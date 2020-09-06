@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Track your team's work",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
+  },
+  "scripts": {
+    "start": "node ./bin/www"
   },
   "keywords": [
     "timetracker",
@@ -21,5 +21,13 @@
   "bugs": {
     "url": "https://github.com/procesoseficientes/work-timetracker/issues"
   },
-  "homepage": "https://github.com/procesoseficientes/work-timetracker#readme"
+  "homepage": "https://github.com/procesoseficientes/work-timetracker#readme",
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "hbs": "^4.1.1",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0"
+  }
 }
