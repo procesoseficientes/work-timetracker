@@ -1,9 +1,20 @@
 var express = require('express')
 var router = express.Router()
 
-/* GET home page. */
 router.get('/', (req, res, next) => {
   res.render('track', {
+    title: 'Timetracker',
+    owners: [
+      { id: 1, name: 'FERCO' },
+      { id: 2, name: 'Arium' },
+      { id: 3, name: 'Alza' },
+      { id: 4, name: 'Cendalza' }
+    ]
+  })
+})
+
+router.post('/', (req, res, next) => {
+  res.status(201).render('track', {
     title: 'Timetracker',
     owners: [
       { id: 1, name: 'FERCO' },
