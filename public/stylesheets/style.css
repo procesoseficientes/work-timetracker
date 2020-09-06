@@ -1,0 +1,11 @@
+.content {
+  padding: 100px 15px 0;
+}
+
+body {
+  background-color: #21252B;
+}
+
+select, input {
+  border: none !important;
+}
