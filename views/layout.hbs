@@ -2,9 +2,39 @@
 <html>
   <head>
     <title>{{title}}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap-grid.min.css'/>
+    <link rel='stylesheet' href='/stylesheets/bootstrap-reboot.min.css'/>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css'/>
   </head>
   <body>
-    {{{body}}}
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Time tracker</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto mb-2 mb-md-0">
+            <li class="nav-item active">
+              <a class="nav-link" aria-current="page" href="#">My times</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">My team</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+
+      <div class="starter-template text-center py-5 px-3">
+        {{{body}}}
+      </div>
+
+    </main>
+    <script src="javascripts/jquery.slim.min.js"></script>
+    <script src="javascripts/bootstrap.min.js"></script>
   </body>
 </html>
