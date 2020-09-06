@@ -9,3 +9,15 @@ body {
 select, input {
   border: none !important;
 }
+
+.filter-content {
+  background-color: #343a40;
+  border-radius: 5px 5px 0 0;
+  padding: 15px;
+  transition: all .4s;
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
+}

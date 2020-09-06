@@ -1,2 +1,21 @@
 <h2>Team</h2>
-{{each team}}
+{{#each team}}
+  <hr/>
+  <h6>{{this.name}}</h6>
+  <label>{{this.task}} - {{this.proyect}}</label>
+  <div class="progress" style="height: 35px;">
+    {{#each this.times}}
+    <div 
+      class="progress-bar {{this.color}} {{#if this.current}}progress-bar-animated progress-bar-striped{{/if}}" 
+      role="progressbar" 
+      style="width: {{this.percent}}%" 
+      aria-valuenow="20" 
+      aria-valuemin="0" 
+      aria-valuemax="100"
+    >
+      {{this.owner}} ({{this.hours}}h)
+    </div>
+    {{/each}}
+  </div>
+  <br/>
+{{/each}}

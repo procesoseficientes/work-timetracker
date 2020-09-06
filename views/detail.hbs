@@ -1,31 +1,87 @@
-<h2>Detail</h2>
+<h2>
+  Detail
+  <button onclick="toggleFilter()" type="button" class="btn btn-dark btn-sm">
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-funnel-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+    </svg>
+  </button>
+</h2>
+
+<form id="filter" class="filter-content hiding hidden">
+  <div class="form-group row">
+    <label for="name" class="col-sm-2 col-form-label">Name</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="owner" class="col-sm-2 col-form-label">Owner</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="owner" id="owner" placeholder="Owner">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="proyect" class="col-sm-2 col-form-label">Proyect</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" name="proyect" id="proyect" placeholder="Proyect">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="proyect" class="col-sm-2 col-form-label">Date</label>
+    <div class="col-sm-10">
+      <div class="input-group">
+        <input type="datetime-local" name="from" id="from" placeholder="From" class="form-control">
+        <input type="datetime-local" name="to" id="from" placeholder="To" class="form-control">
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <th scope="col">Name</th>
+      <th scope="col">Owner</th>
+      <th scope="col">Proyect</th>
+      <th scope="col">Task</th>
+      <th scope="col">Start</th>
+      <th scope="col">End</th>
+      <th scope="col">Hours</th>
     </tr>
   </thead>
   <tbody>
+    {{#each times}}
     <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
+      <th scope="row">{{this.name}}</th>
+      <td>{{this.owner}}</td>
+      <td>{{this.proyect}}</td>
+      <td>{{this.task}}</td>
+      <td>{{this.start}}</td>
+      <td>{{this.end}}</td>
+      <td>{{this.hours}}</td>
     </tr>
+    {{/each}}
     <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
+      <th scope="row"></th>
+      <td></td>
+      <td></td>
+      <td>Count: {{count}}</td>
+      <td></td>
+      <td></td>
+      <td>Sum: {{total}}{{#if total}}h{{/if}}</td>
     </tr>
   </tbody>
 </table>
+<nav>
+  <ul class="pagination">
+    <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="#">Previous</a></li>
+    <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="#">Next</a></li>
+  </ul>
+</nav>
+
+<script>
+  function toggleFilter() {
+    document.getElementById('filter').classList.toggle('hidden')
+  }
+</script>
