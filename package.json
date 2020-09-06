@@ -1,0 +1,25 @@
+{
+  "name": "work-timetracker",
+  "version": "1.0.0",
+  "description": "Track your team's work",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
+  },
+  "keywords": [
+    "timetracker",
+    "work",
+    "time",
+    "javascript"
+  ],
+  "author": "Procesoso Eficientes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/procesoseficientes/work-timetracker/issues"
+  },
+  "homepage": "https://github.com/procesoseficientes/work-timetracker#readme"
+}
