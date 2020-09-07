@@ -1,4 +1,9 @@
 <h2>Proyects</h2>
+
+<form id="filter">
+  <input type="hidden" id="page" name="page" value="{{page}}"/>
+</form>
+
 <form method="POST">
   <div class="form-group">
     <label for="owner">Task owner</label>
@@ -43,3 +48,16 @@
   </div>
   <br/>
 {{/each}}
+
+<ul class="pagination">
+  {{#if showPrevious}}<li onclick="pagination(-1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Previous</a></li>{{/if}}
+  {{#if showNext}}<li onclick="pagination(1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Next</a></li>{{/if}}
+</ul>
+
+<script>
+  function pagination (direction) {
+    const newPage = parseInt($('#page').val()) + direction
+    $('#page').val(newPage > 0 ? newPage : 0)
+    $('#filter').submit()
+  }
+</script>

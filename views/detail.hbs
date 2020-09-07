@@ -41,6 +41,7 @@
       </div>
     </div>
   </div>
+  <input type="hidden" id="page" name="page" value="{{page}}"/>
   <button type="submit" class="btn btn-primary">Filter</button>
 </form>
 
@@ -81,13 +82,18 @@
 </table>
 <nav>
   <ul class="pagination">
-    <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="#">Previous</a></li>
-    <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="#">Next</a></li>
+    {{#if showPrevious}}<li onclick="pagination(-1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Previous</a></li>{{/if}}
+    {{#if showNext}}<li onclick="pagination(1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Next</a></li>{{/if}}
   </ul>
 </nav>
 
 <script>
-  function toggleFilter() {
+  function toggleFilter () {
     document.getElementById('filter').classList.toggle('hidden')
+  }
+  function pagination (direction) {
+    const newPage = parseInt($('#page').val()) + direction
+    $('#page').val(newPage > 0 ? newPage : 0)
+    $('#filter').submit()
   }
 </script>
