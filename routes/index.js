@@ -1,4 +1,5 @@
 var express = require('express')
+const createError = require('http-errors')
 
 class IndexRoutes {
   constructor (dbService) {
@@ -16,16 +17,22 @@ class IndexRoutes {
       })
     })
 
-    this.router.post('/', (req, res, next) => {
-      res.status(201).render('track', {
-        title: 'Timetracker',
-        owners: [
-          { id: 1, name: 'FERCO' },
-          { id: 2, name: 'Arium' },
-          { id: 3, name: 'Alza' },
-          { id: 4, name: 'Cendalza' }
-        ]
-      })
+    this.router.post('/', async (req, res, next) => {
+      try {
+        await this.dbService.startTracking(
+          1,
+          req.body.owner,
+          req.body.project,
+          req.body.task
+        )
+        res.status(201).render('track', {
+          title: 'Timetracker',
+          owners: (await this.dbService.getOwners()).rows
+        })
+      } catch (error) {
+        console.error(error)
+        next(createError(500))
+      }
     })
 
     this.router.get('/detail', (req, res, next) => {
@@ -33,7 +40,7 @@ class IndexRoutes {
       this.dbService.getTimes(
         req.query.name,
         req.query.owner,
-        req.query.proyect,
+        req.query.project,
         req.query.from === '' ? undefined : req.query.from,
         req.query.to === '' ? undefined : req.query.to,
         req.query.page
@@ -44,7 +51,7 @@ class IndexRoutes {
             .slice(0, 51)
             .map(a => {
               a.start = a.start.toString().substring(0, 21)
-              a.end = a.end.toString().substring(0, 21)
+              a.end = a.end ? a.end.toString().substring(0, 21) : ''
               return a
             }),
           count: data.rows.length,

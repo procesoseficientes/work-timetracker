@@ -27,13 +27,13 @@
     </div>
   </div>
   <div class="form-group row">
-    <label for="proyect" class="col-sm-2 col-form-label">Proyect</label>
+    <label for="project" class="col-sm-2 col-form-label">Project</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="proyect" id="proyect" placeholder="Proyect">
+      <input type="text" class="form-control" name="project" id="project" placeholder="Project">
     </div>
   </div>
   <div class="form-group row">
-    <label for="proyect" class="col-sm-2 col-form-label">Date</label>
+    <label for="project" class="col-sm-2 col-form-label">Date</label>
     <div class="col-sm-10">
       <div class="input-group">
         <input type="datetime-local" name="from" id="from" placeholder="From" class="form-control">
@@ -50,7 +50,7 @@
     <tr>
       <th scope="col">Name</th>
       <th scope="col">Owner</th>
-      <th scope="col">Proyect</th>
+      <th scope="col">Project</th>
       <th scope="col">Task</th>
       <th scope="col">Start</th>
       <th scope="col">End</th>
@@ -62,7 +62,7 @@
     <tr>
       <th scope="row">{{this.name}}</th>
       <td>{{this.owner}}</td>
-      <td>{{this.proyect}}</td>
+      <td>{{this.project}}</td>
       <td>{{this.task}}</td>
       <td>{{this.start}}</td>
       <td>{{this.end}}</td>
@@ -80,12 +80,6 @@
     </tr>
   </tbody>
 </table>
-<nav>
-  <ul class="pagination">
-    {{#if showPrevious}}<li onclick="pagination(-1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Previous</a></li>{{/if}}
-    {{#if showNext}}<li onclick="pagination(1)" class="page-item bg-dark"><a class="page-link bg-dark text-light">Next</a></li>{{/if}}
-  </ul>
-</nav>
 
 <script>
   function toggleFilter () {

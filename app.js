@@ -7,7 +7,7 @@ const logger = require('morgan')
 
 const IndexRouter = require('./routes/index')
 const UsersRouter = require('./routes/users')
-const ProyectsRouter = require('./routes/proyects')
+const ProjectsRouter = require('./routes/projects')
 const DbService = require('./services/db-service')
 
 const app = express()
@@ -28,7 +28,7 @@ const dbService = new DbService(process.env.DATABASE_URL)
 
 app.use('/', new IndexRouter(dbService).router)
 app.use('/users', new UsersRouter(dbService).router)
-app.use('/proyects', new ProyectsRouter(dbService).router)
+app.use('/projects', new ProjectsRouter(dbService).router)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
