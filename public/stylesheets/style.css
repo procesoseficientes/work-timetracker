@@ -10,7 +10,7 @@ select, input {
   border: none !important;
 }
 
-.filter-content {
+.collapsible-content {
   background-color: #343a40;
   border-radius: 5px 5px 0 0;
   padding: 15px;

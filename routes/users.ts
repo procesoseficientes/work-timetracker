@@ -8,14 +8,35 @@ class UsersRoutes {
     this.dbService = dbService
     this.router = express.Router()
 
-    this.router.get('/', (req, res) => {
-      res.render('users', { title: 'Timetracker - Users' })
+    this.router.get('/', async (req, res) => {
+      res.render('users', await this.usersView())
     })
 
-    this.router.post('/', (req, res) => {
-      console.log(req.body)
-      res.status(201).render('users', { title: 'Timetracker - Users' })
+    this.router.post('/', async (req, res) => {
+      if (
+        req.body.name &&
+        req.body.username && 
+        req.body.password
+      ) {
+        try {
+          this.dbService.createUser(req.body.name, req.body.username, req.body.password)
+          res.status(201).render('users', await this.usersView()) 
+        } catch (error) {
+          console.error(error)
+          res.status(500).render('users', await this.usersView()) 
+        }
+      } else {
+        console.error('Insufficient parameters for request')
+        res.status(401).render('users', await this.usersView()) 
+      }
     })
+  }
+
+  async usersView () {
+    return {
+      title: 'Timetracker - Users',
+      users: (await this.dbService.getUsers()).rows
+    }
   }
 }
 

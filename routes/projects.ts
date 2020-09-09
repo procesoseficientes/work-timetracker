@@ -6,12 +6,11 @@ import DbService from '../services/db-service'
 class ProjectsRoutes {
   dbService: DbService
   router: express.Router
-  colors: string[]
+  colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
   constructor (dbService: DbService) {
     this.dbService = dbService
     this.router = express.Router()
-    this.colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
     this.router.get('/', async (req, res, next) => {
       if (!req.query.page || req.query.page === '') req.query.page = '0'
@@ -49,7 +48,7 @@ class ProjectsRoutes {
         hours: projects[a][0].project_hours
       }
       g.times = g.times.map((b: any) => {
-        b.color = this.colors[b.time_id]
+        b.color = this.colors[b.time_id % this.colors.length]
         return b
       })
       return g

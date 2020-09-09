@@ -18,6 +18,10 @@ class DbService {
     return await this.client.query('select * from owner')
   }
 
+  async getUsers () {
+    return await this.client.query('select * from "user"')
+  }
+
   async getProjects (ownerId: string) {
     return await this.client.query(`select * from project where owner_id = ${ownerId}`)
   }
@@ -48,8 +52,8 @@ class DbService {
         and lower(p.name) like '%${project.toLowerCase()}%'
         and "start" between '${from}' and '${to}'
       order by "start" desc
-      limit 51
-      offset ${page * 50}
+      limit 26
+      offset ${page * 25}
     `)
   }
 
@@ -70,7 +74,7 @@ class DbService {
     `)
   }
 
-  async stopTracking (userId: string) {
+  async stopTracking (userId: number) {
     return await this.client.query(`
       update "time" set "end" = CURRENT_TIMESTAMP
       where user_id = ${userId}
@@ -108,11 +112,57 @@ class DbService {
     `)
   }
 
-  async insertProjects (ownerId: string, name: string, description: string) {
+  async insertProjects (ownerId: number, name: string, description: string) {
     return await this.client.query(`
       insert into public.project(
       owner_id, name, description)
       values (${ownerId}, '${name}', '${description}')
+    `)
+  }
+
+  async createUser (name: string, username: string, password: string) {
+    return await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true)`)
+  }
+
+  async getTodayUser (userId: string) {
+    return await this.client.query(`
+      select 
+        user_id,
+        o.name as "owner",
+        p.name as "project",
+        t.task,
+        t.start,
+        "end" is null as "current",
+        (extract(epoch from "end" - "start")) / 3600 as hours,
+        (extract(epoch from "end" - "start") / 28800) * 100 as "percent"
+      from "time" t
+      inner join "owner" o on owner_id = o.id
+      inner join project p on project_id = p.id
+      where user_id = ${userId}
+      and "start" > now() - interval '1 day'
+      order by "start" desc
+    `)
+  }
+
+  async getTodayTeam() {
+    return await this.client.query(`
+      select 
+        t.id as "time_id",
+        user_id,
+        u.name,
+        o.name as "owner",
+        p.name as "project",
+        t.task,
+        t.start,
+        "end" is null as "is_current",
+        (extract(epoch from "end" - "start")) / 3600 as hours,
+        (extract(epoch from "end" - "start") / 28800) * 100 as "percent"
+      from "time" t
+      inner join "owner" o on owner_id = o.id
+      inner join "user" u on user_id = u.id
+      inner join project p on project_id = p.id
+      and "start" > now() - interval '1 day'
+      order by "start" desc
     `)
   }
 }
