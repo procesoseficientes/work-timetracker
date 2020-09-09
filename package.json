@@ -32,7 +32,8 @@
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
     "pg": "^8.3.3",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.0.0",
+    "typescript": "4.0.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
