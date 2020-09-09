@@ -61,7 +61,7 @@ class IndexRoutes {
                         .map(a => a.hours)
                         .reduce((a, b) => {
                         return a + b;
-                    }),
+                    }, 0),
                     page: req.query.page,
                     showPrevious: parseInt(req.query.page) > 0,
                     showNext: data.rows.length === 26
@@ -87,8 +87,8 @@ class IndexRoutes {
             return {
                 title: 'Timetracker',
                 owners: owners,
-                isWorking: times[0].current,
-                lastTask: times[0].task,
+                isWorking: times[0] ? times[0].current : false,
+                lastTask: times[0] ? times[0].task : '',
                 times: times.filter(a => a.percent > 0.5 || a.current)
                     .map(this.mapTime)
                     .reverse()
@@ -120,7 +120,7 @@ class IndexRoutes {
         const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning'];
         const start = new Date(element.start).getTime();
         if (element.current) {
-            element.hours = (start - new Date().getTime()) / 3600000;
+            element.hours = (new Date().getTime() - start) / 3600000;
             element.percent = ((element.hours / 8) * 100) + 3;
         }
         const hoursSplit = element.hours.toString().split('.');
