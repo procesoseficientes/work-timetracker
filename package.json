@@ -8,7 +8,9 @@
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
   },
   "scripts": {
-    "start": "ts-node index.ts",
+    "copy": "copyfiles --up 1 src/**/*.hbs dist/",
+    "start": "node dist",
+    "build": "npm run copy && tsc",
     "start:live": "nodemon --exec ts-node index.ts"
   },
   "keywords": [
@@ -41,12 +43,7 @@
     "@types/http-errors": "^1.8.0",
     "@types/morgan": "^1.9.1",
     "@types/pg": "^7.14.4",
-    "eslint": "^7.8.1",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
+    "copyfiles": "^2.3.0",
     "nodemon": "^2.0.4"
   }
 }
