@@ -65,7 +65,7 @@ class IndexRoutes {
             .map(a => a.hours)
             .reduce((a, b) => {
               return a + b
-            }),
+            }, 0),
           page: req.query.page,
           showPrevious: parseInt(<string>req.query.page) > 0,
           showNext: data.rows.length === 26
@@ -92,8 +92,8 @@ class IndexRoutes {
     return {
       title: 'Timetracker',
       owners: owners,
-      isWorking: times[0].current,
-      lastTask: times[0].task,
+      isWorking: times[0] ? times[0].current : false,
+      lastTask: times[0] ?  times[0].task : '',
       times: times.filter(a => a.percent > 0.5 || a.current)
                   .map(this.mapTime)
                   .reverse()
