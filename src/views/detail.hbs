@@ -45,41 +45,43 @@
   <button type="submit" class="btn btn-primary">Filter</button>
 </form>
 
-<table class="table responsive-table table-dark">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Owner</th>
-      <th scope="col">Project</th>
-      <th scope="col">Task</th>
-      <th scope="col">Start</th>
-      <th scope="col">End</th>
-      <th scope="col">Hours</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each times}}
-    <tr>
-      <th scope="row">{{this.name}}</th>
-      <td>{{this.owner}}</td>
-      <td>{{this.project}}</td>
-      <td>{{this.task}}</td>
-      <td>{{this.start}}</td>
-      <td>{{this.end}}</td>
-      <td>{{this.hours}}</td>
-    </tr>
-    {{/each}}
-    <tr>
-      <th scope="row"></th>
-      <td></td>
-      <td></td>
-      <td>Count: {{count}}</td>
-      <td></td>
-      <td></td>
-      <td>Sum: {{total}}{{#if total}}h{{/if}}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Owner</th>
+        <th scope="col">Project</th>
+        <th scope="col">Task</th>
+        <th scope="col">Start</th>
+        <th scope="col">End</th>
+        <th scope="col">Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each times}}
+      <tr>
+        <th scope="row">{{this.name}}</th>
+        <td>{{this.owner}}</td>
+        <td>{{this.project}}</td>
+        <td>{{this.task}}</td>
+        <td>{{this.start}}</td>
+        <td>{{this.end}}</td>
+        <td>{{this.hours}}</td>
+      </tr>
+      {{/each}}
+      <tr>
+        <th scope="row"></th>
+        <td></td>
+        <td></td>
+        <td>Count: {{count}}</td>
+        <td></td>
+        <td></td>
+        <td>Sum: {{total}}{{#if total}}h{{/if}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <script>
   function toggleFilter () {

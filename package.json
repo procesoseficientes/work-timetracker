@@ -10,8 +10,9 @@
   "scripts": {
     "copy": "copyfiles --up 1 src/**/*.hbs dist/",
     "start": "node dist",
+    "test": "npm run build",
     "build": "npm run copy && tsc",
-    "start:live": "nodemon --exec ts-node index.ts"
+    "start:live": "nodemon --exec ts-node src/index.ts"
   },
   "keywords": [
     "timetracker",

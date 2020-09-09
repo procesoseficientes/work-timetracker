@@ -126,7 +126,7 @@ class IndexRoutes {
     const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
     const start = new Date(element.start).getTime()
     if (element.current) {
-      element.hours = (start - new Date().getTime()) / 3600000
+      element.hours = (new Date().getTime() - start) / 3600000
       element.percent = ((element.hours / 8) * 100) + 3
     }
     const hoursSplit = element.hours.toString().split('.')
