@@ -1,19 +1,22 @@
-var express = require('express')
-const createError = require('http-errors')
+import express from 'express'
+import createError from 'http-errors'
+import DbService from '../services/db-service'
 
 class IndexRoutes {
-  constructor (dbService) {
+  dbService: DbService
+  router: express.Router
+  constructor (dbService: DbService) {
     this.dbService = dbService
     this.router = express.Router()
 
-    this.router.get('/', (req, res, next) => {
+    this.router.get('/', (_req, res, _next) => {
       this.dbService.getOwners().then(data => {
         res.render('track', {
           title: 'Timetracker',
           owners: data.rows
         })
       }).catch(err => {
-        res.status(500).semd(err)
+        res.status(500).send(err)
       })
     })
 
@@ -35,15 +38,15 @@ class IndexRoutes {
       }
     })
 
-    this.router.get('/detail', (req, res, next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = 0
+    this.router.get('/detail', (req, res, _next) => {
+      if (!req.query.page || req.query.page === '') req.query.page = '0'
       this.dbService.getTimes(
-        req.query.name,
-        req.query.owner,
-        req.query.project,
-        req.query.from === '' ? undefined : req.query.from,
-        req.query.to === '' ? undefined : req.query.to,
-        req.query.page
+        <string>req.query.name, 
+        <string>req.query.owner,
+        <string>req.query.project,
+        <string>req.query.from === '' ? undefined : <string>req.query.from,
+        <string>req.query.to === '' ? undefined : <string>req.query.to,
+        parseInt(<string>req.query.page)
       ).then(data => {
         res.render('detail', {
           title: 'Timetracker - Detail',
@@ -62,7 +65,7 @@ class IndexRoutes {
               return a + b
             }),
           page: req.query.page,
-          showPrevious: parseInt(req.query.page) > 0,
+          showPrevious: parseInt(<string>req.query.page) > 0,
           showNext: data.rows.length === 51
         })
       }).catch(err => {
@@ -75,7 +78,7 @@ class IndexRoutes {
       })
     })
 
-    this.router.get('/team', (req, res, next) => {
+    this.router.get('/team', (_req, res, _next) => {
       const colors = ['bg-primary', 'bg-secondary', 'bg-danger', 'bg-warning', 'bg-info']
       res.render('team', {
         title: 'Timetracker - Team',
@@ -87,24 +90,24 @@ class IndexRoutes {
             times: [
               {
                 owner: 'Arium',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: false,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               },
               {
                 owner: 'Lunch',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: false,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               },
               {
                 owner: 'Alza',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: true,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               }
             ]
           },
@@ -115,24 +118,24 @@ class IndexRoutes {
             times: [
               {
                 owner: 'FERCO',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: false,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               },
               {
                 owner: 'Arium',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: false,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               },
               {
                 owner: 'Break',
-                color: colors[parseInt(Math.random() * colors.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
                 current: true,
-                hours: parseInt(Math.random() * 8) + 1,
-                percent: parseInt(Math.random() * 33) + 10
+                hours: Math.floor(Math.random() * 8) + 1,
+                percent: Math.floor(Math.random() * 33) + 10
               }
             ]
           }
@@ -142,4 +145,4 @@ class IndexRoutes {
   }
 }
 
-module.exports = IndexRoutes
+export default IndexRoutes

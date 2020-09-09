@@ -1,31 +1,32 @@
-const express = require('express')
-const groupBy = require('../utils/json')
-const createError = require('http-errors')
+import express from 'express'
+import { groupBy } from '../utils/json'
+import createError from 'http-errors'
+import DbService from '../services/db-service'
 
 class ProjectsRoutes {
-  /**
-   * Object for all the `projects` routes
-   * @param {DbService} dbService DbService class
-   */
-  constructor (dbService) {
+  dbService: DbService
+  router: express.Router
+  colors: string[]
+
+  constructor (dbService: DbService) {
     this.dbService = dbService
     this.router = express.Router()
     this.colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
     this.router.get('/', async (req, res, next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = 0
-      res.render('projects', await this.projectsView(req.query.page))
+      if (!req.query.page || req.query.page === '') req.query.page = '0'
+      res.render('projects', await this.projectsView(<string>req.query.page))
     })
 
     this.router.post('/', async (req, res, next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = 0
+      if (!req.query.page || req.query.page === '') req.query.page = '0'
       try {
         await this.dbService.insertProjects(
           req.body.owner,
           req.body.name,
           req.body.description
         )
-        res.status(201).render('projects', await this.projectsView(req.query.page))
+        res.status(201).render('projects', await this.projectsView(<string>req.query.page))
       } catch (error) {
         console.error(error)
         next(createError(500))
@@ -33,11 +34,11 @@ class ProjectsRoutes {
     })
 
     this.router.get('/json', async (req, res, next) => {
-      res.send((await this.dbService.getProjects(req.query.id)).rows)
+      res.send((await this.dbService.getProjects(<string>req.query.id)).rows)
     })
   }
 
-  async projectsView (page) {
+  async projectsView (page: string) {
     const projects = groupBy((await this.dbService.getProjectsDetail()).rows, 'id')
     const grouped = Object.keys(projects).map(a => {
       const g = {
@@ -47,7 +48,7 @@ class ProjectsRoutes {
         description: projects[a][0].description,
         hours: projects[a][0].project_hours
       }
-      g.times = g.times.map(b => {
+      g.times = g.times.map((b: any) => {
         b.color = this.colors[b.time_id]
         return b
       })
@@ -61,4 +62,4 @@ class ProjectsRoutes {
     }
   }
 }
-module.exports = ProjectsRoutes
+export default ProjectsRoutes

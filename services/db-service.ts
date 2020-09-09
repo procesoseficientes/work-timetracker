@@ -1,11 +1,11 @@
-const { Client } = require('pg')
+import { Client } from 'pg'
 
 class DbService {
-  constructor (url) {
+  client: Client
+  constructor (url: string) {
     this.client = new Client({
       connectionString: url,
       ssl: {
-        require: true,
         rejectUnauthorized: false
       }
     })
@@ -18,7 +18,7 @@ class DbService {
     return await this.client.query('select * from owner')
   }
 
-  async getProjects (ownerId) {
+  async getProjects (ownerId: string) {
     return await this.client.query(`select * from project where owner_id = ${ownerId}`)
   }
 
@@ -53,7 +53,12 @@ class DbService {
     `)
   }
 
-  async startTracking (userId, ownerId, projectId, task) {
+  async startTracking (
+    userId: number, 
+    ownerId: string, 
+    projectId: string, 
+    task: string
+  ) {
     return await this.client.query(`
       update "time" set "end" = CURRENT_TIMESTAMP
       where user_id = ${userId}
@@ -65,7 +70,7 @@ class DbService {
     `)
   }
 
-  async stopTracking (userId) {
+  async stopTracking (userId: string) {
     return await this.client.query(`
       update "time" set "end" = CURRENT_TIMESTAMP
       where user_id = ${userId}
@@ -103,7 +108,7 @@ class DbService {
     `)
   }
 
-  async insertProjects (ownerId, name, description) {
+  async insertProjects (ownerId: string, name: string, description: string) {
     return await this.client.query(`
       insert into public.project(
       owner_id, name, description)
@@ -112,4 +117,4 @@ class DbService {
   }
 }
 
-module.exports = DbService
+export default DbService
