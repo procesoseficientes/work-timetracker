@@ -30,7 +30,8 @@ class ProjectsRoutes {
           await this.dbService.insertProjects(
             req.body.owner,
             req.body.name,
-            req.body.description
+            req.body.description,
+            req.body.budget
           )
           res.status(201).render('projects', await this.projectsView(<string>req.query.page))
         } catch (error) {

@@ -94,7 +94,7 @@ class DbService {
       u.name as "user",
       user_hours as "hours",
       project_hours,
-      (user_hours / project_hours) * 100 as "percent"
+      (user_hours / (project_hours + 0.1)) * 100 as "percent"
     from project p
     inner join owner o on o.id = p.owner_id
     inner join (select 
@@ -115,12 +115,12 @@ class DbService {
     `);
         });
     }
-    insertProjects(ownerId, name, description) {
+    insertProjects(ownerId, name, description, budget) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.client.query(`
       insert into public.project(
       owner_id, name, description)
-      values (${ownerId}, '${name}', '${description}')
+      values (${ownerId}, '${name}', '${description}', ${budget})
     `);
         });
     }
