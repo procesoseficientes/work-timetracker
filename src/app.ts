@@ -9,6 +9,10 @@ import IndexRouter from './routes/index'
 import UsersRouter from './routes/users'
 import ProjectsRouter from './routes/projects'
 import DbService from './services/db-service'
+import LoginRoutes from './routes/login'
+
+import session from 'express-session'
+import OwnersRoutes from './routes/owners'
 
 const app = express()
 
@@ -23,12 +27,15 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(session({secret: 'secret'}))
 
 const dbService = new DbService(process.env.DATABASE_URL)
 
 app.use('/', new IndexRouter(dbService).router)
+app.use('/login', new LoginRoutes(dbService).router)
 app.use('/users', new UsersRouter(dbService).router)
 app.use('/projects', new ProjectsRouter(dbService).router)
+app.use('/owners', new OwnersRoutes(dbService).router)
 
 // catch 404 and forward to error handler
 app.use(function (_req, _res, next) {

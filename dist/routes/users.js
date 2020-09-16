@@ -18,24 +18,34 @@ class UsersRoutes {
         this.dbService = dbService;
         this.router = express_1.default.Router();
         this.router.get('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
-            res.render('users', yield this.usersView());
-        }));
-        this.router.post('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
-            if (req.body.name &&
-                req.body.username &&
-                req.body.password) {
-                try {
-                    this.dbService.createUser(req.body.name, req.body.username, req.body.password);
-                    res.status(201).render('users', yield this.usersView());
-                }
-                catch (error) {
-                    console.error(error);
-                    res.status(500).render('users', yield this.usersView());
-                }
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
             }
             else {
-                console.error('Insufficient parameters for request');
-                res.status(401).render('users', yield this.usersView());
+                res.render('users', yield this.usersView());
+            }
+        }));
+        this.router.post('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
+            }
+            else {
+                if (req.body.name &&
+                    req.body.username &&
+                    req.body.password) {
+                    try {
+                        this.dbService.createUser(req.body.name, req.body.username, req.body.password);
+                        res.status(201).render('users', yield this.usersView());
+                    }
+                    catch (error) {
+                        console.error(error);
+                        res.status(500).render('users', yield this.usersView());
+                    }
+                }
+                else {
+                    console.error('Insufficient parameters for request');
+                    res.status(401).render('users', yield this.usersView());
+                }
             }
         }));
     }

@@ -26,6 +26,10 @@ class DbService {
     return await this.client.query(`select * from project where owner_id = ${ownerId}`)
   }
 
+  async createOwner (name: string) {
+    return await this.client.query(`insert into "owner"(name, active) values ('${name}', true)`)
+  }
+
   async getTimes (
     name = '',
     owner = '',
@@ -91,7 +95,7 @@ class DbService {
       u.name as "user",
       user_hours as "hours",
       project_hours,
-      (user_hours / project_hours) * 100 as "percent"
+      ((user_hours + 1) / p.budget) * 100 as "percent"
     from project p
     inner join owner o on o.id = p.owner_id
     inner join (select 
@@ -112,11 +116,11 @@ class DbService {
     `)
   }
 
-  async insertProjects (ownerId: number, name: string, description: string) {
+  async createProject (ownerId: number, name: string, description: string, budget: number) {
     return await this.client.query(`
       insert into public.project(
-      owner_id, name, description)
-      values (${ownerId}, '${name}', '${description}')
+      owner_id, name, description, budget)
+      values (${ownerId}, '${name}', '${description}', ${budget})
     `)
   }
 
@@ -124,7 +128,7 @@ class DbService {
     return await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true)`)
   }
 
-  async getTodayUser (userId: string) {
+  async getTodayUser (userId: number) {
     return await this.client.query(`
       select 
         user_id,

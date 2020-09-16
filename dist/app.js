@@ -13,6 +13,8 @@ const index_1 = __importDefault(require("./routes/index"));
 const users_1 = __importDefault(require("./routes/users"));
 const projects_1 = __importDefault(require("./routes/projects"));
 const db_service_1 = __importDefault(require("./services/db-service"));
+const login_1 = __importDefault(require("./routes/login"));
+const express_session_1 = __importDefault(require("express-session"));
 const app = express_1.default();
 // view engine setup
 app.set('views', path_1.default.join(__dirname, 'views'));
@@ -24,8 +26,10 @@ app.use(cookie_parser_1.default());
 app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.use(express_session_1.default({ secret: 'secret' }));
 const dbService = new db_service_1.default(process.env.DATABASE_URL);
 app.use('/', new index_1.default(dbService).router);
+app.use('/login', new login_1.default(dbService).router);
 app.use('/users', new users_1.default(dbService).router);
 app.use('/projects', new projects_1.default(dbService).router);
 // catch 404 and forward to error handler

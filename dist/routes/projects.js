@@ -21,20 +21,30 @@ class ProjectsRoutes {
         this.dbService = dbService;
         this.router = express_1.default.Router();
         this.router.get('/', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            if (!req.query.page || req.query.page === '')
-                req.query.page = '0';
-            res.render('projects', yield this.projectsView(req.query.page));
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
+            }
+            else {
+                if (!req.query.page || req.query.page === '')
+                    req.query.page = '0';
+                res.render('projects', yield this.projectsView(req.query.page));
+            }
         }));
         this.router.post('/', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            if (!req.query.page || req.query.page === '')
-                req.query.page = '0';
-            try {
-                yield this.dbService.insertProjects(req.body.owner, req.body.name, req.body.description);
-                res.status(201).render('projects', yield this.projectsView(req.query.page));
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
             }
-            catch (error) {
-                console.error(error);
-                next(http_errors_1.default(500));
+            else {
+                if (!req.query.page || req.query.page === '')
+                    req.query.page = '0';
+                try {
+                    yield this.dbService.insertProjects(req.body.owner, req.body.name, req.body.description, req.body.budget);
+                    res.status(201).render('projects', yield this.projectsView(req.query.page));
+                }
+                catch (error) {
+                    console.error(error);
+                    next(http_errors_1.default(500));
+                }
             }
         }));
         this.router.get('/json', (req, res, next) => __awaiter(this, void 0, void 0, function* () {

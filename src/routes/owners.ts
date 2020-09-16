@@ -1,7 +1,7 @@
 import DbService from '../services/db-service'
 import express from 'express'
 
-class UsersRoutes {
+class OwnersRoutes {
   dbService: DbService
   router: express.Router
   constructor (dbService: DbService) {
@@ -12,7 +12,7 @@ class UsersRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.render('users', await this.usersView())
+        res.render('owners', await this.ownersView())
       }
     })
 
@@ -21,31 +21,29 @@ class UsersRoutes {
         res.status(401).redirect('/login')
       } else {
         if (
-          req.body.name &&
-          req.body.username && 
-          req.body.password
+          req.body.name
         ) {
           try {
-            this.dbService.createUser(req.body.name, req.body.username, req.body.password)
-            res.status(201).render('users', await this.usersView()) 
+            this.dbService.createOwner(req.body.name)
+            res.status(201).render('owners', await this.ownersView()) 
           } catch (error) {
             console.error(error)
-            res.status(500).render('users', await this.usersView()) 
+            res.status(500).render('owners', await this.ownersView()) 
           }
         } else {
           console.error('Insufficient parameters for request')
-          res.status(401).render('users', await this.usersView()) 
+          res.status(401).render('owners', await this.ownersView()) 
         }
       }
     })
   }
 
-  async usersView () {
+  async ownersView () {
     return {
-      title: 'Timetracker - Users',
-      users: (await this.dbService.getUsers()).rows
+      title: 'Timetracker - Owners',
+      owners: (await this.dbService.getOwners()).rows
     }
   }
 }
 
-export default UsersRoutes
+export default OwnersRoutes

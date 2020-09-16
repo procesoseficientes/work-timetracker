@@ -13,22 +13,31 @@ class ProjectsRoutes {
     this.router = express.Router()
 
     this.router.get('/', async (req, res, next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = '0'
-      res.render('projects', await this.projectsView(<string>req.query.page))
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        if (!req.query.page || req.query.page === '') req.query.page = '0'
+        res.render('projects', await this.projectsView(<string>req.query.page))
+      }
     })
 
     this.router.post('/', async (req, res, next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = '0'
-      try {
-        await this.dbService.insertProjects(
-          req.body.owner,
-          req.body.name,
-          req.body.description
-        )
-        res.status(201).render('projects', await this.projectsView(<string>req.query.page))
-      } catch (error) {
-        console.error(error)
-        next(createError(500))
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        if (!req.query.page || req.query.page === '') req.query.page = '0'
+        try {
+          await this.dbService.createProject(
+            req.body.owner,
+            req.body.name,
+            req.body.description,
+            req.body.budget
+          )
+          res.status(201).render('projects', await this.projectsView(<string>req.query.page))
+        } catch (error) {
+          console.error(error)
+          next(createError(500))
+        }
       }
     })
 

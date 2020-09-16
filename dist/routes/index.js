@@ -20,70 +20,95 @@ class IndexRoutes {
         this.colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning'];
         this.dbService = dbService;
         this.router = express_1.default.Router();
-        this.router.get('/', (_req, res, _next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                res.render('track', yield this.trackView());
+        this.router.get('/', (req, res, _next) => __awaiter(this, void 0, void 0, function* () {
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
             }
-            catch (error) {
-                console.log(error);
-                res.status(500).send(error);
+            else {
+                try {
+                    res.render('track', yield this.trackView(req.session.user));
+                }
+                catch (error) {
+                    console.log(error);
+                    res.status(500).send(error);
+                }
             }
         }));
         this.router.post('/', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.dbService.startTracking(1, req.body.owner, req.body.project, req.body.task);
-                res.status(201).render('track', yield this.trackView());
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
             }
-            catch (error) {
-                console.error(error);
-                next(http_errors_1.default(500));
+            else {
+                try {
+                    yield this.dbService.startTracking(req.session.user, req.body.owner, req.body.project, req.body.task);
+                    res.status(201).render('track', yield this.trackView(req.session.user));
+                }
+                catch (error) {
+                    console.error(error);
+                    next(http_errors_1.default(500));
+                }
             }
         }));
         this.router.delete('/', (req, res) => __awaiter(this, void 0, void 0, function* () {
-            res.send((yield this.dbService.stopTracking(req.body.id)).rows);
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
+            }
+            else {
+                res.send((yield this.dbService.stopTracking(req.body.id)).rows);
+            }
         }));
         this.router.get('/detail', (req, res, _next) => {
-            if (!req.query.page || req.query.page === '')
-                req.query.page = '0';
-            this.dbService.getTimes(req.query.name, req.query.owner, req.query.project, req.query.from === '' ? undefined : req.query.from, req.query.to === '' ? undefined : req.query.to, parseInt(req.query.page)).then(data => {
-                res.render('detail', {
-                    title: 'Timetracker - Detail',
-                    times: data.rows
-                        .slice(0, 26)
-                        .map(a => {
-                        a.start = a.start.toString().substring(0, 21);
-                        a.end = a.end ? a.end.toString().substring(0, 21) : '';
-                        return a;
-                    }),
-                    count: data.rows.length,
-                    total: data.rows
-                        .slice(0, 26)
-                        .map(a => a.hours)
-                        .reduce((a, b) => {
-                        return a + b;
-                    }, 0),
-                    page: req.query.page,
-                    showPrevious: parseInt(req.query.page) > 0,
-                    showNext: data.rows.length === 26
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
+            }
+            else {
+                if (!req.query.page || req.query.page === '')
+                    req.query.page = '0';
+                this.dbService.getTimes(req.query.name, req.query.owner, req.query.project, req.query.from === '' ? undefined : req.query.from, req.query.to === '' ? undefined : req.query.to, parseInt(req.query.page)).then(data => {
+                    res.render('detail', {
+                        title: 'Timetracker - Detail',
+                        times: data.rows
+                            .slice(0, 26)
+                            .map(a => {
+                            a.start = a.start.toString().substring(0, 21);
+                            a.end = a.end ? a.end.toString().substring(0, 21) : '';
+                            return a;
+                        }),
+                        count: data.rows.length,
+                        total: data.rows
+                            .slice(0, 26)
+                            .map(a => a.hours)
+                            .reduce((a, b) => {
+                            return a + b;
+                        }, 0),
+                        page: req.query.page,
+                        showPrevious: parseInt(req.query.page) > 0,
+                        showNext: data.rows.length === 26
+                    });
+                }).catch(err => {
+                    console.error(err);
+                    res.status(500).render('detail', {
+                        title: 'Timetracker - Detail',
+                        page: req.query.page,
+                        times: []
+                    });
                 });
-            }).catch(err => {
-                console.error(err);
-                res.status(500).render('detail', {
-                    title: 'Timetracker - Detail',
-                    page: req.query.page,
-                    times: []
-                });
-            });
+            }
         });
-        this.router.get('/team', (_req, res, _next) => __awaiter(this, void 0, void 0, function* () {
-            const view = yield this.teamView();
-            res.render('team', view);
+        this.router.get('/team', (req, res, _next) => __awaiter(this, void 0, void 0, function* () {
+            if (!req.session.user) {
+                res.status(401).redirect('/login');
+            }
+            else {
+                const view = yield this.teamView();
+                res.render('team', view);
+            }
         }));
     }
-    trackView() {
+    trackView(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const owners = (yield this.dbService.getOwners()).rows;
-            const times = (yield this.dbService.getTodayUser('1')).rows;
+            const times = (yield this.dbService.getTodayUser(userId)).rows;
             return {
                 title: 'Timetracker',
                 owners: owners,
@@ -91,7 +116,8 @@ class IndexRoutes {
                 lastTask: times[0] ? times[0].task : '',
                 times: times.filter(a => a.percent > 0.5 || a.current)
                     .map(this.mapTime)
-                    .reverse()
+                    .reverse(),
+                userId: userId
             };
         });
     }

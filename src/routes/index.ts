@@ -12,83 +12,103 @@ class IndexRoutes {
     this.dbService = dbService
     this.router = express.Router()
 
-    this.router.get('/', async (_req, res, _next) => {
-      try {
-        res.render('track', await this.trackView())
-      } catch (error) {
-        console.log(error)
-        res.status(500).send(error)
+    this.router.get('/', async (req, res, _next) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        try {
+          res.render('track', await this.trackView(req.session.user))
+        } catch (error) {
+          console.log(error)
+          res.status(500).send(error)
+        }
       }
     })
 
     this.router.post('/', async (req, res, next) => {
-      try {
-        await this.dbService.startTracking(
-          1,
-          req.body.owner,
-          req.body.project,
-          req.body.task
-        )
-        res.status(201).render('track', await this.trackView())
-      } catch (error) {
-        console.error(error)
-        next(createError(500))
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        try {
+          await this.dbService.startTracking(
+            req.session.user,
+            req.body.owner,
+            req.body.project,
+            req.body.task
+          )
+          res.status(201).render('track', await this.trackView(req.session.user))
+        } catch (error) {
+          console.error(error)
+          next(createError(500))
+        }
       }
     })
 
     this.router.delete('/', async (req, res) => {
-      res.send((await this.dbService.stopTracking(req.body.id)).rows)
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.send((await this.dbService.stopTracking(req.body.id)).rows)
+      }
     })
 
     this.router.get('/detail', (req, res, _next) => {
-      if (!req.query.page || req.query.page === '') req.query.page = '0'
-      this.dbService.getTimes(
-        <string>req.query.name, 
-        <string>req.query.owner,
-        <string>req.query.project,
-        <string>req.query.from === '' ? undefined : <string>req.query.from,
-        <string>req.query.to === '' ? undefined : <string>req.query.to,
-        parseInt(<string>req.query.page)
-      ).then(data => {
-        res.render('detail', {
-          title: 'Timetracker - Detail',
-          times: data.rows
-            .slice(0, 26)
-            .map(a => {
-              a.start = a.start.toString().substring(0, 21)
-              a.end = a.end ? a.end.toString().substring(0, 21) : ''
-              return a
-            }),
-          count: data.rows.length,
-          total: data.rows
-            .slice(0, 26)
-            .map(a => a.hours)
-            .reduce((a, b) => {
-              return a + b
-            }, 0),
-          page: req.query.page,
-          showPrevious: parseInt(<string>req.query.page) > 0,
-          showNext: data.rows.length === 26
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        if (!req.query.page || req.query.page === '') req.query.page = '0'
+        this.dbService.getTimes(
+          <string>req.query.name, 
+          <string>req.query.owner,
+          <string>req.query.project,
+          <string>req.query.from === '' ? undefined : <string>req.query.from,
+          <string>req.query.to === '' ? undefined : <string>req.query.to,
+          parseInt(<string>req.query.page)
+        ).then(data => {
+          res.render('detail', {
+            title: 'Timetracker - Detail',
+            times: data.rows
+              .slice(0, 26)
+              .map(a => {
+                a.start = a.start.toString().substring(0, 21)
+                a.end = a.end ? a.end.toString().substring(0, 21) : ''
+                return a
+              }),
+            count: data.rows.length,
+            total: data.rows
+              .slice(0, 26)
+              .map(a => a.hours)
+              .reduce((a, b) => {
+                return a + b
+              }, 0),
+            page: req.query.page,
+            showPrevious: parseInt(<string>req.query.page) > 0,
+            showNext: data.rows.length === 26
+          })
+        }).catch(err => {
+          console.error(err)
+          res.status(500).render('detail', {
+            title: 'Timetracker - Detail',
+            page: req.query.page,
+            times: []
+          })
         })
-      }).catch(err => {
-        console.error(err)
-        res.status(500).render('detail', {
-          title: 'Timetracker - Detail',
-          page: req.query.page,
-          times: []
-        })
-      })
+      }
     })
 
-    this.router.get('/team', async (_req, res, _next) => {
-      const view = await this.teamView()
-      res.render('team', view)
+    this.router.get('/team', async (req, res, _next) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        const view = await this.teamView()
+        res.render('team', view)
+      }
     })
   }
   
-  async trackView() {
+  async trackView(userId: number) {
     const owners = (await this.dbService.getOwners()).rows
-    const times = (await this.dbService.getTodayUser('1')).rows
+    const times = (await this.dbService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
       owners: owners,
@@ -96,7 +116,8 @@ class IndexRoutes {
       lastTask: times[0] ?  times[0].task : '',
       times: times.filter(a => a.percent > 0.5 || a.current)
                   .map(this.mapTime)
-                  .reverse()
+                  .reverse(),
+      userId: userId
     }
   }
 
