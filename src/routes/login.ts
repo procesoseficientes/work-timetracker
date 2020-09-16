@@ -13,7 +13,7 @@ class LoginRoutes {
     this.router = express.Router()
 
     this.router.get('/', async (_req, res, _next) => {
-      res.sendFile(path.join(__dirname + '/login.html'));
+      res.sendFile(path.join(__dirname + '/../views/login.html'));
     })
 
     this.router.post('/', async (req, res, _next) => {
@@ -28,7 +28,7 @@ class LoginRoutes {
         req.session.user = result.id
         res.redirect('/')
       } else {
-        res.status(401).sendFile(path.join(__dirname + '/login.html'))
+        res.status(401).sendFile(path.join(__dirname + '/../views/login.html'));
       }
     })
   }

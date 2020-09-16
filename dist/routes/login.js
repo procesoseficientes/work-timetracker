@@ -20,7 +20,7 @@ class LoginRoutes {
         this.dbService = dbService;
         this.router = express_1.default.Router();
         this.router.get('/', (_req, res, _next) => __awaiter(this, void 0, void 0, function* () {
-            res.sendFile(path_1.default.join(__dirname + '/login.html'));
+            res.sendFile(path_1.default.join(__dirname + '/../views/login.html'));
         }));
         this.router.post('/', (req, res, _next) => __awaiter(this, void 0, void 0, function* () {
             const users = (yield this.dbService.getUsers()).rows;
@@ -35,7 +35,7 @@ class LoginRoutes {
                 res.redirect('/');
             }
             else {
-                res.status(401).sendFile(path_1.default.join(__dirname + '/login.html'));
+                res.status(401).sendFile(path_1.default.join(__dirname + '/../views/login.html'));
             }
         }));
     }
