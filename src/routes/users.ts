@@ -9,25 +9,33 @@ class UsersRoutes {
     this.router = express.Router()
 
     this.router.get('/', async (req, res) => {
-      res.render('users', await this.usersView())
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.render('users', await this.usersView())
+      }
     })
 
     this.router.post('/', async (req, res) => {
-      if (
-        req.body.name &&
-        req.body.username && 
-        req.body.password
-      ) {
-        try {
-          this.dbService.createUser(req.body.name, req.body.username, req.body.password)
-          res.status(201).render('users', await this.usersView()) 
-        } catch (error) {
-          console.error(error)
-          res.status(500).render('users', await this.usersView()) 
-        }
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
       } else {
-        console.error('Insufficient parameters for request')
-        res.status(401).render('users', await this.usersView()) 
+        if (
+          req.body.name &&
+          req.body.username && 
+          req.body.password
+        ) {
+          try {
+            this.dbService.createUser(req.body.name, req.body.username, req.body.password)
+            res.status(201).render('users', await this.usersView()) 
+          } catch (error) {
+            console.error(error)
+            res.status(500).render('users', await this.usersView()) 
+          }
+        } else {
+          console.error('Insufficient parameters for request')
+          res.status(401).render('users', await this.usersView()) 
+        }
       }
     })
   }

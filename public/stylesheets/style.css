@@ -21,3 +21,8 @@ select, input {
 .hidden {
   display: none;
 }
+
+.signin-content {
+  width: 400px;
+  margin: auto;
+}

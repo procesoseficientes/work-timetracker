@@ -73,7 +73,7 @@
     fetch('/', {
       method: 'delete',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({id: 1})
+      body: JSON.stringify({ id: {{userId}} })
     }).then(() => {
       location.reload()
     })
