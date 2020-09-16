@@ -95,7 +95,7 @@ class DbService {
       u.name as "user",
       user_hours as "hours",
       project_hours,
-      ((user_hours + 1) / p.budget) * 100 as "percent"
+      ((user_hours + 1) / (p.budget + 0.1)) * 100 as "percent"
     from project p
     inner join owner o on o.id = p.owner_id
     inner join (select 

@@ -1,6 +1,6 @@
 -- Table: public.owner
 
--- DROP TABLE public.owner;
+DROP TABLE IF EXISTS public.owner;
 
 CREATE TABLE public.owner
 (
@@ -14,7 +14,7 @@ TABLESPACE pg_default;
 
 -- Table: public."user"
 
--- DROP TABLE public."user";
+DROP TABLE IF EXISTS public."user";
 
 CREATE TABLE public."user"
 (
@@ -32,7 +32,7 @@ TABLESPACE pg_default;
 
 -- Table: public.project
 
--- DROP TABLE public.project;
+DROP TABLE IF EXISTS public.project;
 
 CREATE TABLE public.project
 (
@@ -41,6 +41,7 @@ CREATE TABLE public.project
     name text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default",
     active boolean NOT NULL DEFAULT true,
+    budget numeric NOT NULL DEFAULT 1
     CONSTRAINT proyects_pkey PRIMARY KEY (id),
     CONSTRAINT owner_fk FOREIGN KEY (owner_id)
         REFERENCES public.owner (id) MATCH SIMPLE
@@ -52,7 +53,7 @@ TABLESPACE pg_default;
 
 -- Table: public."time"
 
--- DROP TABLE public."time";
+DROP TABLE IF EXISTS public."time";
 
 CREATE TABLE public."time"
 (
