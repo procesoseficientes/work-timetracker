@@ -119,7 +119,7 @@ class DbService {
   async createProject (ownerId: number, name: string, description: string, budget: number) {
     return await this.client.query(`
       insert into public.project(
-      owner_id, name, description)
+      owner_id, name, description, budget)
       values (${ownerId}, '${name}', '${description}', ${budget})
     `)
   }
