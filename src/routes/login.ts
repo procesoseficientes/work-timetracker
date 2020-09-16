@@ -28,6 +28,11 @@ class LoginRoutes {
         res.status(401).sendFile(path.join(__dirname + '/../views/login.html'));
       }
     })
+
+    this.router.get('/signout', async (req, res, _next) => {
+      req.session.user = undefined
+      res.redirect('/login')
+    })
   }
 }
 
