@@ -124,7 +124,7 @@ class DbService {
     return await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true)`)
   }
 
-  async getTodayUser (userId: string) {
+  async getTodayUser (userId: number) {
     return await this.client.query(`
       select 
         user_id,

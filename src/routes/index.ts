@@ -106,9 +106,9 @@ class IndexRoutes {
     })
   }
   
-  async trackView(userId: string) {
+  async trackView(userId: number) {
     const owners = (await this.dbService.getOwners()).rows
-    const times = (await this.dbService.getTodayUser('1')).rows
+    const times = (await this.dbService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
       owners: owners,

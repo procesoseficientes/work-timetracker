@@ -108,7 +108,7 @@ class IndexRoutes {
     trackView(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const owners = (yield this.dbService.getOwners()).rows;
-            const times = (yield this.dbService.getTodayUser('1')).rows;
+            const times = (yield this.dbService.getTodayUser(userId)).rows;
             return {
                 title: 'Timetracker',
                 owners: owners,
