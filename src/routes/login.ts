@@ -18,12 +18,9 @@ class LoginRoutes {
 
     this.router.post('/', async (req, res, _next) => {
       const users = (await this.dbService.getUsers()).rows
-      console.log(req.body)
-      console.log(users)
       const result = users.find(u => {
         return u.username === req.body.username && u.password === req.body.password
       })
-      console.log(result)
       if (result) {
         req.session.user = result.id
         res.redirect('/')

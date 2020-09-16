@@ -26,6 +26,10 @@ class DbService {
     return await this.client.query(`select * from project where owner_id = ${ownerId}`)
   }
 
+  async createOwner (name: string) {
+    return await this.client.query(`insert into "owner"(name, active) values ('${name}', true)`)
+  }
+
   async getTimes (
     name = '',
     owner = '',
@@ -112,7 +116,7 @@ class DbService {
     `)
   }
 
-  async insertProjects (ownerId: number, name: string, description: string, budget: number) {
+  async createProject (ownerId: number, name: string, description: string, budget: number) {
     return await this.client.query(`
       insert into public.project(
       owner_id, name, description)

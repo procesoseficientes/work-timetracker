@@ -27,7 +27,7 @@ class ProjectsRoutes {
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
         try {
-          await this.dbService.insertProjects(
+          await this.dbService.createProject(
             req.body.owner,
             req.body.name,
             req.body.description,
