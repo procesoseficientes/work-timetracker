@@ -79,7 +79,7 @@ class IndexRoutes {
               .slice(0, 26)
               .map(a => a.hours)
               .reduce((a, b) => {
-                return a + b
+                return (parseFloat(a) + parseFloat(b)).toFixed(2)
               }, 0),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,

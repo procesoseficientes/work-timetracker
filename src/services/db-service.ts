@@ -46,7 +46,7 @@ class DbService {
         task,
         "start",
         "end",
-        date_part('hour', "end" - "start") as "hours"
+        ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2) as "hours"
       from time t
       inner join owner o on o.id = owner_id
       inner join project p on p.id = project_id
@@ -95,21 +95,21 @@ class DbService {
       u.name as "user",
       user_hours as "hours",
       project_hours,
-      ((user_hours + 1) / p.budget) * 100 as "percent"
+      ((user_hours + 1) / (p.budget + 0.1)) * 100 as "percent"
     from project p
     inner join owner o on o.id = p.owner_id
     inner join (select 
         u.id as id,
         u.name as name,
         t.project_id,
-        sum(date_part('hour', "end" - "start")) as user_hours
+        sum(ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2)) as user_hours
       from time t
       inner join "user" u on u.id = user_id
       group by u.id, u.name, t.project_id) u on u.project_id = p.id
     inner join (
       select 
         p.id as project_id, 
-        sum(date_part('hour', "end" - "start")) as project_hours
+        sum(ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2)) as project_hours
       from project p
       inner join time t on t.project_id = p.id
       group by p.id) as ih on ih.project_id = p.id

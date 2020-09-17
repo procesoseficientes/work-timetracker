@@ -18,6 +18,10 @@ INSERT INTO public.owner(
 name, active)
 VALUES ('Cendalza', 't');
 
+INSERT INTO public.owner(
+name, active)
+VALUES ('Procesos Eficientes', 't');
+
 -- User inserts
 INSERT INTO public."user"(
 	name, username, password, active)
@@ -30,3 +34,11 @@ INSERT INTO public."user"(
 INSERT INTO public."user"(
 	name, username, password, active)
 	VALUES ('Gustavo Garcia', 'gustavo.garcia', '123', 't');
+
+INSERT INTO public."user"(
+	name, username, password, active)
+	VALUES ('Eira Delcompare', 'eira.delcompare', '123', 't');
+
+INSERT INTO public."user"(
+	name, username, password, active)
+	VALUES ('Marvin Canel', 'marvin.canel', '123', 't');
