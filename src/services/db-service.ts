@@ -46,7 +46,7 @@ class DbService {
         task,
         "start",
         "end",
-        date_part('hour', "end" - "start") as "hours"
+        ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2) as "hours"
       from time t
       inner join owner o on o.id = owner_id
       inner join project p on p.id = project_id
