@@ -49,3 +49,6 @@ INSERT INTO public."user"(
 
 INSERT INTO project(owner_id, name, description, budget)
 VALUES (0, 'Lunch/Break', 'Section of time schedulded for lunchs and breaks, budget is based on 1.5 hours for 7 team members', 53);
+
+insert into role(name, active)
+values ('Administrator', true)
