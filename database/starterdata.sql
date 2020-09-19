@@ -23,8 +23,11 @@ name, active)
 VALUES ('Procesos Eficientes', 't');
 
 INSERT INTO public.owner(
-id, name) 
-VALUES (0, 'Personal (lunch/break/other)')
+id, name)
+VALUES (0, 'Personal (lunch/break/other)');
+
+insert into public.role(name, active)
+values ('Administrator', true);
 
 -- User inserts
 INSERT INTO public."user"(
@@ -47,23 +50,20 @@ INSERT INTO public."user"(
 	name, username, password, active)
 	VALUES ('Marvin Canel', 'marvin.canel', '123', 't');
 
-INSERT INTO project(owner_id, name, description, budget)
+INSERT INTO public.project(owner_id, name, description, budget)
 VALUES (0, 'Lunch/Break', 'Section of time schedulded for lunchs and breaks, budget is based on 1.5 hours for 7 team members', 53);
 
-insert into role(name, active)
-values ('Administrator', true)
-
-insert into access(role_id, route, "create", read, update, delete)
+insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/', true, true, true, true);
 
-insert into access(role_id, route, "create", read, update, delete)
+insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/team', true, true, true, true);
 
-insert into access(role_id, route, "create", read, update, delete)
+insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/users', true, true, true, true);
 
-insert into access(role_id, route, "create", read, update, delete)
+insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/projects', true, true, true, true);
 
-insert into access(role_id, route, "create", read, update, delete)
+insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/owners', true, true, true, true);

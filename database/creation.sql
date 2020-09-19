@@ -24,9 +24,13 @@ CREATE TABLE public."user"
     username text COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE pg_catalog."default" NOT NULL,
     active boolean DEFAULT true,
+    role_id  integer default 1 not null,
     CONSTRAINT user_pkey PRIMARY KEY (id),
-    CONSTRAINT username_unique UNIQUE (username)
-
+    CONSTRAINT username_unique UNIQUE (username),
+    CONSTRAINT role_fk foreign key (role_id)
+        references public.role (id) match simple
+        on UPDATE no action
+        on delete no action
 );
 
 -- Table: public.project

@@ -99,7 +99,7 @@ select, input {
   outline: none;
 }
 
-.navbar-toggler:active, .navbar-toggler:hover {
+.navbar-toggler:active {
   border: none;
   outline: none;
   background-color: rgba(0, 0, 0, 0.1);
