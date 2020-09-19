@@ -41,7 +41,7 @@ CREATE TABLE public.project
     description text COLLATE pg_catalog."default",
     active boolean NOT NULL DEFAULT true,
     budget numeric NOT NULL DEFAULT 1,
-    CONSTRAINT proyects_pkey PRIMARY KEY (id),
+    CONSTRAINT projects_pkey PRIMARY KEY (id),
     CONSTRAINT owner_fk FOREIGN KEY (owner_id)
         REFERENCES public.owner (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -66,7 +66,7 @@ CREATE TABLE public."time"
         REFERENCES public.owner (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT proyect_fk FOREIGN KEY (project_id)
+    CONSTRAINT project_fk FOREIGN KEY (project_id)
         REFERENCES public.project (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,

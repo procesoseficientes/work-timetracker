@@ -37,6 +37,16 @@ select, input {
   margin: auto;
 }
 
+@media only screen and (max-width: 500px) {
+  .signin-content {
+    width: 90%;
+  }
+}
+
 .btn, select, input {
   border-radius: 8px !important;
+}
+
+.rounded-table {
+  border-radius: 5px;
 }
