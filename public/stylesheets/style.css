@@ -83,3 +83,25 @@ select, input {
   background-color: var(--blue);
   box-shadow: 0 0 10px 3px var(--blue);
 }
+
+.navbar-toggler {
+  outline: none;
+  border: none;
+  height: 58px;
+  transition: box-shadow .25s ease-out;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 1px 30px #343a40;
+}
+
+.navbar-toggler:focus {
+  border: none;
+  outline: none;
+}
+
+.navbar-toggler:active, .navbar-toggler:hover {
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 0 #343a40;
+}
