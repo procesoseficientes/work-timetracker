@@ -1,5 +1,8 @@
 -- Table: public.owner
 
+DROP TABLE IF EXISTS public."time";
+DROP TABLE IF EXISTS public.project;
+DROP TABLE IF EXISTS public."user";
 DROP TABLE IF EXISTS public.owner;
 
 CREATE TABLE public.owner
@@ -13,8 +16,6 @@ CREATE TABLE public.owner
 TABLESPACE pg_default;
 
 -- Table: public."user"
-
-DROP TABLE IF EXISTS public."user";
 
 CREATE TABLE public."user"
 (
@@ -31,8 +32,6 @@ CREATE TABLE public."user"
 TABLESPACE pg_default;
 
 -- Table: public.project
-
-DROP TABLE IF EXISTS public.project;
 
 CREATE TABLE public.project
 (
@@ -52,8 +51,6 @@ CREATE TABLE public.project
 TABLESPACE pg_default;
 
 -- Table: public."time"
-
-DROP TABLE IF EXISTS public."time";
 
 CREATE TABLE public."time"
 (

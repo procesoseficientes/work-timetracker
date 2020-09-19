@@ -22,6 +22,10 @@ INSERT INTO public.owner(
 name, active)
 VALUES ('Procesos Eficientes', 't');
 
+INSERT INTO public.owner(
+id, name) 
+VALUES (0, 'Personal (lunch/break/other)')
+
 -- User inserts
 INSERT INTO public."user"(
 	name, username, password, active)
@@ -42,3 +46,6 @@ INSERT INTO public."user"(
 INSERT INTO public."user"(
 	name, username, password, active)
 	VALUES ('Marvin Canel', 'marvin.canel', '123', 't');
+
+INSERT INTO project(owner_id, name, description, budget)
+VALUES (0, 'Lunch/Break', 'Section of time schedulded for lunchs and breaks, budget is based on 1.5 hours for 7 team members', 53);
