@@ -52,3 +52,18 @@ VALUES (0, 'Lunch/Break', 'Section of time schedulded for lunchs and breaks, bud
 
 insert into role(name, active)
 values ('Administrator', true)
+
+insert into access(role_id, route, "create", read, update, delete)
+values (1, '/', true, true, true, true);
+
+insert into access(role_id, route, "create", read, update, delete)
+values (1, '/team', true, true, true, true);
+
+insert into access(role_id, route, "create", read, update, delete)
+values (1, '/users', true, true, true, true);
+
+insert into access(role_id, route, "create", read, update, delete)
+values (1, '/projects', true, true, true, true);
+
+insert into access(role_id, route, "create", read, update, delete)
+values (1, '/owners', true, true, true, true);
