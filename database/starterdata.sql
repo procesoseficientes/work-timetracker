@@ -22,6 +22,10 @@ INSERT INTO public.owner(
 name, active)
 VALUES ('Procesos Eficientes', 't');
 
+INSERT INTO public.owner(
+id, name) 
+VALUES (0, 'Personal (lunch/break/other)')
+
 -- User inserts
 INSERT INTO public."user"(
 	name, username, password, active)
