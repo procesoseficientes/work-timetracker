@@ -15,7 +15,7 @@ class DbService {
   }
 
   async getOwners () {
-    return await this.client.query('select * from owner')
+    return await this.client.query('select * from owner order by id desc')
   }
 
   async getUsers () {
