@@ -6,7 +6,6 @@
       {{#each owners}}
         <option value="{{this.id}}">{{this.name}}</option>
       {{/each}}
-      <option value="0">You (lunch/break)</option>
     </select>
   </div>
 
@@ -75,7 +74,7 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ id: {{userId}} })
     }).then(() => {
-      location.reload()
+      window.location.replace('/')
     })
   }
 
