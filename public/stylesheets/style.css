@@ -39,7 +39,7 @@ select, input {
 
 @media only screen and (max-width: 500px) {
   .signin-content {
-    width: 90%;
+    width: 95%;
   }
 }
 
@@ -49,4 +49,37 @@ select, input {
 
 .rounded-table {
   border-radius: 5px;
+}
+
+.loader {
+  height: 2px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
+
+.loader .loading-bar {
+  height: 0;
+  width: 0%;
+  background-color: var(--blue);
+  position: relative;
+  transition: width 3.5s cubic-bezier(.38,.43,0,1.07);
+}
+
+.loading {
+  width: 90% !important;
+  box-shadow: 0 0 2px 1px var(--blue);
+}
+
+.loader .loading::after {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 20px;
+  content: '';
+  background-color: var(--blue);
+  box-shadow: 0 0 10px 3px var(--blue);
 }

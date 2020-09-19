@@ -41,6 +41,7 @@ class OwnersRoutes {
   async ownersView () {
     return {
       title: 'Timetracker - Owners',
+      ownersActive: true,
       owners: (await this.dbService.getOwners()).rows
     }
   }

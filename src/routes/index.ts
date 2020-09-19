@@ -67,6 +67,7 @@ class IndexRoutes {
         ).then(data => {
           res.render('detail', {
             title: 'Timetracker - Detail',
+            detailActive: true,
             times: data.rows
               .slice(0, 26)
               .map(a => {
@@ -112,6 +113,7 @@ class IndexRoutes {
     const times = (await this.dbService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
+      trackActive: true,
       owners: owners,
       isWorking: times[0] ? times[0].current : false,
       lastTask: times[0] ?  times[0].task : '',
@@ -140,6 +142,7 @@ class IndexRoutes {
 
     return {
       title: 'Timetracker - Team',
+      teamActive: true,
       team: grouped
     }
   }
