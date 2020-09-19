@@ -2,7 +2,7 @@
 <form method="POST">
   <div class="form-group">
     <label for="owner">Task owner</label>
-    <select onchange="toggleProject(); loadProject()" name="owner" class="form-control bg-dark text-light">
+    <select onchange="loadProject()" name="owner" class="form-control bg-dark text-light">
       {{#each owners}}
         <option value="{{this.id}}">{{this.name}}</option>
       {{/each}}
@@ -44,16 +44,6 @@
 {{#if isWorking}}<button onclick="stopTracking()" class="btn btn-danger">Stop Tracking</button>{{/if}}
 
 <script>
-  function toggleProject() {
-    const owner = document.getElementsByName('owner')[0].value
-    
-    if (owner === '0') {
-      document.getElementById('project-container').classList.add('hidden')
-    } else {
-      document.getElementById('project-container').classList.remove('hidden')
-    }
-  }
-
   function loadProject() {
     const owner = document.getElementsByName('owner')[0].value
     fetch(`/projects/json?id=${owner}`).then(async data => {

@@ -83,7 +83,8 @@ class IndexRoutes {
               }, 0),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,
-            showNext: data.rows.length === 26
+            showNext: data.rows.length === 26,
+            query: req.query
           })
         }).catch(err => {
           console.error(err)
