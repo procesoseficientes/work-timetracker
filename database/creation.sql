@@ -15,6 +15,18 @@ CREATE TABLE public.owner
     CONSTRAINT owner_pkey PRIMARY KEY (id)
 );
 
+
+-- Table: public."role"
+create table public.role
+(
+	id serial not null
+		constraint role_pk
+			primary key,
+	name text not null,
+	active boolean not null,
+	color text default '#fff'
+);
+
 -- Table: public."user"
 
 CREATE TABLE public."user"
@@ -74,17 +86,6 @@ CREATE TABLE public."time"
         REFERENCES public."user" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-);
-
--- Table: public."role"
-create table public.role
-(
-	id serial not null
-		constraint role_pk
-			primary key,
-	name text not null,
-	active boolean not null,
-	color text default '#fff'
 );
 
 create table public."access"

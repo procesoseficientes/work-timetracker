@@ -47,10 +47,6 @@ select, input {
   border-radius: 8px !important;
 }
 
-.rounded-table {
-  border-radius: 5px;
-}
-
 .loader {
   height: 2px;
   width: 100%;

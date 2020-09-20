@@ -27,13 +27,7 @@ class ProjectsRoutes {
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
         try {
-          await this.dbService.createProject(
-            req.body.owner,
-            req.body.name,
-            req.body.description,
-            req.body.budget
-          )
-          res.status(201).render('projects', await this.projectsView(<string>req.query.page))
+          res.status(201).redirect('/projects')
         } catch (error) {
           console.error(error)
           next(createError(500))

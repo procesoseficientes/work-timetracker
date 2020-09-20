@@ -36,7 +36,7 @@ class IndexRoutes {
             req.body.project,
             req.body.task
           )
-          res.status(201).render('track', await this.trackView(req.session.user))
+          res.status(201).redirect('/')
         } catch (error) {
           console.error(error)
           next(createError(500))

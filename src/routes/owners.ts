@@ -25,14 +25,14 @@ class OwnersRoutes {
         ) {
           try {
             this.dbService.createOwner(req.body.name)
-            res.status(201).render('owners', await this.ownersView()) 
+            res.status(201).redirect('/owners')
           } catch (error) {
             console.error(error)
-            res.status(500).render('owners', await this.ownersView()) 
+            res.status(500).redirect('/owners')
           }
         } else {
           console.error('Insufficient parameters for request')
-          res.status(401).render('owners', await this.ownersView()) 
+          res.status(401).redirect('/owners')
         }
       }
     })

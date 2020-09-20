@@ -27,14 +27,14 @@ class UsersRoutes {
         ) {
           try {
             this.dbService.createUser(req.body.name, req.body.username, req.body.password)
-            res.status(201).render('users', await this.usersView()) 
+            res.status(201).redirect('/users')
           } catch (error) {
             console.error(error)
-            res.status(500).render('users', await this.usersView()) 
+            res.status(500).redirect('/users')
           }
         } else {
           console.error('Insufficient parameters for request')
-          res.status(401).render('users', await this.usersView()) 
+          res.status(401).redirect('/users')
         }
       }
     })

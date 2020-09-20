@@ -5,9 +5,9 @@ class DbService {
   constructor (url: string) {
     this.client = new Client({
       connectionString: url,
-      ssl: {
+      ssl: process.env.DATABASE_SSL ? {
         rejectUnauthorized: false
-      }
+      } : false
     })
     this.client.connect().catch((err) => {
       console.error(err)

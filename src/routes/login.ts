@@ -23,6 +23,7 @@ class LoginRoutes {
       })
       if (result) {
         req.session.user = result.id
+        req.session.cookie.expires = false
         res.redirect('/')
       } else {
         res.status(401).sendFile(path.join(__dirname + '/../views/login.html'));
