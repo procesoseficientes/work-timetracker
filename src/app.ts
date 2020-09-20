@@ -15,6 +15,7 @@ import session from 'express-session'
 import OwnersRoutes from './routes/owners'
 import DetailRoutes from './routes/detail'
 import TeamRoutes from './routes/team'
+import { Client } from 'pg'
 
 const app = express()
 
@@ -34,6 +35,16 @@ app.use(session({
   resave: true,
 	saveUninitialized: true
 }))
+
+const pgClient = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL ? {
+    rejectUnauthorized: false
+  } : false
+})
+pgClient.connect().catch((err) => {
+  console.error(err)
+})
 
 const dbService = new DbService(process.env.DATABASE_URL)
 
