@@ -11,7 +11,7 @@ class TeamRoutes {
     this.dbService = dbService
     this.router = express.Router()
 
-    this.router.get('/team', async (req, res, _next) => {
+    this.router.get('/', async (req, res, _next) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {

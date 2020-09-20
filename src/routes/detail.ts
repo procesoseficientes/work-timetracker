@@ -10,7 +10,7 @@ class DetailRoutes {
     this.dbService = dbService
     this.router = express.Router()
 
-    this.router.get('/detail', (req, res, _next) => {
+    this.router.get('/', (req, res, _next) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
