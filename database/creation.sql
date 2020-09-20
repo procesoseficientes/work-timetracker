@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS public."time";
 DROP TABLE IF EXISTS public.project;
 DROP TABLE IF EXISTS public."user";
 DROP TABLE IF EXISTS public.owner;
-DROP TABLE IF EXISTS public.role;
 DROP TABLE IF EXISTS public."access";
+DROP TABLE IF EXISTS public.role;
 
 CREATE TABLE public.owner
 (
