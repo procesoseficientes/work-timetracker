@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS public."time";
 DROP TABLE IF EXISTS public.project;
 DROP TABLE IF EXISTS public."user";
 DROP TABLE IF EXISTS public.owner;
+DROP TABLE IF EXISTS public.role;
+DROP TABLE IF EXISTS public."access";
 
 CREATE TABLE public.owner
 (
@@ -11,9 +13,7 @@ CREATE TABLE public.owner
     name text COLLATE pg_catalog."default" NOT NULL,
     active boolean NOT NULL DEFAULT true,
     CONSTRAINT owner_pkey PRIMARY KEY (id)
-)
-
-TABLESPACE pg_default;
+);
 
 -- Table: public."user"
 
@@ -24,12 +24,14 @@ CREATE TABLE public."user"
     username text COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE pg_catalog."default" NOT NULL,
     active boolean DEFAULT true,
+    role_id  integer default 1 not null,
     CONSTRAINT user_pkey PRIMARY KEY (id),
-    CONSTRAINT username_unique UNIQUE (username)
-
-)
-
-TABLESPACE pg_default;
+    CONSTRAINT username_unique UNIQUE (username),
+    CONSTRAINT role_fk foreign key (role_id)
+        references public.role (id) match simple
+        on UPDATE no action
+        on delete no action
+);
 
 -- Table: public.project
 
@@ -41,14 +43,12 @@ CREATE TABLE public.project
     description text COLLATE pg_catalog."default",
     active boolean NOT NULL DEFAULT true,
     budget numeric NOT NULL DEFAULT 1,
-    CONSTRAINT proyects_pkey PRIMARY KEY (id),
+    CONSTRAINT projects_pkey PRIMARY KEY (id),
     CONSTRAINT owner_fk FOREIGN KEY (owner_id)
         REFERENCES public.owner (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
+);
 
 -- Table: public."time"
 
@@ -66,7 +66,7 @@ CREATE TABLE public."time"
         REFERENCES public.owner (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
-    CONSTRAINT proyect_fk FOREIGN KEY (project_id)
+    CONSTRAINT project_fk FOREIGN KEY (project_id)
         REFERENCES public.project (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
@@ -74,6 +74,31 @@ CREATE TABLE public."time"
         REFERENCES public."user" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
+);
 
-TABLESPACE pg_default;
+-- Table: public."role"
+create table public.role
+(
+	id serial not null
+		constraint role_pk
+			primary key,
+	name text not null,
+	active boolean not null,
+	color text default '#fff'
+);
+
+create table public."access"
+(
+	id serial,
+	role_id integer not null,
+	route text not null,
+	"create" boolean default false not null,
+	read boolean default true not null,
+	update boolean default false not null,
+	delete boolean default false not null,
+	constraint access_pk primary key (id),
+	constraint role_fk foreign key (role_id)
+        references public.role (id) match simple
+        on UPDATE no action
+        on delete no action
+);

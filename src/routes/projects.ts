@@ -64,6 +64,7 @@ class ProjectsRoutes {
     })
     return {
       title: 'Timetracker - Projects',
+      projectsActive: true,
       owners: (await this.dbService.getOwners()).rows,
       projects: grouped,
       page: page

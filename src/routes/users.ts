@@ -43,6 +43,7 @@ class UsersRoutes {
   async usersView () {
     return {
       title: 'Timetracker - Users',
+      teamActive: true,
       users: (await this.dbService.getUsers()).rows
     }
   }

@@ -67,6 +67,7 @@ class IndexRoutes {
         ).then(data => {
           res.render('detail', {
             title: 'Timetracker - Detail',
+            detailActive: true,
             times: data.rows
               .slice(0, 26)
               .map(a => {
@@ -79,7 +80,7 @@ class IndexRoutes {
               .slice(0, 26)
               .map(a => a.hours)
               .reduce((a, b) => {
-                return (parseFloat(a) + parseFloat(b)).toFixed(2)
+                return ((isNaN(parseFloat(a)) ? 0 : parseFloat(a)) + (isNaN(parseFloat(b)) ? 0 : parseFloat(a))).toFixed(2)
               }, 0),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,
@@ -112,6 +113,7 @@ class IndexRoutes {
     const times = (await this.dbService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
+      trackActive: true,
       owners: owners,
       isWorking: times[0] ? times[0].current : false,
       lastTask: times[0] ?  times[0].task : '',
@@ -140,6 +142,7 @@ class IndexRoutes {
 
     return {
       title: 'Timetracker - Team',
+      teamActive: true,
       team: grouped
     }
   }
