@@ -1,5 +1,6 @@
 import express from 'express'
 import createError from 'http-errors'
+import mapTime from '../utils/mapTime'
 import DbService from '../services/db-service'
 import { groupBy } from '../utils/json'
 
@@ -51,61 +52,6 @@ class IndexRoutes {
         res.send((await this.dbService.stopTracking(req.body.id)).rows)
       }
     })
-
-    this.router.get('/detail', (req, res, _next) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (!req.query.page || req.query.page === '') req.query.page = '0'
-        this.dbService.getTimes(
-          <string>req.query.name, 
-          <string>req.query.owner,
-          <string>req.query.project,
-          <string>req.query.from === '' ? undefined : <string>req.query.from,
-          <string>req.query.to === '' ? undefined : <string>req.query.to,
-          parseInt(<string>req.query.page)
-        ).then(data => {
-          res.render('detail', {
-            title: 'Timetracker - Detail',
-            detailActive: true,
-            times: data.rows
-              .slice(0, 26)
-              .map(a => {
-                a.start = a.start.toString().substring(0, 21)
-                a.end = a.end ? a.end.toString().substring(0, 21) : ''
-                return a
-              }),
-            count: data.rows.length,
-            total: data.rows
-              .slice(0, 26)
-              .map(a => a.hours)
-              .reduce((a, b) => {
-                return ((isNaN(parseFloat(a)) ? 0 : parseFloat(a)) + (isNaN(parseFloat(b)) ? 0 : parseFloat(a))).toFixed(2)
-              }, 0),
-            page: req.query.page,
-            showPrevious: parseInt(<string>req.query.page) > 0,
-            showNext: data.rows.length === 26,
-            query: req.query
-          })
-        }).catch(err => {
-          console.error(err)
-          res.status(500).render('detail', {
-            title: 'Timetracker - Detail',
-            page: req.query.page,
-            times: []
-          })
-        })
-      }
-    })
-
-    this.router.get('/team', async (req, res, _next) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        const view = await this.teamView()
-        res.render('team', view)
-      }
-    })
   }
   
   async trackView(userId: number) {
@@ -118,47 +64,12 @@ class IndexRoutes {
       isWorking: times[0] ? times[0].current : false,
       lastTask: times[0] ?  times[0].task : '',
       times: times.filter(a => a.percent > 0.5 || a.current)
-                  .map(this.mapTime)
+                  .map(mapTime)
                   .reverse(),
       userId: userId
     }
   }
-
-  async teamView() {
-    const teamTimes = groupBy((await this.dbService.getTodayTeam()).rows, 'user_id')
-    const grouped = Object.keys(teamTimes).map(a => {
-      const g = {
-        id: parseInt(a),
-        times: teamTimes[a].filter((a: any) => a.percent > 0.5 || a.current)
-          .map(this.mapTime)
-          .reverse(),
-        task: teamTimes[a][0].task,
-        name: teamTimes[a][0].name,
-        project: teamTimes[a][0].project
-      }
-      
-      return g
-    })
-
-    return {
-      title: 'Timetracker - Team',
-      teamActive: true,
-      team: grouped
-    }
-  }
-
-  mapTime(element: any, index: number) {
-    const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
-    const start = new Date(element.start).getTime()
-    if (element.current) {
-      element.hours = (new Date().getTime() - start) / 3600000
-      element.percent = ((element.hours / 8) * 100) + 3
-    }
-    const hoursSplit = element.hours.toString().split('.')
-    element.color = colors[index]
-    element.hours = hoursSplit[0] + '.' + hoursSplit[1][0];
-    return element
-  }
+  
 }
 
 export default IndexRoutes

@@ -13,6 +13,8 @@ import LoginRoutes from './routes/login'
 
 import session from 'express-session'
 import OwnersRoutes from './routes/owners'
+import DetailRoutes from './routes/detail'
+import TeamRoutes from './routes/team'
 
 const app = express()
 
@@ -40,6 +42,8 @@ app.use('/login', new LoginRoutes(dbService).router)
 app.use('/users', new UsersRouter(dbService).router)
 app.use('/projects', new ProjectsRouter(dbService).router)
 app.use('/owners', new OwnersRoutes(dbService).router)
+app.use('/detail', new DetailRoutes(dbService).router)
+app.use('/team', new TeamRoutes(dbService).router)
 
 // catch 404 and forward to error handler
 app.use(function (_req, _res, next) {
