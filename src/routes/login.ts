@@ -1,6 +1,5 @@
 import express from 'express'
 import DbService from '../services/db-service'
-import fs from 'fs'
 import path from 'path'
 
 class LoginRoutes {

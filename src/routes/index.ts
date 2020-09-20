@@ -2,12 +2,10 @@ import express from 'express'
 import createError from 'http-errors'
 import mapTime from '../utils/mapTime'
 import DbService from '../services/db-service'
-import { groupBy } from '../utils/json'
 
 class IndexRoutes {
   dbService: DbService
   router: express.Router
-  colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
   constructor (dbService: DbService) {
     this.dbService = dbService
