@@ -1,11 +1,12 @@
-import DbService from '../services/db-service'
 import express from 'express'
+import { Client } from 'pg'
+import UserService from '../services/UserService'
 
 class UsersRoutes {
-  dbService: DbService
+  userService: UserService
   router: express.Router
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
+    this.userService = new UserService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', async (req, res) => {
@@ -26,7 +27,7 @@ class UsersRoutes {
           req.body.password
         ) {
           try {
-            this.dbService.createUser(req.body.name, req.body.username, req.body.password)
+            this.userService.createUser(req.body.name, req.body.username, req.body.password)
             res.status(201).redirect('/users')
           } catch (error) {
             console.error(error)
@@ -44,7 +45,7 @@ class UsersRoutes {
     return {
       title: 'Timetracker - Users',
       teamActive: true,
-      users: (await this.dbService.getUsers()).rows
+      users: (await this.userService.getUsers()).rows
     }
   }
 }

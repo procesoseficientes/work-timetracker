@@ -5,16 +5,15 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import logger from 'morgan'
 
-import IndexRouter from './routes/index'
-import UsersRouter from './routes/users'
-import ProjectsRouter from './routes/projects'
-import DbService from './services/db-service'
-import LoginRoutes from './routes/login'
+import IndexRoutes from './routes/IndexRoutes'
+import UsersRoutes from './routes/UsersRoutes'
+import ProjectsRoutes from './routes/ProjectsRoutes'
+import LoginRoutes from './routes/LoginRoutes'
 
 import session from 'express-session'
-import OwnersRoutes from './routes/owners'
-import DetailRoutes from './routes/detail'
-import TeamRoutes from './routes/team'
+import OwnersRoutes from './routes/OwnersRoutes'
+import DetailRoutes from './routes/DetailRoutes'
+import TeamRoutes from './routes/TeamRoutes'
 import { Client } from 'pg'
 
 const app = express()
@@ -46,15 +45,13 @@ pgClient.connect().catch((err) => {
   console.error(err)
 })
 
-const dbService = new DbService(process.env.DATABASE_URL)
-
-app.use('/', new IndexRouter(dbService).router)
-app.use('/login', new LoginRoutes(dbService).router)
-app.use('/users', new UsersRouter(dbService).router)
-app.use('/projects', new ProjectsRouter(dbService).router)
-app.use('/owners', new OwnersRoutes(dbService).router)
-app.use('/detail', new DetailRoutes(dbService).router)
-app.use('/team', new TeamRoutes(dbService).router)
+app.use('/', new IndexRoutes(pgClient).router)
+app.use('/login', new LoginRoutes(pgClient).router)
+app.use('/users', new UsersRoutes(pgClient).router)
+app.use('/projects', new ProjectsRoutes(pgClient).router)
+app.use('/owners', new OwnersRoutes(pgClient).router)
+app.use('/detail', new DetailRoutes(pgClient).router)
+app.use('/team', new TeamRoutes(pgClient).router)
 
 // catch 404 and forward to error handler
 app.use(function (_req, _res, next) {

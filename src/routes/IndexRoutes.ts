@@ -1,14 +1,18 @@
 import express from 'express'
 import createError from 'http-errors'
+import { Client } from 'pg'
+import OwnerService from '../services/OwnerService'
+import TimeService from '../services/TimeService'
 import mapTime from '../utils/mapTime'
-import DbService from '../services/db-service'
 
 class IndexRoutes {
-  dbService: DbService
+  timeService: TimeService
+  ownerService: OwnerService
   router: express.Router
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
+    this.timeService = new TimeService(pgClient)
+    this.ownerService = new OwnerService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', async (req, res, _next) => {
@@ -29,7 +33,7 @@ class IndexRoutes {
         res.status(401).redirect('/login')
       } else {
         try {
-          await this.dbService.startTracking(
+          await this.timeService.startTracking(
             req.session.user,
             req.body.owner,
             req.body.project,
@@ -47,14 +51,14 @@ class IndexRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.send((await this.dbService.stopTracking(req.body.id)).rows)
+        res.send((await this.timeService.stopTracking(req.body.id)).rows)
       }
     })
   }
   
   async trackView(userId: number) {
-    const owners = (await this.dbService.getOwners()).rows
-    const times = (await this.dbService.getTodayUser(userId)).rows
+    const owners = (await this.ownerService.getOwners()).rows
+    const times = (await this.timeService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
       trackActive: true,

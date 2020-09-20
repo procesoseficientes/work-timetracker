@@ -1,6 +1,6 @@
 import DbService from "./DbService";
 
-class UsersService extends DbService{
+class UserService extends DbService{
   async getUsers () {
     return await this.client.query('select * from "user"')
   }
@@ -10,4 +10,4 @@ class UsersService extends DbService{
   }
 }
 
-export default UsersService
+export default UserService

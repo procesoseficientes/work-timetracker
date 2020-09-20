@@ -1,14 +1,15 @@
 import express from 'express'
 import mapTime from '../utils/mapTime'
-import DbService from '../services/db-service'
 import { groupBy } from '../utils/json'
+import { Client } from 'pg'
+import TimeService from '../services/TimeService'
 
 class TeamRoutes {
-  dbService: DbService
+  timeService: TimeService
   router: express.Router
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
+    this.timeService = new TimeService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', async (req, res, _next) => {
@@ -22,7 +23,7 @@ class TeamRoutes {
   }
 
   async teamView() {
-    const teamTimes = groupBy((await this.dbService.getTodayTeam()).rows, 'user_id')
+    const teamTimes = groupBy((await this.timeService.getTodayTeam()).rows, 'user_id')
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),

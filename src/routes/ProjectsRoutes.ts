@@ -1,16 +1,20 @@
 import express from 'express'
 import { groupBy } from '../utils/json'
 import createError from 'http-errors'
-import DbService from '../services/db-service'
+import { Client } from 'pg'
+import ProjectsService from '../services/ProjectService'
+import OwnerService from '../services/OwnerService'
 
 class ProjectsRoutes {
-  dbService: DbService
   router: express.Router
+  projectService: ProjectsService
+  ownerService: OwnerService
   colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
     this.router = express.Router()
+    this.projectService = new ProjectsService(pgClient)
+    this.ownerService = new OwnerService(pgClient)
 
     this.router.get('/', async (req, res, next) => {
       if (!req.session.user) {
@@ -36,12 +40,12 @@ class ProjectsRoutes {
     })
 
     this.router.get('/json', async (req, res, next) => {
-      res.send((await this.dbService.getProjects(<string>req.query.id)).rows)
+      res.send((await this.projectService.getProjects(<string>req.query.id)).rows)
     })
   }
 
   async projectsView (page: string) {
-    const projects = groupBy((await this.dbService.getProjectsDetail()).rows, 'id')
+    const projects = groupBy((await this.projectService.getProjectsDetail()).rows, 'id')
     const grouped = Object.keys(projects).map(a => {
       const g = {
         id: parseInt(a),
@@ -59,7 +63,7 @@ class ProjectsRoutes {
     return {
       title: 'Timetracker - Projects',
       projectsActive: true,
-      owners: (await this.dbService.getOwners()).rows,
+      owners: (await this.ownerService.getOwners()).rows,
       projects: grouped,
       page: page
     }

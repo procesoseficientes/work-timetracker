@@ -1,6 +1,6 @@
 import DbService from "./DbService";
 
-class ProjectsService extends DbService{
+class ProjectService extends DbService{
   async getProjects (ownerId: string) {
     return await this.client.query(`select * from project where owner_id = ${ownerId}`)
   }
@@ -45,4 +45,4 @@ class ProjectsService extends DbService{
   }
 }
 
-export default ProjectsService
+export default ProjectService

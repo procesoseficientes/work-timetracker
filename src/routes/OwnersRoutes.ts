@@ -1,12 +1,15 @@
-import DbService from '../services/db-service'
 import express from 'express'
+import { Client } from 'pg'
+import OwnerService from '../services/OwnerService'
 
 class OwnersRoutes {
-  dbService: DbService
   router: express.Router
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  pgClient: Client
+  ownerService: OwnerService
+  
+  constructor (pgClient: Client) {
     this.router = express.Router()
+    this.ownerService = new OwnerService(pgClient)
 
     this.router.get('/', async (req, res) => {
       if (!req.session.user) {
@@ -24,7 +27,7 @@ class OwnersRoutes {
           req.body.name
         ) {
           try {
-            this.dbService.createOwner(req.body.name)
+            this.ownerService.createOwner(req.body.name)
             res.status(201).redirect('/owners')
           } catch (error) {
             console.error(error)
@@ -42,7 +45,7 @@ class OwnersRoutes {
     return {
       title: 'Timetracker - Owners',
       ownersActive: true,
-      owners: (await this.dbService.getOwners()).rows
+      owners: (await this.ownerService.getOwners()).rows
     }
   }
 }

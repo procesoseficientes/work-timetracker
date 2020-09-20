@@ -1,12 +1,13 @@
 import express from 'express'
-import DbService from '../services/db-service'
+import { Client } from 'pg'
+import TimeService from '../services/TimeService'
 
 class DetailRoutes {
-  dbService: DbService
+  timeService: TimeService
   router: express.Router
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
+    this.timeService = new TimeService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', (req, res, _next) => {
@@ -14,7 +15,7 @@ class DetailRoutes {
         res.status(401).redirect('/login')
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
-        this.dbService.getTimes(
+        this.timeService.getTimes(
           <string>req.query.name, 
           <string>req.query.owner,
           <string>req.query.project,

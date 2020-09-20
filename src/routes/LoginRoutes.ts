@@ -1,14 +1,15 @@
 import express from 'express'
-import DbService from '../services/db-service'
 import path from 'path'
+import { Client } from 'pg'
+import UserService from '../services/UserService'
 
 class LoginRoutes {
-  dbService: DbService
+  userService: UserService
   router: express.Router
   colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
+    this.userService = new UserService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', async (_req, res, _next) => {
@@ -16,7 +17,7 @@ class LoginRoutes {
     })
 
     this.router.post('/', async (req, res, _next) => {
-      const users = (await this.dbService.getUsers()).rows
+      const users = (await this.userService.getUsers()).rows
       const result = users.find(u => {
         return u.username === req.body.username && u.password === req.body.password
       })
