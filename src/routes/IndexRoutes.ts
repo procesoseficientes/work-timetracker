@@ -22,7 +22,7 @@ class IndexRoutes {
         try {
           res.render('track', await this.trackView(req.session.user))
         } catch (error) {
-          console.log(error)
+          console.error(error)
           res.status(500).send(error)
         }
       }

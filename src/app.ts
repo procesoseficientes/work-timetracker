@@ -7,6 +7,7 @@ import logger from 'morgan'
 
 import IndexRoutes from './routes/IndexRoutes'
 import UsersRoutes from './routes/UsersRoutes'
+import StatsRoutes from './routes/StatsRoutes'
 import ProjectsRoutes from './routes/ProjectsRoutes'
 import LoginRoutes from './routes/LoginRoutes'
 
@@ -48,10 +49,11 @@ pgClient.connect().catch((err) => {
 app.use('/', new IndexRoutes(pgClient).router)
 app.use('/login', new LoginRoutes(pgClient).router)
 app.use('/users', new UsersRoutes(pgClient).router)
-app.use('/projects', new ProjectsRoutes(pgClient).router)
+app.use('/stats', new StatsRoutes(pgClient).router)
 app.use('/owners', new OwnersRoutes(pgClient).router)
 app.use('/detail', new DetailRoutes(pgClient).router)
 app.use('/team', new TeamRoutes(pgClient).router)
+app.use('/projects', new ProjectsRoutes(pgClient).router)
 
 // catch 404 and forward to error handler
 app.use(function (_req, _res, next) {
