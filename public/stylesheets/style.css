@@ -1,6 +1,7 @@
 @font-face {
   font-family: KumbhSans; 
   src: url('../fonts/KumbhSans-Regular.ttf');
+  font-display: swap;
 }
 
 .content {
