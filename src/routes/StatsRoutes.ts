@@ -1,23 +1,27 @@
 import express from 'express'
 import { groupBy } from '../utils/json'
 import createError from 'http-errors'
-import DbService from '../services/db-service'
+import { Client } from 'pg'
+import ProjectsService from '../services/ProjectService'
+import OwnerService from '../services/OwnerService'
 
-class ProjectsRoutes {
-  dbService: DbService
+class StatsRoutes {
   router: express.Router
+  projectService: ProjectsService
+  ownerService: OwnerService
   colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  constructor (pgClient: Client) {
     this.router = express.Router()
+    this.projectService = new ProjectsService(pgClient)
+    this.ownerService = new OwnerService(pgClient)
 
     this.router.get('/', async (req, res, next) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
-        res.render('projects', await this.projectsView(<string>req.query.page))
+        res.render('stats', await this.projectsView(<string>req.query.page))
       }
     })
 
@@ -27,13 +31,7 @@ class ProjectsRoutes {
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
         try {
-          await this.dbService.createProject(
-            req.body.owner,
-            req.body.name,
-            req.body.description,
-            req.body.budget
-          )
-          res.status(201).render('projects', await this.projectsView(<string>req.query.page))
+          res.status(201).redirect('/stats')
         } catch (error) {
           console.error(error)
           next(createError(500))
@@ -42,12 +40,12 @@ class ProjectsRoutes {
     })
 
     this.router.get('/json', async (req, res, next) => {
-      res.send((await this.dbService.getProjects(<string>req.query.id)).rows)
+      res.send((await this.projectService.getProjects(<string>req.query.id)).rows)
     })
   }
 
   async projectsView (page: string) {
-    const projects = groupBy((await this.dbService.getProjectsDetail()).rows, 'id')
+    const projects = groupBy((await this.projectService.getProjectsDetail()).rows, 'id')
     const grouped = Object.keys(projects).map(a => {
       const g = {
         id: parseInt(a),
@@ -65,10 +63,10 @@ class ProjectsRoutes {
     return {
       title: 'Timetracker - Projects',
       projectsActive: true,
-      owners: (await this.dbService.getOwners()).rows,
+      owners: (await this.ownerService.getOwners()).rows,
       projects: grouped,
       page: page
     }
   }
 }
-export default ProjectsRoutes
+export default StatsRoutes

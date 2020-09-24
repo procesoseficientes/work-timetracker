@@ -15,4 +15,4 @@ Following this steps before submitting a PR
 2. Fork the project or if you are part of Procesos create a new brach
     - If you are part of Procesos create a branch with the following nomeclature `<your initials>-<description>`, e.g: `fr-sumBugFix`
 3. Ensure your changes are as granular as possible (and avoid profanities in the commits' message), this will make it easier for check the code
-4. Create a new PR
+4. Create a new PR to `dev` branch

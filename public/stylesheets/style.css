@@ -1,6 +1,7 @@
 @font-face {
   font-family: KumbhSans; 
   src: url('../fonts/KumbhSans-Regular.ttf');
+  font-display: swap;
 }
 
 .content {
@@ -45,10 +46,6 @@ select, input {
 
 .btn, select, input {
   border-radius: 8px !important;
-}
-
-.rounded-table {
-  border-radius: 5px;
 }
 
 .loader {

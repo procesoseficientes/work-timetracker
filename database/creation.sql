@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS public."time";
 DROP TABLE IF EXISTS public.project;
 DROP TABLE IF EXISTS public."user";
 DROP TABLE IF EXISTS public.owner;
-DROP TABLE IF EXISTS public.role;
 DROP TABLE IF EXISTS public."access";
+DROP TABLE IF EXISTS public.role;
 
 CREATE TABLE public.owner
 (
@@ -13,6 +13,18 @@ CREATE TABLE public.owner
     name text COLLATE pg_catalog."default" NOT NULL,
     active boolean NOT NULL DEFAULT true,
     CONSTRAINT owner_pkey PRIMARY KEY (id)
+);
+
+
+-- Table: public."role"
+create table public.role
+(
+	id serial not null
+		constraint role_pk
+			primary key,
+	name text not null,
+	active boolean not null,
+	color text default '#fff'
 );
 
 -- Table: public."user"
@@ -74,17 +86,6 @@ CREATE TABLE public."time"
         REFERENCES public."user" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-);
-
--- Table: public."role"
-create table public.role
-(
-	id serial not null
-		constraint role_pk
-			primary key,
-	name text not null,
-	active boolean not null,
-	color text default '#fff'
 );
 
 create table public."access"

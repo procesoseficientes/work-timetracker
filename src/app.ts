@@ -5,14 +5,17 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import logger from 'morgan'
 
-import IndexRouter from './routes/index'
-import UsersRouter from './routes/users'
-import ProjectsRouter from './routes/projects'
-import DbService from './services/db-service'
-import LoginRoutes from './routes/login'
+import IndexRoutes from './routes/IndexRoutes'
+import UsersRoutes from './routes/UsersRoutes'
+import StatsRoutes from './routes/StatsRoutes'
+import ProjectsRoutes from './routes/ProjectsRoutes'
+import LoginRoutes from './routes/LoginRoutes'
 
 import session from 'express-session'
-import OwnersRoutes from './routes/owners'
+import OwnersRoutes from './routes/OwnersRoutes'
+import DetailRoutes from './routes/DetailRoutes'
+import TeamRoutes from './routes/TeamRoutes'
+import { Client } from 'pg'
 
 const app = express()
 
@@ -27,15 +30,30 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(session({secret: 'secret'}))
+app.use(session({
+  secret: 'secret',
+  resave: true,
+	saveUninitialized: true
+}))
 
-const dbService = new DbService(process.env.DATABASE_URL)
+const pgClient = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL ? {
+    rejectUnauthorized: false
+  } : false
+})
+pgClient.connect().catch((err) => {
+  console.error(err)
+})
 
-app.use('/', new IndexRouter(dbService).router)
-app.use('/login', new LoginRoutes(dbService).router)
-app.use('/users', new UsersRouter(dbService).router)
-app.use('/projects', new ProjectsRouter(dbService).router)
-app.use('/owners', new OwnersRoutes(dbService).router)
+app.use('/', new IndexRoutes(pgClient).router)
+app.use('/login', new LoginRoutes(pgClient).router)
+app.use('/users', new UsersRoutes(pgClient).router)
+app.use('/stats', new StatsRoutes(pgClient).router)
+app.use('/owners', new OwnersRoutes(pgClient).router)
+app.use('/detail', new DetailRoutes(pgClient).router)
+app.use('/team', new TeamRoutes(pgClient).router)
+app.use('/projects', new ProjectsRoutes(pgClient).router)
 
 // catch 404 and forward to error handler
 app.use(function (_req, _res, next) {

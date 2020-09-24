@@ -1,12 +1,15 @@
-import DbService from '../services/db-service'
 import express from 'express'
+import { Client } from 'pg'
+import OwnerService from '../services/OwnerService'
 
 class OwnersRoutes {
-  dbService: DbService
   router: express.Router
-  constructor (dbService: DbService) {
-    this.dbService = dbService
+  pgClient: Client
+  ownerService: OwnerService
+  
+  constructor (pgClient: Client) {
     this.router = express.Router()
+    this.ownerService = new OwnerService(pgClient)
 
     this.router.get('/', async (req, res) => {
       if (!req.session.user) {
@@ -24,15 +27,15 @@ class OwnersRoutes {
           req.body.name
         ) {
           try {
-            this.dbService.createOwner(req.body.name)
-            res.status(201).render('owners', await this.ownersView()) 
+            this.ownerService.createOwner(req.body.name)
+            res.status(201).redirect('/owners')
           } catch (error) {
             console.error(error)
-            res.status(500).render('owners', await this.ownersView()) 
+            res.status(500).redirect('/owners')
           }
         } else {
           console.error('Insufficient parameters for request')
-          res.status(401).render('owners', await this.ownersView()) 
+          res.status(401).redirect('/owners')
         }
       }
     })
@@ -42,7 +45,7 @@ class OwnersRoutes {
     return {
       title: 'Timetracker - Owners',
       ownersActive: true,
-      owners: (await this.dbService.getOwners()).rows
+      owners: (await this.ownerService.getOwners()).rows
     }
   }
 }
