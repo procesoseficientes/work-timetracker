@@ -30,6 +30,9 @@ npm i
 npm run start:live
 ```
 
+## Contributing
+Please read the [contributing guidelines](CONTRIBUTING.md) before submiting a PR.
+
 ## Use and access
 1. Dev enviroment is at [https://work-timetracker-dev.herokuapp.com/](https://work-timetracker-dev.herokuapp.com/)
 2. Production enviroment is at [https://work-timetracker.herokuapp.com/](https://work-timetracker-dev.herokuapp.com/)
