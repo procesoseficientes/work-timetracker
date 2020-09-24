@@ -7,7 +7,7 @@ function mapTime(element: any, index: number) {
   }
   const hoursSplit = element.hours.toString().split('.')
   element.color = colors[index]
-  element.hours = hoursSplit[0] + '.' + hoursSplit[1][0];
+  element.hours = hoursSplit[0] + '.' + hoursSplit[1][0]
   return element
 }
 
