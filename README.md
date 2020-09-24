@@ -1,2 +1,35 @@
-# Timetracker
+# Watchman Timetracker
 Timetrack your team's work
+
+## Dependencies
+- [PostgreSQL](https://www.postgresql.org/)
+- [NodeJS 12.14+](https://nodejs.org/)
+- [Typescript 3.9+](https://www.typescriptlang.org/)
+- Git
+
+## Local enviroment setup
+### Clone repo
+1. Run the following command and enter project directory
+```bash
+git clone https://github.com/procesoseficientes/work-timetracker.git
+cd work-timetracker
+```
+
+### Database
+1. Create a PostgreSQL Database and a `public` schema
+2. Run the `database/creating.sql` query
+3. Run the `database/starterdata.sql` query
+
+### Server
+1. Run the following command to download the project dependecies
+```bash
+npm i
+```
+2. Start with live reoload
+```
+npm run start:live
+```
+
+## Use and access
+1. Dev enviroment is at [https://work-timetracker-dev.herokuapp.com/](https://work-timetracker-dev.herokuapp.com/)
+2. Production enviroment is at [https://work-timetracker.herokuapp.com/](https://work-timetracker-dev.herokuapp.com/)
