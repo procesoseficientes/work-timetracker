@@ -19,6 +19,10 @@ cd work-timetracker
 1. Create a PostgreSQL Database and a `public` schema
 2. Run the `database/creating.sql` query
 3. Run the `database/starterdata.sql` query
+4. Add an enviroment variable poiting to your DB, in PowerShell you can run the following command:
+```powershell
+$env:DATABASE_URL="postgres://postgres:admin@localhost:5432/timetracker-local"
+```
 
 ### Server
 1. Run the following command to download the project dependecies
