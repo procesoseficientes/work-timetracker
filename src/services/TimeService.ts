@@ -1,5 +1,15 @@
 import DbService from "./DbService"
 
+interface time {
+  name: string,
+  owner: string,
+  project: string,
+  task: string,
+  start: string,
+  end: string,
+  hours: string
+}
+
 class TimeService extends DbService{
   async getTimes (
     name = '',
@@ -8,8 +18,8 @@ class TimeService extends DbService{
     from = '1970-01-01T00:00:00.000',
     to = new Date().toISOString().replace('Z', '+00'),
     page = 0
-  ) {
-    return await this.client.query(`
+  ): Promise<time[]> {
+    return (await this.client.query(`
       select 
         u.name as "name",  
         o.name as "owner",
@@ -29,7 +39,7 @@ class TimeService extends DbService{
       order by "start" desc
       limit 26
       offset ${page * 25}
-    `)
+    `)).rows
   }
 
   async startTracking (

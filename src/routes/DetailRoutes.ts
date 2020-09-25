@@ -26,23 +26,23 @@ class DetailRoutes {
           res.render('detail', {
             title: 'Timetracker - Detail',
             detailActive: true,
-            times: data.rows
+            times: data
               .slice(0, 26)
               .map(a => {
                 a.start = a.start.toString().substring(0, 21)
                 a.end = a.end ? a.end.toString().substring(0, 21) : ''
                 return a
               }),
-            count: data.rows.length,
-            total: data.rows
+            count: data.length,
+            total: data
               .slice(0, 26)
               .map(a => a.hours)
-              .reduce((a, b) => {
+              .reduce((a: any, b) => {
                 return ((isNaN(parseFloat(a)) ? 0 : parseFloat(a)) + (isNaN(parseFloat(b)) ? 0 : parseFloat(a))).toFixed(2)
               }, 0),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,
-            showNext: data.rows.length === 26,
+            showNext: data.length === 26,
             query: req.query
           })
         }).catch(err => {

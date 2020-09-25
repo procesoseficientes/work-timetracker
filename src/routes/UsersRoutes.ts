@@ -45,7 +45,7 @@ class UsersRoutes {
     return {
       title: 'Timetracker - Users',
       teamActive: true,
-      users: (await this.userService.getUsers()).rows
+      users: await this.userService.getUsers()
     }
   }
 }

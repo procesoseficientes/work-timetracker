@@ -1,8 +1,16 @@
 import DbService from "./DbService";
 
+interface user {
+  username: string, 
+  password: string,
+  id: number,
+  active: boolean,
+  role: number
+}
+
 class UserService extends DbService{
-  async getUsers () {
-    return await this.client.query('select * from "user"')
+  async getUsers (): Promise<user[]> {
+    return (await this.client.query('select * from "user"')).rows
   }
 
   async createUser (name: string, username: string, password: string) {

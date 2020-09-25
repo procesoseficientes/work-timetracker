@@ -17,9 +17,9 @@ class LoginRoutes {
     })
 
     this.router.post('/', async (req, res, _next) => {
-      const users = (await this.userService.getUsers()).rows
+      const users = await this.userService.getUsers()
       const result = users.find(u => {
-        return u.username === req.body.username && u.password === req.body.password
+        return u.username.toLowerCase() === req.body.username.toLowerCase() && u.password === req.body.password
       })
       if (result) {
         req.session.user = result.id
