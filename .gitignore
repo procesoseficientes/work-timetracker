@@ -1,3 +1,4 @@
 /.vs/
 /node_modules/
 vars.ps1
+debug.log

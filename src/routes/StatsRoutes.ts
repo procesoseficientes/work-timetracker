@@ -29,8 +29,13 @@ class StatsRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        if (!req.query.page || req.query.page === '') req.query.page = '0'
         try {
+          await this.projectService.createProject(
+            req.body.owner,
+            req.body.name,
+            req.body.description,
+            req.body.budget
+          )
           res.status(201).redirect('/stats')
         } catch (error) {
           console.error(error)

@@ -5,9 +5,9 @@ interface time {
   owner: string,
   project: string,
   task: string,
-  start: Date,
-  end: Date,
-  hours: number
+  start: string,
+  end: string,
+  hours: string
 }
 
 class TimeService extends DbService{
