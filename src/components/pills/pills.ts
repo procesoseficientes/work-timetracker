@@ -41,6 +41,11 @@ export class pillsComponent extends Component<pillsInterface> {
           link: '/users',
           active: false
         },
+        {
+          title: 'Types',
+          link: '/types',
+          active: false
+        },
       ],
       stats: [
         {
