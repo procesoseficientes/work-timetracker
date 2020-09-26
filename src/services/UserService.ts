@@ -10,7 +10,16 @@ interface user {
 
 class UserService extends DbService{
   async getUsers (): Promise<user[]> {
-    return (await this.client.query('select * from "user"')).rows
+    return (await this.client.query(`
+    select 
+      u.id, 
+      u.name, 
+      u.username, 
+      u.password, 
+      u.active, 
+      r.name as "role"
+    from public."user" u
+    inner join role r on r.id = u.role_id`)).rows
   }
 
   async createUser (name: string, username: string, password: string): Promise<number> {

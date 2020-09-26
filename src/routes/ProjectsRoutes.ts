@@ -5,6 +5,8 @@ import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
 import OwnerService from '../services/OwnerService'
 import { pillsComponent } from '../components/pills/pills'
+import { tableComponent } from '../components/table/table'
+import toTableArray from '../utils/tableArray'
 
 class ProjectsRoutes {
   router: express.Router
@@ -70,7 +72,7 @@ class ProjectsRoutes {
       title: 'Timetracker - Projects',
       pills: new pillsComponent('detail', '/projects').render(),
       detailActive: true,
-      projects: await this.projectService.getProjects(),
+      table: new tableComponent(toTableArray(await this.projectService.getProjects())).render(),
       owners: await this.ownerService.getOwners()
     }
   }

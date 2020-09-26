@@ -62,7 +62,6 @@ export class pillsComponent extends Component<pillsInterface> {
       })
     }
 
-    console.log(viewData)
     super(viewData, template)
   }
 }

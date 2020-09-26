@@ -12,7 +12,7 @@ class OwnerService extends DbService{
   }
 
   async createOwner (name: string): Promise<number> {
-    return (await this.client.query(`insert into "owner"(name, active) values ('${name}', true)`)).rows[0].id
+    return (await this.client.query(`insert into "owner"(name, active) values ('${name}', true) returning id`)).rows[0].id
   }
 }
 

@@ -1,7 +1,9 @@
 import express from 'express'
 import { Client } from 'pg'
+import toTableArray from '../utils/tableArray'
 import { pillsComponent } from '../components/pills/pills'
 import UserService from '../services/UserService'
+import { tableComponent } from '../components/table/table'
 
 class UsersRoutes {
   userService: UserService
@@ -56,7 +58,7 @@ class UsersRoutes {
       title: 'Timetracker - Users',
       pills: new pillsComponent('detail', '/users').render(),
       detailActive: true,
-      users: await this.userService.getUsers()
+      table: new tableComponent(toTableArray(await this.userService.getUsers())).render()
     }
   }
 }

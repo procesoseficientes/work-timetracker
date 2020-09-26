@@ -1,5 +1,7 @@
 import express from 'express'
 import { Client } from 'pg'
+import { tableComponent } from '../components/table/table'
+import toTableArray from '../utils/tableArray'
 import { pillsComponent } from '../components/pills/pills'
 import OwnerService from '../services/OwnerService'
 
@@ -45,7 +47,7 @@ class OwnersRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.status(200).send(this.ownerService.getOwners())
+        res.status(200).send(await this.ownerService.getOwners())
       }
     })
 
@@ -56,7 +58,7 @@ class OwnersRoutes {
       title: 'Timetracker - Owners',
       pills: new pillsComponent('detail', '/owners').render(),
       detailActive: true,
-      owners: await this.ownerService.getOwners()
+      table: new tableComponent(toTableArray(await this.ownerService.getOwners())).render()
     }
   }
 }

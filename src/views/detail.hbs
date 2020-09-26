@@ -83,6 +83,13 @@
   </table>
 </div>
 
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    {{#if showPrevious}}<li class="page-item"><a class="page-link bg-dark text-light" onclick="pagination(-1)" href="#">Previous</a></li>{{/if}}
+    {{#if showNext}}<li class="page-item"><a class="page-link bg-dark text-light" onclick="pagination(1)" href="#">Next</a></li>{{/if}}
+  </ul>
+</nav>
+
 <script>
   function toggleFilter () {
     document.getElementById('filter').classList.toggle('hidden')
