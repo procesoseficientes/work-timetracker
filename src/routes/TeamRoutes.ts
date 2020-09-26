@@ -33,7 +33,8 @@ class TeamRoutes {
           .reverse(),
         task: teamTimes[a][0].task,
         name: teamTimes[a][0].name,
-        project: teamTimes[a][0].project
+        project: teamTimes[a][0].project,
+        owner: teamTimes[a][0].owner
       }
       
       return g
