@@ -4,35 +4,6 @@
   <input type="hidden" id="page" name="page" value="{{page}}"/>
 </form>
 
-<form method="POST">
-  <div class="form-group">
-    <label for="owner">Task owner</label>
-    <select name="owner" class="form-control bg-dark text-light">
-      {{#each owners}}
-        <option value="{{this.id}}">{{this.name}}</option>
-      {{/each}}
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="name">Project name</label>
-    <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Enter name">
-  </div>
-
-  <div class="form-group">
-    <label for="name">Hours budget</label>
-    <input min="1" type="number" class="form-control bg-dark text-light" name="budget" placeholder="Enter budget in hours">
-  </div>
-
-  <div class="form-group">
-    <label for="name">Description</label>
-    <input type="text" class="form-control bg-dark text-light" name="description" placeholder="Enter description">
-  </div>
-
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-<br>
-
 {{#each projects}}
   <hr/>
   <h6>{{this.name}}</h6>

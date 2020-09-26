@@ -21,7 +21,7 @@ class ProjectsRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.render('users', await this.usersView())
+        res.render('projects', await this.projectsView())
       }
     })
 
@@ -30,13 +30,13 @@ class ProjectsRoutes {
         res.status(401).redirect('/login')
       } else {
         if (
-          req.body.ownerId &&
+          req.body.owner &&
           req.body.name && 
           req.body.description && 
           req.body.budget
         ) {
           try {
-            this.projectService.createProject(req.body.ownerId, req.body.name, req.body.description,req.body.budget)
+            this.projectService.createProject(req.body.owner, req.body.name, req.body.description,req.body.budget)
             res.status(201).redirect('/projects')
           } catch (error) {
             console.error(error)
@@ -64,11 +64,12 @@ class ProjectsRoutes {
     })
   }
 
-  async usersView () {
+  async projectsView () {
     return {
       title: 'Timetracker - Projects',
-      teamActive: true,
-      users: await this.projectService.getProjects()
+      projectsActive: true,
+      projects: await this.projectService.getProjects(),
+      owners: await this.ownerService.getOwners()
     }
   }
 }
