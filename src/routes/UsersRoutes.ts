@@ -1,5 +1,6 @@
 import express from 'express'
 import { Client } from 'pg'
+import { pillsComponent } from '../components/pills/pills'
 import UserService from '../services/UserService'
 
 class UsersRoutes {
@@ -53,6 +54,7 @@ class UsersRoutes {
   async usersView () {
     return {
       title: 'Timetracker - Users',
+      pills: new pillsComponent('detail', '/users').render(),
       detailActive: true,
       users: await this.userService.getUsers()
     }

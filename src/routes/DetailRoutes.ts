@@ -1,5 +1,6 @@
 import express from 'express'
 import { Client } from 'pg'
+import { pillsComponent } from '../components/pills/pills'
 import TimeService from '../services/TimeService'
 
 class DetailRoutes {
@@ -24,7 +25,8 @@ class DetailRoutes {
           parseInt(<string>req.query.page)
         ).then(data => {
           res.render('detail', {
-            title: 'Timetracker - Detail',
+            title: 'Timetracker - Times',
+            pills: new pillsComponent('detail', '/detail').render(),
             detailActive: true,
             times: data
               .slice(0, 26)
@@ -48,7 +50,7 @@ class DetailRoutes {
         }).catch(err => {
           console.error(err)
           res.status(500).render('detail', {
-            title: 'Timetracker - Detail',
+            title: 'Timetracker - Times',
             page: req.query.page,
             times: []
           })

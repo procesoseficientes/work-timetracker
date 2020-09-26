@@ -1,105 +1,107 @@
--- Table: public.owner
+drop table if exists public."time";
+drop table if exists public.project;
+drop table if exists public."user";
+drop table if exists public.owner;
+drop table if exists public.type;
+drop table if exists public."access";
+drop table if exists public.role;
 
-DROP TABLE IF EXISTS public."time";
-DROP TABLE IF EXISTS public.project;
-DROP TABLE IF EXISTS public."user";
-DROP TABLE IF EXISTS public.owner;
-DROP TABLE IF EXISTS public."access";
-DROP TABLE IF EXISTS public.role;
-
-CREATE TABLE public.owner
-(
-    id SERIAL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    active boolean NOT NULL DEFAULT true,
-    CONSTRAINT owner_pkey PRIMARY KEY (id)
+-- table: public.owner
+create table public.owner (
+  id serial,
+  name text collate pg_catalog."default" not null,
+  active boolean not null default true,
+  constraint owner_pkey primary key (id)
 );
 
-
--- Table: public."role"
-create table public.role
-(
-	id serial not null
-		constraint role_pk
-			primary key,
-	name text not null,
-	active boolean not null,
-	color text default '#fff'
+-- table: public."type"
+create table public.type (
+  id serial not null constraint type_pk primary key,
+  type text not null, active boolean
 );
 
--- Table: public."user"
+-- table: public."role"
+create table public.role (
+  id serial not null constraint role_pk primary key,
+  name text not null,
+  active boolean not null,
+  color text default '#fff'
+);
 
-CREATE TABLE public."user"
+-- table: public."user"
+create table public."user" (
+  id serial,
+  name text collate pg_catalog."default" not null,
+  username text collate pg_catalog."default" not null,
+  password text collate pg_catalog."default" not null,
+  active boolean default true,
+  role_id integer default 1 not null,
+  constraint user_pkey primary key (id),
+  constraint username_unique unique (username),
+  constraint role_fk foreign key (role_id)
+    references public.role (id) match simple
+    on update no action
+    on delete no action
+);
+
+-- table: public.project
+create table public.project (
+  id serial,
+  owner_id integer not null,
+  name text collate pg_catalog."default" not null,
+  description text collate pg_catalog."default",
+  active boolean not null default true,
+  budget numeric not null default 1,
+  constraint projects_pkey primary key (id),
+  constraint owner_fk foreign key (owner_id)
+    references public.owner (id) match simple
+    on update no action
+    on delete no action
+);
+
+-- table: public.time
+create table public."time"
 (
-    id SERIAL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    username text COLLATE pg_catalog."default" NOT NULL,
-    password text COLLATE pg_catalog."default" NOT NULL,
-    active boolean DEFAULT true,
-    role_id  integer default 1 not null,
-    CONSTRAINT user_pkey PRIMARY KEY (id),
-    CONSTRAINT username_unique UNIQUE (username),
-    CONSTRAINT role_fk foreign key (role_id)
-        references public.role (id) match simple
-        on UPDATE no action
+    id serial,
+    user_id integer not null,
+    owner_id integer not null,
+    project_id integer not null,
+    type_id integer default null,
+    task text collate pg_catalog."default" not null,
+    start timestamp(6) with time zone not null,
+    "end" timestamp(6) with time zone,
+    constraint time_pkey primary key (id),
+    constraint owner_fk foreign key (owner_id)
+        references public.owner (id) match simple
+        on update no action
+        on delete no action,
+    constraint project_fk foreign key (project_id)
+        references public.project (id) match simple
+        on update no action
+        on delete no action,
+    constraint user_fk foreign key (user_id)
+        references public."user" (id) match simple
+        on update no action
+        on delete no action,
+    constraint type_fk foreign key (type_id)
+        references public."type" (id) match simple
+        on update no action
         on delete no action
 );
 
--- Table: public.project
-
-CREATE TABLE public.project
-(
-    id SERIAL,
-    owner_id integer NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    description text COLLATE pg_catalog."default",
-    active boolean NOT NULL DEFAULT true,
-    budget numeric NOT NULL DEFAULT 1,
-    CONSTRAINT projects_pkey PRIMARY KEY (id),
-    CONSTRAINT owner_fk FOREIGN KEY (owner_id)
-        REFERENCES public.owner (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-);
-
--- Table: public."time"
-
-CREATE TABLE public."time"
-(
-    id SERIAL,
-    user_id integer NOT NULL,
-    owner_id integer NOT NULL,
-    project_id integer NOT NULL,
-    task text COLLATE pg_catalog."default" NOT NULL,
-    start timestamp(6) with time zone NOT NULL,
-    "end" timestamp(6) with time zone,
-    CONSTRAINT time_pkey PRIMARY KEY (id),
-    CONSTRAINT owner_fk FOREIGN KEY (owner_id)
-        REFERENCES public.owner (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT project_fk FOREIGN KEY (project_id)
-        REFERENCES public.project (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT user_fk FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-);
-
-create table public."access"
-(
-	id serial,
-	role_id integer not null,
-	route text not null,
-	"create" boolean default false not null,
-	read boolean default true not null,
-	update boolean default false not null,
-	delete boolean default false not null,
-	constraint access_pk primary key (id),
-	constraint role_fk foreign key (role_id)
+-- table: public."access"
+create table public."access" (
+  id serial,
+  role_id integer not null,
+  route text not null,
+  "create" boolean default false not null,
+  read boolean default true not null,
+  update
+    boolean default false not null,
+    delete boolean default false not null,
+    constraint access_pk primary key (id),
+    constraint role_fk foreign key (role_id)
         references public.role (id) match simple
-        on UPDATE no action
+        on update no action
         on delete no action
 );

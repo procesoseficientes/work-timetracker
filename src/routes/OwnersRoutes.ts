@@ -1,5 +1,6 @@
 import express from 'express'
 import { Client } from 'pg'
+import { pillsComponent } from '../components/pills/pills'
 import OwnerService from '../services/OwnerService'
 
 class OwnersRoutes {
@@ -53,6 +54,7 @@ class OwnersRoutes {
   async ownersView () {
     return {
       title: 'Timetracker - Owners',
+      pills: new pillsComponent('detail', '/owners').render(),
       detailActive: true,
       owners: await this.ownerService.getOwners()
     }
