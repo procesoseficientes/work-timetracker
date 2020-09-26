@@ -39,6 +39,15 @@ class UsersRoutes {
         }
       }
     })
+  
+    this.router.get('/api', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.status(200).send(await this.userService.getUsers())
+      }
+    })
+
   }
 
   async usersView () {

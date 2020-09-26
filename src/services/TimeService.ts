@@ -39,7 +39,13 @@ class TimeService extends DbService{
       order by "start" desc
       limit 26
       offset ${page * 25}
-    `)).rows
+    `)).rows.map(a => {
+      a.start = new Date(a.start)
+      a.start.setHours(a.start.getHours() - 6)
+      a.end = new Date(a.end)
+      a.end.setHours(a.end.getHours() - 6)
+      return a
+    })
   }
 
   async startTracking (

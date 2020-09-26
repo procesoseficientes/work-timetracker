@@ -45,7 +45,7 @@ class StatsRoutes {
     })
 
     this.router.get('/json', async (req, res, next) => {
-      res.send(await this.projectService.getProjects(<string>req.query.id))
+      res.send(await this.projectService.getProjectsByOwner(parseInt(<string>req.query.id)))
     })
   }
 

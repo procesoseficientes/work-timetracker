@@ -46,7 +46,7 @@
 <script>
   function loadProject() {
     const owner = document.getElementsByName('owner')[0].value
-    fetch(`/projects/api?id=${owner}`).then(async data => {
+    fetch(`/projects/api?ownerId=${owner}`).then(async data => {
       data = await data.json()
       let projectsOption = data.reduce((a, b) => {
         return a + `<option value="${b.id}">${b.name}</option>`

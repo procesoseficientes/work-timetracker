@@ -37,8 +37,8 @@ class DetailRoutes {
             total: data
               .slice(0, 26)
               .map(a => a.hours)
-              .reduce((a: any, b) => {
-                return ((isNaN(parseFloat(a)) ? 0 : parseFloat(a)) + (isNaN(parseFloat(b)) ? 0 : parseFloat(a))).toFixed(2)
+              .reduce((a: any, b: any) => {
+                return a + (isNaN(parseFloat(b)) ? 0 : parseFloat(b))
               }, 0),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,

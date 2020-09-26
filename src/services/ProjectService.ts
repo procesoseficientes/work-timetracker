@@ -10,8 +10,16 @@ interface project {
 }
 
 class ProjectService extends DbService{
-  async getProjects (ownerId: string): Promise<project[]> {
-    return (await this.client.query(`select * from project where owner_id = ${ownerId}`)).rows
+  async getProjects(): Promise<project[]> {
+    return (await this.client.query(`
+    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+    inner join owner o on o.id = p.owner_id`)).rows
+  }
+
+  async getProjectsByOwner (ownerId: number): Promise<project[]> {
+    return (await this.client.query(`
+    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId}`)).rows
   }
   
   async getProjectsDetail () {
