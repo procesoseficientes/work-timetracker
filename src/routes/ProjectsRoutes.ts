@@ -16,8 +16,8 @@ class ProjectsRoutes {
     this.projectService = new ProjectsService(pgClient)
     this.ownerService = new OwnerService(pgClient)
 
-    this.router.get('/json', async (req, res, next) => {
-      res.send((await this.projectService.getProjects(<string>req.query.id)).rows)
+    this.router.get('/api', async (req, res, next) => {
+      res.send(await this.projectService.getProjects(<string>req.query.id))
     })
   }
 }

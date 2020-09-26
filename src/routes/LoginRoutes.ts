@@ -34,6 +34,25 @@ class LoginRoutes {
       req.session.user = undefined
       res.redirect('/login')
     })
+
+    this.router.post('/api', async (req, res, _next) => {
+      const users = await this.userService.getUsers()
+      const result = users.find(u => {
+        return u.username.toLowerCase() === req.body.username.toLowerCase() && u.password === req.body.password
+      })
+      if (result) {
+        req.session.user = result.id
+        req.session.cookie.expires = false
+        res.status(200).send({success: true})
+      } else {
+        res.status(401).sendFile('Unauthorized');
+      }
+    })
+
+    this.router.delete('/api', async (req, res, _next) => {
+      req.session.user = undefined
+      res.status(203).send({success: true})
+    })
   }
 }
 

@@ -45,7 +45,7 @@ class StatsRoutes {
     })
 
     this.router.get('/json', async (req, res, next) => {
-      res.send((await this.projectService.getProjects(<string>req.query.id)).rows)
+      res.send(await this.projectService.getProjects(<string>req.query.id))
     })
   }
 
@@ -66,9 +66,9 @@ class StatsRoutes {
       return g
     })
     return {
-      title: 'Timetracker - Projects',
+      title: 'Timetracker - Stats',
       projectsActive: true,
-      owners: (await this.ownerService.getOwners()).rows,
+      owners: await this.ownerService.getOwners(),
       projects: grouped,
       page: page
     }

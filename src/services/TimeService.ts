@@ -47,16 +47,17 @@ class TimeService extends DbService{
     ownerId: string, 
     projectId: string, 
     task: string
-  ) {
-    return await this.client.query(`
-      update "time" set "end" = CURRENT_TIMESTAMP
-      where user_id = ${userId}
-      and "end" is null;
+  ): Promise<number> {
+    const result: any = (await this.client.query(`
+    update "time" set "end" = CURRENT_TIMESTAMP
+    where user_id = ${userId}
+    and "end" is null;
 
-      insert into "time"(
-      user_id, owner_id, project_id, task, start)
-      values (${userId}, ${ownerId}, ${projectId}, '${task}', CURRENT_TIMESTAMP);
-    `)
+    insert into "time"(
+    user_id, owner_id, project_id, task, start)
+    values (${userId}, ${ownerId}, ${projectId}, '${task}', CURRENT_TIMESTAMP) returning id;
+  `))
+    return result[1].rows[0].id
   }
 
   async stopTracking (userId: number) {

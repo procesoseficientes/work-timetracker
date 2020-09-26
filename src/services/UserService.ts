@@ -13,8 +13,8 @@ class UserService extends DbService{
     return (await this.client.query('select * from "user"')).rows
   }
 
-  async createUser (name: string, username: string, password: string) {
-    return await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true)`)
+  async createUser (name: string, username: string, password: string): Promise<number> {
+    return (await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true) returning id`)).rows[0].id
   }
 }
 

@@ -54,10 +54,49 @@ class IndexRoutes {
         res.send((await this.timeService.stopTracking(req.body.id)).rows)
       }
     })
+
+    this.router.delete('/api', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.send((await this.timeService.stopTracking(req.body.id)).rows)
+      }
+    })
+  
+    this.router.get('/api', async (req, res, _next) => {
+      if (!req.session.user) {
+        res.status(401).send('Unathorized')
+      } else {
+        try {
+          res.send((await this.timeService.getTodayUser(req.session.user)).rows)
+        } catch (error) {
+          console.error(error)
+          res.status(500).send(error)
+        }
+      }
+    })
+  
+    this.router.post('/api', async (req, res, next) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        try {
+          res.status(201).send(await this.timeService.startTracking(
+            req.session.user,
+            req.body.owner,
+            req.body.project,
+            req.body.task
+          ))
+        } catch (error) {
+          console.error(error)
+          next(createError(500))
+        }
+      }
+    })
   }
   
   async trackView(userId: number) {
-    const owners = (await this.ownerService.getOwners()).rows
+    const owners = await this.ownerService.getOwners()
     const times = (await this.timeService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',

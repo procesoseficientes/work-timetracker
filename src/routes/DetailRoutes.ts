@@ -55,6 +55,20 @@ class DetailRoutes {
         })
       }
     })
+  
+    this.router.get('/api', async (req, res) => {
+      if (!req.query.page || req.query.page === '') req.query.page = '0'
+      res.status(200).send(
+        await this.timeService.getTimes(
+          <string>req.query.name, 
+          <string>req.query.owner,
+          <string>req.query.project,
+          <string>req.query.from === '' ? undefined : <string>req.query.from,
+          <string>req.query.to === '' ? undefined : <string>req.query.to,
+          parseInt(<string>req.query.page)
+        )
+      )
+    })
   }
 }
 
