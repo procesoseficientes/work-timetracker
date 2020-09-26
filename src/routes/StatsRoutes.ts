@@ -4,6 +4,7 @@ import createError from 'http-errors'
 import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
 import OwnerService from '../services/OwnerService'
+import { pillsComponent } from '../components/pills/pills'
 
 class StatsRoutes {
   router: express.Router
@@ -44,6 +45,7 @@ class StatsRoutes {
     })
     return {
       title: 'Timetracker - Stats',
+      pills: new pillsComponent('stats', '/stats').render(),
       statsActive: true,
       owners: await this.ownerService.getOwners(),
       projects: grouped,

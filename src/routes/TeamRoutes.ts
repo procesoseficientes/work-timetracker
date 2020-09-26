@@ -3,6 +3,7 @@ import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
 import TimeService from '../services/TimeService'
+import { pillsComponent } from '../components/pills/pills'
 
 class TeamRoutes {
   timeService: TimeService
@@ -40,6 +41,7 @@ class TeamRoutes {
 
     return {
       title: 'Timetracker - Team',
+      pills: new pillsComponent('stats', '/team').render(),
       statsActive: true,
       team: grouped
     }

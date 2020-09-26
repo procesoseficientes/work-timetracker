@@ -50,7 +50,7 @@ export class pillsComponent extends Component<pillsInterface> {
         },
         {
           title: 'Projects',
-          link: '/projects',
+          link: '/stats',
           active: false
         }
       ]
