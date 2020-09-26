@@ -53,7 +53,7 @@ class OwnersRoutes {
   async ownersView () {
     return {
       title: 'Timetracker - Owners',
-      ownersActive: true,
+      detailActive: true,
       owners: await this.ownerService.getOwners()
     }
   }

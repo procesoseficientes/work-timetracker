@@ -67,7 +67,7 @@ class ProjectsRoutes {
   async projectsView () {
     return {
       title: 'Timetracker - Projects',
-      projectsActive: true,
+      detailActive: true,
       projects: await this.projectService.getProjects(),
       owners: await this.ownerService.getOwners()
     }

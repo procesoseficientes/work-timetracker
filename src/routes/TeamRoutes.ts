@@ -40,7 +40,7 @@ class TeamRoutes {
 
     return {
       title: 'Timetracker - Team',
-      teamActive: true,
+      statsActive: true,
       team: grouped
     }
   }

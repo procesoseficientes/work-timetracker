@@ -53,7 +53,7 @@ class UsersRoutes {
   async usersView () {
     return {
       title: 'Timetracker - Users',
-      teamActive: true,
+      detailActive: true,
       users: await this.userService.getUsers()
     }
   }
