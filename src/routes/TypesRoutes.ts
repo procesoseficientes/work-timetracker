@@ -3,22 +3,22 @@ import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { pillsComponent } from '../components/pills/pills'
-import OwnerService from '../services/OwnerService'
+import TypeService from '../services/TypeService'
 
-class OwnersRoutes {
+class TypesRoutes {
   router: express.Router
   pgClient: Client
-  ownerService: OwnerService
+  typeService: TypeService
   
   constructor (pgClient: Client) {
     this.router = express.Router()
-    this.ownerService = new OwnerService(pgClient)
+    this.typeService = new TypeService(pgClient)
 
     this.router.get('/', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.render('owners', await this.ownersView())
+        res.render('types', await this.typesView())
       }
     })
 
@@ -27,18 +27,18 @@ class OwnersRoutes {
         res.status(401).redirect('/login')
       } else {
         if (
-          req.body.name
+          req.body.type
         ) {
           try {
-            this.ownerService.createOwner(req.body.name)
-            res.status(201).redirect('/owners')
+            this.typeService.createType(req.body.type)
+            res.status(201).redirect('/types')
           } catch (error) {
             console.error(error)
-            res.status(500).redirect('/owners')
+            res.status(500).redirect('/types')
           }
         } else {
           console.error('Insufficient parameters for request')
-          res.status(401).redirect('/owners')
+          res.status(401).redirect('/types')
         }
       }
     })
@@ -47,20 +47,20 @@ class OwnersRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.status(200).send(await this.ownerService.getOwners())
+        res.status(200).send(await this.typeService.getTypes())
       }
     })
 
   }
 
-  async ownersView () {
+  async typesView () {
     return {
-      title: 'Timetracker - Owners',
-      pills: new pillsComponent('detail', '/owners').render(),
+      title: 'Timetracker - Types',
+      pills: new pillsComponent('detail', '/types').render(),
       detailActive: true,
-      table: new tableComponent(toTableArray(await this.ownerService.getOwners())).render()
+      table: new tableComponent(toTableArray(await this.typeService.getTypes())).render()
     }
   }
 }
 
-export default OwnersRoutes
+export default TypesRoutes

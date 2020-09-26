@@ -102,3 +102,17 @@ select, input {
   background-color: rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 0 0 0 #343a40;
 }
+
+.nav-dark-pills a{
+  color: var(--light);
+  cursor: pointer;
+}
+
+.nav-dark-pills .active {
+  background-color: var(--dark);
+  border-radius: 8px;
+}
+
+.page-link {
+  border: none;
+}

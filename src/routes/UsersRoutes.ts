@@ -1,6 +1,9 @@
 import express from 'express'
 import { Client } from 'pg'
+import toTableArray from '../utils/tableArray'
+import { pillsComponent } from '../components/pills/pills'
 import UserService from '../services/UserService'
+import { tableComponent } from '../components/table/table'
 
 class UsersRoutes {
   userService: UserService
@@ -39,13 +42,23 @@ class UsersRoutes {
         }
       }
     })
+  
+    this.router.get('/api', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.status(200).send(await this.userService.getUsers())
+      }
+    })
+
   }
 
   async usersView () {
     return {
       title: 'Timetracker - Users',
-      teamActive: true,
-      users: await this.userService.getUsers()
+      pills: new pillsComponent('detail', '/users').render(),
+      detailActive: true,
+      table: new tableComponent(toTableArray(await this.userService.getUsers())).render()
     }
   }
 }

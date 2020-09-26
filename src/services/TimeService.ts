@@ -39,24 +39,34 @@ class TimeService extends DbService{
       order by "start" desc
       limit 26
       offset ${page * 25}
-    `)).rows
+    `)).rows.map(a => {
+      a.start = new Date(a.start)
+      a.start.setHours(a.start.getHours() - 6)
+      if (a.end) {
+        a.end = new Date(a.end)
+        a.end.setHours(a.end.getHours() - 6)
+      }
+      return a
+    })
   }
 
   async startTracking (
     userId: number, 
     ownerId: string, 
     projectId: string, 
-    task: string
-  ) {
-    return await this.client.query(`
-      update "time" set "end" = CURRENT_TIMESTAMP
-      where user_id = ${userId}
-      and "end" is null;
+    task: string,
+    typeId: number
+  ): Promise<number> {
+    const result: any = (await this.client.query(`
+    update "time" set "end" = CURRENT_TIMESTAMP
+    where user_id = ${userId}
+    and "end" is null;
 
-      insert into "time"(
-      user_id, owner_id, project_id, task, start)
-      values (${userId}, ${ownerId}, ${projectId}, '${task}', CURRENT_TIMESTAMP);
-    `)
+    insert into "time"(
+    user_id, owner_id, project_id, task, type_id, start)
+    values (${userId}, ${ownerId}, ${projectId}, '${task}', ${typeId}, CURRENT_TIMESTAMP) returning id;
+  `))
+    return result[1].rows[0].id
   }
 
   async stopTracking (userId: number) {

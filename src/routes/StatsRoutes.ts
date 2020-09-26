@@ -4,6 +4,7 @@ import createError from 'http-errors'
 import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
 import OwnerService from '../services/OwnerService'
+import { pillsComponent } from '../components/pills/pills'
 
 class StatsRoutes {
   router: express.Router
@@ -21,35 +22,12 @@ class StatsRoutes {
         res.status(401).redirect('/login')
       } else {
         if (!req.query.page || req.query.page === '') req.query.page = '0'
-        res.render('stats', await this.projectsView(<string>req.query.page))
+        res.render('stats', await this.statsView(<string>req.query.page))
       }
-    })
-
-    this.router.post('/', async (req, res, next) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        try {
-          await this.projectService.createProject(
-            req.body.owner,
-            req.body.name,
-            req.body.description,
-            req.body.budget
-          )
-          res.status(201).redirect('/stats')
-        } catch (error) {
-          console.error(error)
-          next(createError(500))
-        }
-      }
-    })
-
-    this.router.get('/json', async (req, res, next) => {
-      res.send((await this.projectService.getProjects(<string>req.query.id)).rows)
     })
   }
 
-  async projectsView (page: string) {
+  async statsView (page: string) {
     const projects = groupBy((await this.projectService.getProjectsDetail()).rows, 'id')
     const grouped = Object.keys(projects).map(a => {
       const g = {
@@ -66,9 +44,10 @@ class StatsRoutes {
       return g
     })
     return {
-      title: 'Timetracker - Projects',
-      projectsActive: true,
-      owners: (await this.ownerService.getOwners()).rows,
+      title: 'Timetracker - Stats',
+      pills: new pillsComponent('stats', '/stats').render(),
+      statsActive: true,
+      owners: await this.ownerService.getOwners(),
       projects: grouped,
       page: page
     }

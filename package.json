@@ -8,7 +8,7 @@
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
   },
   "scripts": {
-    "copy": "copyfiles --up 1 src/views/*.* dist/",
+    "copy": "copyfiles --up 1 src/views/*.* dist/ && copyfiles --up 1 src/components/**/*.html dist/",
     "start": "node dist",
     "test": "npm run build",
     "build": "npm run copy && tsc",
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/procesoseficientes/work-timetracker#readme",
   "dependencies": {
+    "bigojs": "^1.0.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",

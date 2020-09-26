@@ -1,8 +1,25 @@
 import DbService from "./DbService";
 
+interface project {
+  id: number,
+  owner_id: number,
+  name: string,
+  description: string,
+  active: boolean,
+  budget: number
+}
+
 class ProjectService extends DbService{
-  async getProjects (ownerId: string) {
-    return await this.client.query(`select * from project where owner_id = ${ownerId}`)
+  async getProjects(): Promise<project[]> {
+    return (await this.client.query(`
+    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+    inner join owner o on o.id = p.owner_id`)).rows
+  }
+
+  async getProjectsByOwner (ownerId: number): Promise<project[]> {
+    return (await this.client.query(`
+    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId}`)).rows
   }
   
   async getProjectsDetail () {
@@ -36,12 +53,13 @@ class ProjectService extends DbService{
     `)
   }
 
-  async createProject (ownerId: number, name: string, description: string, budget: number) {
-    return await this.client.query(`
+  async createProject (ownerId: number, name: string, description: string, budget: number): Promise<number> {
+    return (await this.client.query(`
       insert into public.project(
       owner_id, name, description, budget)
       values (${ownerId}, '${name}', '${description}', ${budget})
-    `)
+      returning id
+    `)).rows[0].id
   }
 }
 

@@ -1,5 +1,5 @@
 <h2>
-  Users
+  Types
 
   <button onclick="toggleFilter()" type="button" class="btn btn-dark btn-sm">
     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -9,18 +9,8 @@
 </h2>
 <form method="POST" id="post" class="collapsible-content hiding hidden">
   <div class="form-group">
-    <label for="name">Full name</label>
-    <input type="text" class="form-control" name="name" placeholder="Enter name">
-  </div>
-  
-  <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" class="form-control" name="username" placeholder="Enter username">
-  </div>
-
-  <div class="form-group">
-    <label for="name">Password</label>
-    <input type="password" class="form-control" name="password" placeholder="Enter password">
+    <label for="name">Type name</label>
+    <input type="text" class="form-control" name="type" placeholder="Enter name">
   </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
@@ -34,6 +24,7 @@
     {{#showNext}}<li class="page-item"><a class="page-link bg-dark text-light" href="#">Next</a></li>{{/showNext}}
   </ul>
 </nav>
+
 
 <script>
   function toggleFilter () {

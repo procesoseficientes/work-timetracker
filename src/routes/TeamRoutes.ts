@@ -3,6 +3,7 @@ import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
 import TimeService from '../services/TimeService'
+import { pillsComponent } from '../components/pills/pills'
 
 class TeamRoutes {
   timeService: TimeService
@@ -32,7 +33,8 @@ class TeamRoutes {
           .reverse(),
         task: teamTimes[a][0].task,
         name: teamTimes[a][0].name,
-        project: teamTimes[a][0].project
+        project: teamTimes[a][0].project,
+        owner: teamTimes[a][0].owner
       }
       
       return g
@@ -40,7 +42,8 @@ class TeamRoutes {
 
     return {
       title: 'Timetracker - Team',
-      teamActive: true,
+      pills: new pillsComponent('stats', '/team').render(),
+      statsActive: true,
       team: grouped
     }
   }

@@ -67,3 +67,9 @@ values (1, '/projects', true, true, true, true);
 
 insert into public.access(role_id, route, "create", read, update, delete)
 values (1, '/owners', true, true, true, true);
+
+insert into public."type"(type, active) values ('Development', true)
+insert into public."type"(type, active) values ('Bug fixing', true)
+insert into public."type"(type, active) values ('Support', true)
+insert into public."type"(type, active) values ('Meeting', true)
+insert into public."type"(type, active) values ('Other', true)
