@@ -1,6 +1,7 @@
 import express from 'express'
 import createError from 'http-errors'
 import { Client } from 'pg'
+import TypeService from '../services/TypeService'
 import OwnerService from '../services/OwnerService'
 import TimeService from '../services/TimeService'
 import mapTime from '../utils/mapTime'
@@ -8,11 +9,13 @@ import mapTime from '../utils/mapTime'
 class IndexRoutes {
   timeService: TimeService
   ownerService: OwnerService
+  typeService: TypeService
   router: express.Router
 
   constructor (pgClient: Client) {
     this.timeService = new TimeService(pgClient)
     this.ownerService = new OwnerService(pgClient)
+    this.typeService = new TypeService(pgClient)
     this.router = express.Router()
 
     this.router.get('/', async (req, res, _next) => {
@@ -37,7 +40,8 @@ class IndexRoutes {
             req.session.user,
             req.body.owner,
             req.body.project,
-            req.body.task
+            req.body.task,
+            req.body.type
           )
           res.status(201).redirect('/')
         } catch (error) {
@@ -85,7 +89,8 @@ class IndexRoutes {
             req.session.user,
             req.body.owner,
             req.body.project,
-            req.body.task
+            req.body.task,
+            req.body.type
           ))
         } catch (error) {
           console.error(error)
@@ -96,12 +101,12 @@ class IndexRoutes {
   }
   
   async trackView(userId: number) {
-    const owners = await this.ownerService.getOwners()
     const times = (await this.timeService.getTodayUser(userId)).rows
     return {
       title: 'Timetracker',
       trackActive: true,
-      owners: owners,
+      owners: await this.ownerService.getOwners(),
+      types: await this.typeService.getTypes(),
       isWorking: times[0] ? times[0].current : false,
       lastTask: times[0] ?  times[0].task : '',
       times: times.filter(a => a.percent > 0.5 || a.current)

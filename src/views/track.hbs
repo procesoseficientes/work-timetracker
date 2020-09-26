@@ -15,6 +15,15 @@
     </select>
   </div>
 
+  <div id="project-container" class="form-group">
+    <label for="type">Type</label>
+    <select id="type" name="type" class="form-control bg-dark text-light">
+      {{#each types}}
+      <option value="{{this.id}}">{{this.type}}</option>
+      {{/each}}
+    </select>
+  </div>
+
   <div class="form-group">
     <label for="task">Task</label>
     <input type="text" class="form-control bg-dark text-light" name="task" placeholder="Enter task">

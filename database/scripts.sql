@@ -11,3 +11,9 @@ alter table time
         references public."type" (id) match simple
         on update no action
         on delete no action
+
+insert into public."type"(type, active) values ('Development', true)
+insert into public."type"(type, active) values ('Bug fixing', true)
+insert into public."type"(type, active) values ('Support', true)
+insert into public."type"(type, active) values ('Meeting', true)
+insert into public."type"(type, active) values ('Other', true)

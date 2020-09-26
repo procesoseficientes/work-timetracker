@@ -54,7 +54,8 @@ class TimeService extends DbService{
     userId: number, 
     ownerId: string, 
     projectId: string, 
-    task: string
+    task: string,
+    typeId: number
   ): Promise<number> {
     const result: any = (await this.client.query(`
     update "time" set "end" = CURRENT_TIMESTAMP
@@ -62,8 +63,8 @@ class TimeService extends DbService{
     and "end" is null;
 
     insert into "time"(
-    user_id, owner_id, project_id, task, start)
-    values (${userId}, ${ownerId}, ${projectId}, '${task}', CURRENT_TIMESTAMP) returning id;
+    user_id, owner_id, project_id, task, type_id, start)
+    values (${userId}, ${ownerId}, ${projectId}, '${task}', ${typeId}, CURRENT_TIMESTAMP) returning id;
   `))
     return result[1].rows[0].id
   }
