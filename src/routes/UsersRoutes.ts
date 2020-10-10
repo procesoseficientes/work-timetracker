@@ -53,7 +53,12 @@ class UsersRoutes {
 
   }
 
-  async usersView () {
+  async usersView (): Promise<{
+    title: string
+    sidebar: string
+    detailActive: boolean
+    table: string
+  }> {
     return {
       title: 'Timetracker - Users',
       sidebar: new sidebarComponent('/users').render(),

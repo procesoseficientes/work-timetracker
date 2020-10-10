@@ -1,8 +1,8 @@
 import express from 'express'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
-import ProjectsService from '../services/ProjectService'
-import OwnerService from '../services/OwnerService'
+import ProjectsService, { projectDetail } from '../services/ProjectService'
+import OwnerService, { owner } from '../services/OwnerService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 
 class StatsRoutes {
@@ -26,8 +26,21 @@ class StatsRoutes {
     })
   }
 
-  async statsView (page: string) {
-    const projects = groupBy((await this.projectService.getProjectsDetail()).rows, 'id')
+  async statsView (page: string): Promise<{
+    title: string;
+    sidebar: string;
+    statsActive: boolean;
+    owners: owner[];
+    projects: {
+        id: number;
+        times: projectDetail;
+        name: string;
+        description: string;
+        hours: number;
+    }[];
+    page: string;
+  }> {
+    const projects = groupBy((await this.projectService.getProjectsDetail()), 'id')
     const grouped = Object.keys(projects).map(a => {
       const g = {
         id: parseInt(a),
@@ -36,7 +49,7 @@ class StatsRoutes {
         description: projects[a][0].description,
         hours: projects[a][0].project_hours
       }
-      g.times = g.times.map((b: any) => {
+      g.times = g.times.map((b: projectDetail) => {
         b.color = this.colors[b.time_id % this.colors.length]
         return b
       })

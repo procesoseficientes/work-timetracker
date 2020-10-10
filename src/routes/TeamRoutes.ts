@@ -2,7 +2,7 @@ import express from 'express'
 import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
-import TimeService from '../services/TimeService'
+import TimeService, { teamTime } from '../services/TimeService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 
 class TeamRoutes {
@@ -23,8 +23,20 @@ class TeamRoutes {
     })
   }
 
-  async teamView() {
-    const teamTimes = groupBy((await this.timeService.getTodayTeam()).rows, 'user_id')
+  async teamView(): Promise<{
+    title: string
+    sidebar: string
+    statsActive: boolean
+    team: {
+      id: number
+      times: teamTime
+      task: string
+      name: string
+      project: string
+      owner: string
+    }[]
+}> {
+    const teamTimes = groupBy((await this.timeService.getTodayTeam()), 'user_id')
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),

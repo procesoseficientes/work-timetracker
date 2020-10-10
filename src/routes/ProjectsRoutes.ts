@@ -1,7 +1,7 @@
 import express from 'express'
 import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
-import OwnerService from '../services/OwnerService'
+import OwnerService, { owner } from '../services/OwnerService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
@@ -65,7 +65,13 @@ class ProjectsRoutes {
     })
   }
 
-  async projectsView () {
+  async projectsView (): Promise<{
+    title: string;
+    sidebar: string;
+    detailActive: boolean;
+    table: string;
+    owners: owner[];
+  }> {
     return {
       title: 'Timetracker - Projects',
       sidebar: new sidebarComponent('/projects').render(),

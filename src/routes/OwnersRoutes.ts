@@ -53,7 +53,12 @@ class OwnersRoutes {
 
   }
 
-  async ownersView () {
+  async ownersView (): Promise<{
+    title: string;
+    sidebar: string;
+    detailActive: boolean;
+    table: string;
+  }> {
     return {
       title: 'Timetracker - Owners',
       sidebar: new sidebarComponent('/owners').render(),

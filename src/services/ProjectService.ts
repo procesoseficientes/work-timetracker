@@ -1,12 +1,24 @@
 import DbService from "./DbService"
 
 interface project {
-  id: number,
-  owner_id: number,
-  name: string,
-  description: string,
-  active: boolean,
+  id: number
+  owner_id: number
+  name: string
+  description: string
+  active: boolean
   budget: number
+}
+
+export interface projectDetail {
+  id: number
+  time_id: number
+  name: string
+  description: string
+  user: string
+  hours: number
+  project_hours: number
+  percent: number
+  color?: string
 }
 
 class ProjectService extends DbService{
@@ -22,8 +34,8 @@ class ProjectService extends DbService{
     inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId}`)).rows
   }
   
-  async getProjectsDetail () {
-    return await this.client.query(`
+  async getProjectsDetail (): Promise<projectDetail[]> {
+    return (await this.client.query(`
     select
       p.id,
       u.id as time_id,
@@ -50,7 +62,7 @@ class ProjectService extends DbService{
       from project p
       inner join time t on t.project_id = p.id
       group by p.id) as ih on ih.project_id = p.id
-    `)
+    `)).rows
   }
 
   async createProject (ownerId: number, name: string, description: string, budget: number): Promise<number> {

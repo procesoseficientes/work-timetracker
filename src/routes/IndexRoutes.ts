@@ -56,7 +56,7 @@ class IndexRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.send((await this.timeService.stopTracking(req.body.id)).rows)
+        res.send(await this.timeService.stopTracking(req.body.id))
       }
     })
 
@@ -64,7 +64,7 @@ class IndexRoutes {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
-        res.send((await this.timeService.stopTracking(req.body.id)).rows)
+        res.send(await this.timeService.stopTracking(req.body.id))
       }
     })
   

@@ -53,11 +53,14 @@ class TypesRoutes {
 
   }
 
-  async typesView () {
+  async typesView (): Promise<{
+    title: string;
+    sidebar: string;
+    table: string;
+  }> {
     return {
       title: 'Timetracker - Types',
       sidebar: new sidebarComponent('/types').render(),
-      detailActive: true,
       table: new tableComponent(toTableArray(await this.typeService.getTypes())).render()
     }
   }
