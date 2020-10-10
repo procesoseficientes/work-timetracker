@@ -29,7 +29,6 @@ class StatsRoutes {
   async statsView (page: string): Promise<{
     title: string;
     sidebar: string;
-    statsActive: boolean;
     owners: owner[];
     projects: {
         id: number;
@@ -58,7 +57,6 @@ class StatsRoutes {
     return {
       title: 'Timetracker - Stats',
       sidebar: new sidebarComponent('/stats').render(),
-      statsActive: true,
       owners: await this.ownerService.getOwners(),
       projects: grouped,
       page: page

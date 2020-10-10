@@ -26,7 +26,6 @@ class TeamRoutes {
   async teamView(): Promise<{
     title: string
     sidebar: string
-    statsActive: boolean
     team: {
       id: number
       times: teamTime
@@ -55,7 +54,6 @@ class TeamRoutes {
     return {
       title: 'Timetracker - Team',
       sidebar: new sidebarComponent('/team').render(),
-      statsActive: true,
       team: grouped
     }
   }

@@ -56,13 +56,11 @@ class UsersRoutes {
   async usersView (): Promise<{
     title: string
     sidebar: string
-    detailActive: boolean
     table: string
   }> {
     return {
       title: 'Timetracker - Users',
       sidebar: new sidebarComponent('/users').render(),
-      detailActive: true,
       table: new tableComponent(toTableArray(await this.userService.getUsers())).render()
     }
   }

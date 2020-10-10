@@ -27,7 +27,6 @@ class DetailRoutes {
           res.render('detail', {
             title: 'Timetracker - Times',
             sidebar: new sidebarComponent('/detail').render(),
-            detailActive: true,
             times: data
               .slice(0, 26)
               .map(a => {

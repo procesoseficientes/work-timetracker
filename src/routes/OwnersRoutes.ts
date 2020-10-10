@@ -56,13 +56,11 @@ class OwnersRoutes {
   async ownersView (): Promise<{
     title: string;
     sidebar: string;
-    detailActive: boolean;
     table: string;
   }> {
     return {
       title: 'Timetracker - Owners',
       sidebar: new sidebarComponent('/owners').render(),
-      detailActive: true,
       table: new tableComponent(toTableArray(await this.ownerService.getOwners())).render()
     }
   }

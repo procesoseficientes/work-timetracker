@@ -68,14 +68,12 @@ class ProjectsRoutes {
   async projectsView (): Promise<{
     title: string;
     sidebar: string;
-    detailActive: boolean;
     table: string;
     owners: owner[];
   }> {
     return {
       title: 'Timetracker - Projects',
       sidebar: new sidebarComponent('/projects').render(),
-      detailActive: true,
       table: new tableComponent(toTableArray(await this.projectService.getProjects())).render(),
       owners: await this.ownerService.getOwners()
     }

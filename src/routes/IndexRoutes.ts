@@ -103,7 +103,6 @@ class IndexRoutes {
   
   async trackView(userId: number): Promise<{
     title: string;
-    trackActive: boolean;
     sidebar: string;
     owners: owner[];
     types: type[];
@@ -115,7 +114,6 @@ class IndexRoutes {
     const times = await this.timeService.getTodayUser(userId)
     return {
       title: 'Timetracker',
-      trackActive: true,
       sidebar: new sidebarComponent('/').render(),
       owners: await this.ownerService.getOwners(),
       types: await this.typeService.getTypes(),
