@@ -67,12 +67,12 @@ class IndexRoutes {
       }
     })
   
-    this.router.get('/api', async (req, res, _next) => {
+    this.router.get('/api', async (req, res) => {
       if (!req.session.user) {
         res.status(401).send('Unathorized')
       } else {
         try {
-          res.send((await this.timeService.getTodayUser(req.session.user)).rows)
+          res.send(await this.timeService.getTodayUser(req.session.user))
         } catch (error) {
           console.error(error)
           res.status(500).send(error)
@@ -101,7 +101,7 @@ class IndexRoutes {
   }
   
   async trackView(userId: number) {
-    const times = (await this.timeService.getTodayUser(userId)).rows
+    const times = await this.timeService.getTodayUser(userId)
     return {
       title: 'Timetracker',
       trackActive: true,

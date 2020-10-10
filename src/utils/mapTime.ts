@@ -1,4 +1,6 @@
-function mapTime(element: any, index: number) {
+import { userTime } from "../services/TimeService"
+
+function mapTime(element: userTime, index: number): userTime {
   const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
   const start = new Date(element.start).getTime()
   if (element.current) {

@@ -10,6 +10,19 @@ interface time {
   hours: string
 }
 
+export interface userTime {
+  user_id: string,
+  owner: string,
+  project: string,
+  task: string, 
+  start: string | number | Date,
+  end: string | number | Date,
+  current: boolean; 
+  hours: string | number,
+  percent: number; 
+  color: string
+}
+
 class TimeService extends DbService{
   async getTimes (
     name = '',
@@ -76,8 +89,8 @@ class TimeService extends DbService{
       and "end" is null`)
   }
 
-  async getTodayUser (userId: number) {
-    return await this.client.query(`
+  async getTodayUser (userId: number): Promise<userTime[]> {
+    return (await this.client.query(`
       select 
         user_id,
         o.name as "owner",
@@ -93,7 +106,7 @@ class TimeService extends DbService{
       where user_id = ${userId}
       and "start" > now() - interval '1 day'
       order by "start" desc
-    `)
+    `)).rows
   }
 
   async getTodayTeam() {
