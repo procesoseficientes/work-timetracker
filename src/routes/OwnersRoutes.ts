@@ -2,7 +2,7 @@ import express from 'express'
 import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 import OwnerService from '../services/OwnerService'
 
 class OwnersRoutes {
@@ -53,11 +53,14 @@ class OwnersRoutes {
 
   }
 
-  async ownersView () {
+  async ownersView (): Promise<{
+    title: string;
+    sidebar: string;
+    table: string;
+  }> {
     return {
       title: 'Timetracker - Owners',
-      pills: new pillsComponent('detail', '/owners').render(),
-      detailActive: true,
+      sidebar: new sidebarComponent('/owners').render(),
       table: new tableComponent(toTableArray(await this.ownerService.getOwners())).render()
     }
   }

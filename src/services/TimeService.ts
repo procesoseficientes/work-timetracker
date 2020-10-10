@@ -10,6 +10,32 @@ interface time {
   hours: string
 }
 
+export interface userTime {
+  user_id: string,
+  owner: string,
+  project: string,
+  task: string, 
+  start: string | number | Date,
+  end: string | number | Date,
+  current: boolean; 
+  hours: string | number,
+  percent: number; 
+  color: string
+}
+
+export interface teamTime {
+  time_id: number,
+  user_id: number,
+  name: string,
+  owner: string,
+  project: string,
+  task: string,
+  start: Date,
+  is_current: boolean,
+  hours: number,
+  percent: number
+}
+
 class TimeService extends DbService{
   async getTimes (
     name = '',
@@ -57,6 +83,7 @@ class TimeService extends DbService{
     task: string,
     typeId: number
   ): Promise<number> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any = (await this.client.query(`
     update "time" set "end" = CURRENT_TIMESTAMP
     where user_id = ${userId}
@@ -69,15 +96,15 @@ class TimeService extends DbService{
     return result[1].rows[0].id
   }
 
-  async stopTracking (userId: number) {
+  async stopTracking (userId: number): Promise<unknown> {
     return await this.client.query(`
       update "time" set "end" = CURRENT_TIMESTAMP
       where user_id = ${userId}
       and "end" is null`)
   }
 
-  async getTodayUser (userId: number) {
-    return await this.client.query(`
+  async getTodayUser (userId: number): Promise<userTime[]> {
+    return (await this.client.query(`
       select 
         user_id,
         o.name as "owner",
@@ -93,11 +120,11 @@ class TimeService extends DbService{
       where user_id = ${userId}
       and "start" > now() - interval '1 day'
       order by "start" desc
-    `)
+    `)).rows
   }
 
-  async getTodayTeam() {
-    return await this.client.query(`
+  async getTodayTeam(): Promise<teamTime[]> {
+    return (await this.client.query(`
       select 
         t.id as "time_id",
         user_id,
@@ -115,7 +142,7 @@ class TimeService extends DbService{
       inner join project p on project_id = p.id
       and "start" > now() - interval '1 day'
       order by "start" desc
-    `)
+    `)).rows
   }
 }
 

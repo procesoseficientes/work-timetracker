@@ -2,8 +2,8 @@ import express from 'express'
 import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
-import TimeService from '../services/TimeService'
-import { pillsComponent } from '../components/pills/pills'
+import TimeService, { teamTime } from '../services/TimeService'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 
 class TeamRoutes {
   timeService: TimeService
@@ -13,7 +13,7 @@ class TeamRoutes {
     this.timeService = new TimeService(pgClient)
     this.router = express.Router()
 
-    this.router.get('/', async (req, res, _next) => {
+    this.router.get('/', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
@@ -23,12 +23,23 @@ class TeamRoutes {
     })
   }
 
-  async teamView() {
-    const teamTimes = groupBy((await this.timeService.getTodayTeam()).rows, 'user_id')
+  async teamView(): Promise<{
+    title: string
+    sidebar: string
+    team: {
+      id: number
+      times: teamTime
+      task: string
+      name: string
+      project: string
+      owner: string
+    }[]
+}> {
+    const teamTimes = groupBy((await this.timeService.getTodayTeam()), 'user_id')
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),
-        times: teamTimes[a].filter((a: any) => a.percent > 0.5 || a.current)
+        times: teamTimes[a].filter((a: {percent: number, current: number}) => a.percent > 0.5 || a.current)
           .map(mapTime)
           .reverse(),
         task: teamTimes[a][0].task,
@@ -42,8 +53,7 @@ class TeamRoutes {
 
     return {
       title: 'Timetracker - Team',
-      pills: new pillsComponent('stats', '/team').render(),
-      statsActive: true,
+      sidebar: new sidebarComponent('/team').render(),
       team: grouped
     }
   }

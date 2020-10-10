@@ -1,7 +1,7 @@
 import express from 'express'
 import { Client } from 'pg'
 import toTableArray from '../utils/tableArray'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 import UserService from '../services/UserService'
 import { tableComponent } from '../components/table/table'
 
@@ -53,11 +53,14 @@ class UsersRoutes {
 
   }
 
-  async usersView () {
+  async usersView (): Promise<{
+    title: string
+    sidebar: string
+    table: string
+  }> {
     return {
       title: 'Timetracker - Users',
-      pills: new pillsComponent('detail', '/users').render(),
-      detailActive: true,
+      sidebar: new sidebarComponent('/users').render(),
       table: new tableComponent(toTableArray(await this.userService.getUsers())).render()
     }
   }

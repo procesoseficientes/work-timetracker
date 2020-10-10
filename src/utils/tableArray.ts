@@ -1,5 +1,6 @@
 import { tableInterface } from "../components/table/table"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toTableArray(data: any[]): tableInterface {
   const keys = data.length === 0 ? [] : Object.keys(data[0]).filter(a => a !== 'active' && a !== 'id' && a !== 'password')
   return {
