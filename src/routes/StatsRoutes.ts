@@ -1,10 +1,9 @@
 import express from 'express'
 import { groupBy } from '../utils/json'
-import createError from 'http-errors'
 import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
 import OwnerService from '../services/OwnerService'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 
 class StatsRoutes {
   router: express.Router
@@ -17,7 +16,7 @@ class StatsRoutes {
     this.projectService = new ProjectsService(pgClient)
     this.ownerService = new OwnerService(pgClient)
 
-    this.router.get('/', async (req, res, next) => {
+    this.router.get('/', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
@@ -45,7 +44,7 @@ class StatsRoutes {
     })
     return {
       title: 'Timetracker - Stats',
-      pills: new pillsComponent('stats', '/stats').render(),
+      sidebar: new sidebarComponent('/stats').render(),
       statsActive: true,
       owners: await this.ownerService.getOwners(),
       projects: grouped,

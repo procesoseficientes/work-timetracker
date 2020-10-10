@@ -1,6 +1,6 @@
 import express from 'express'
 import { Client } from 'pg'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 import TimeService from '../services/TimeService'
 
 class DetailRoutes {
@@ -11,7 +11,7 @@ class DetailRoutes {
     this.timeService = new TimeService(pgClient)
     this.router = express.Router()
 
-    this.router.get('/', (req, res, _next) => {
+    this.router.get('/', (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
@@ -26,7 +26,7 @@ class DetailRoutes {
         ).then(data => {
           res.render('detail', {
             title: 'Timetracker - Times',
-            pills: new pillsComponent('detail', '/detail').render(),
+            sidebar: new sidebarComponent('/detail').render(),
             detailActive: true,
             times: data
               .slice(0, 26)
@@ -41,7 +41,7 @@ class DetailRoutes {
               .map(a => a.hours)
               .reduce((a: any, b: any) => {
                 return a + (isNaN(parseFloat(b)) ? 0 : parseFloat(b))
-              }, 0),
+              }, 0).toFixed(2),
             page: req.query.page,
             showPrevious: parseInt(<string>req.query.page) > 0,
             showNext: data.length === 26,

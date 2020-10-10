@@ -1,10 +1,8 @@
 import express from 'express'
-import { groupBy } from '../utils/json'
-import createError from 'http-errors'
 import { Client } from 'pg'
 import ProjectsService from '../services/ProjectService'
 import OwnerService from '../services/OwnerService'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 
@@ -53,7 +51,7 @@ class ProjectsRoutes {
     })
   
 
-    this.router.get('/api', async (req, res, next) => {
+    this.router.get('/api', async (req, res) => {
       if (!req.session.user) {
         res.status(401).send('Unathorized')
       } else {
@@ -70,7 +68,7 @@ class ProjectsRoutes {
   async projectsView () {
     return {
       title: 'Timetracker - Projects',
-      pills: new pillsComponent('detail', '/projects').render(),
+      sidebar: new sidebarComponent('/projects').render(),
       detailActive: true,
       table: new tableComponent(toTableArray(await this.projectService.getProjects())).render(),
       owners: await this.ownerService.getOwners()

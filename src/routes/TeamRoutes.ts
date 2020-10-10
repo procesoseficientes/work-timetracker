@@ -3,7 +3,7 @@ import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
 import TimeService from '../services/TimeService'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 
 class TeamRoutes {
   timeService: TimeService
@@ -13,7 +13,7 @@ class TeamRoutes {
     this.timeService = new TimeService(pgClient)
     this.router = express.Router()
 
-    this.router.get('/', async (req, res, _next) => {
+    this.router.get('/', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
       } else {
@@ -42,7 +42,7 @@ class TeamRoutes {
 
     return {
       title: 'Timetracker - Team',
-      pills: new pillsComponent('stats', '/team').render(),
+      sidebar: new sidebarComponent('/team').render(),
       statsActive: true,
       team: grouped
     }

@@ -2,7 +2,7 @@ import express from 'express'
 import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
-import { pillsComponent } from '../components/pills/pills'
+import { sidebarComponent } from '../components/sidebar/sidebar'
 import TypeService from '../services/TypeService'
 
 class TypesRoutes {
@@ -56,7 +56,7 @@ class TypesRoutes {
   async typesView () {
     return {
       title: 'Timetracker - Types',
-      pills: new pillsComponent('detail', '/types').render(),
+      sidebar: new sidebarComponent('/types').render(),
       detailActive: true,
       table: new tableComponent(toTableArray(await this.typeService.getTypes())).render()
     }
