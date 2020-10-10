@@ -1,4 +1,4 @@
-import DbService from "./DbService";
+import DbService from "./DbService"
 
 interface project {
   id: number,

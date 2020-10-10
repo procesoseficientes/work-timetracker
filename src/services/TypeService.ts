@@ -1,6 +1,6 @@
-import DbService from "./DbService";
+import DbService from "./DbService"
 
-interface type {
+export interface type {
   id: number,
   name: string, 
   active: boolean

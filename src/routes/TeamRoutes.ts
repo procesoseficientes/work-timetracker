@@ -28,7 +28,7 @@ class TeamRoutes {
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),
-        times: teamTimes[a].filter((a: any) => a.percent > 0.5 || a.current)
+        times: teamTimes[a].filter((a: {percent: number, current: number}) => a.percent > 0.5 || a.current)
           .map(mapTime)
           .reverse(),
         task: teamTimes[a][0].task,

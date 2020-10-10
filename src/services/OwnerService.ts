@@ -1,6 +1,6 @@
-import DbService from "./DbService";
+import DbService from "./DbService"
 
-interface owner {
+export interface owner {
   id: number,
   name: string, 
   active: boolean

@@ -13,7 +13,7 @@ class LoginRoutes {
     this.router = express.Router()
 
     this.router.get('/', async (_req, res) => {
-      res.sendFile(path.join(__dirname + '/../views/login.html'));
+      res.sendFile(path.join(__dirname + '/../views/login.html'))
     })
 
     this.router.post('/', async (req, res) => {
@@ -26,7 +26,7 @@ class LoginRoutes {
         req.session.cookie.expires = false
         res.redirect('/')
       } else {
-        res.status(401).sendFile(path.join(__dirname + '/../views/login.html'));
+        res.status(401).sendFile(path.join(__dirname + '/../views/login.html'))
       }
     })
 
@@ -45,7 +45,7 @@ class LoginRoutes {
         req.session.cookie.expires = false
         res.status(200).send({success: true})
       } else {
-        res.status(401).sendFile('Unauthorized');
+        res.status(401).sendFile('Unauthorized')
       }
     })
 
