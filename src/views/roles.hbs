@@ -1,5 +1,5 @@
 <h2>
-  Owners
+  Roles
 
   <button onclick="toggleFilter()" type="button" class="btn btn-dark btn-sm">
     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -9,8 +9,13 @@
 </h2>
 <form method="POST" id="post" class="collapsible-content hiding hidden">
   <div class="form-group">
-    <label for="name">Owner name</label>
-    <input autocomplete="new-password" type="text" class="form-control" name="name" placeholder="Enter name">
+    <label for="role">Name</label>
+    <input autocomplete="new-password" type="text" class="form-control" name="role" placeholder="Enter role name">
+  </div>
+  
+  <div class="form-group">
+    <label for="username">Color</label>
+    <input type="color" class="form-control" name="color">
   </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
@@ -24,7 +29,6 @@
     {{#showNext}}<li class="page-item"><a class="page-link bg-dark text-light" href="#">Next</a></li>{{/showNext}}
   </ul>
 </nav>
-
 
 <script>
   function toggleFilter () {
