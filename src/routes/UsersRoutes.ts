@@ -61,7 +61,12 @@ class UsersRoutes {
     return {
       title: 'Timetracker - Users',
       sidebar: new sidebarComponent('/users').render(),
-      table: new tableComponent(toTableArray(await this.userService.getUsers())).render()
+      table: new tableComponent(
+        toTableArray(await this.userService.getUsers()), 
+        true, 
+        false,
+        './users'
+      ).render()
     }
   }
 }

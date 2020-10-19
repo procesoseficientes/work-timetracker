@@ -8,7 +8,17 @@ function toTableArray(data: any[]): tableInterface {
     rows: data.map(i => {
       return {
         id: i.id,
-        data: keys.map(a => i[a]),
+        data: keys.map(a => {
+          let val = i[a]
+          if (typeof val == 'boolean') {
+            val = `
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" disabled="" ${val ? 'checked': ''}>
+              <label class="custom-control-label"></label>
+            </div>`
+          }
+          return val
+        }),
         active: i.active
       }
     })

@@ -61,7 +61,12 @@ class TypesRoutes {
     return {
       title: 'Timetracker - Types',
       sidebar: new sidebarComponent('/types').render(),
-      table: new tableComponent(toTableArray(await this.typeService.getTypes())).render()
+      table: new tableComponent(
+        toTableArray(await this.typeService.getTypes()), 
+        true, 
+        false,
+        './types'
+      ).render()
     }
   }
 }

@@ -44,6 +44,24 @@ class RolesRoutes {
       }
     })
   
+    this.router.get('/:id', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.render('role', {
+          title: `Timetracker - Roles`,
+          sidebar: new sidebarComponent('/roles').render(),
+          role: await this.roleService.getRole(parseInt(req.params.id)),
+          table: new tableComponent(
+            toTableArray(await this.roleService.getAccessByRole(parseInt(req.params.id))), 
+            true, 
+            true,
+            `/roles/${req.params.id}`
+          ).render()
+        })
+      }
+    })
+
     this.router.get('/api', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')
@@ -62,7 +80,12 @@ class RolesRoutes {
     return {
       title: 'Timetracker - Roles',
       sidebar: new sidebarComponent('/roles').render(),
-      table: new tableComponent(toTableArray(await this.roleService.getRoles())).render()
+      table: new tableComponent(
+        toTableArray(await this.roleService.getRoles()), 
+        true, 
+        false,
+        './roles'
+      ).render()
     }
   }
 }
