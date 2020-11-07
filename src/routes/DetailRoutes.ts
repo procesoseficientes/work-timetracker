@@ -2,6 +2,8 @@ import express from 'express'
 import { Client } from 'pg'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TimeService from '../services/TimeService'
+import fs from 'fs'
+import { Parser } from 'json2csv'
 
 class DetailRoutes {
   timeService: TimeService
@@ -70,7 +72,44 @@ class DetailRoutes {
         )
       )
     })
+    
+    this.router.get('/excel', async (req, res)=>{
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        if (!req.query.page || req.query.page === '') req.query.page = '0'
+        this.timeService.getTimes(
+          <string>req.query.name, 
+          <string>req.query.owner,
+          <string>req.query.project,
+          <string>req.query.from === '' ? undefined : <string>req.query.from,
+          <string>req.query.to === '' ? undefined : <string>req.query.to,
+          0,
+          10000
+        ).then(data => {
+                    
+          const parser = new Parser();
+          const csv = parser.parse(data)
+
+          res.writeHead(200, {
+            'Content-Disposition': `attachment; filename="file.csv"`,
+            'Content-Type': 'text/csv',
+          })
+          res.end(csv)
+
+        }).catch(err => {
+          console.error(err)
+          res.status(500).render('detail', {
+            title: 'Timetracker - Times',
+            page: req.query.page,
+            times: []
+          })
+        })
+      }
+    })
   }
+
+    
 }
 
 export default DetailRoutes

@@ -61,7 +61,12 @@ class OwnersRoutes {
     return {
       title: 'Timetracker - Owners',
       sidebar: new sidebarComponent('/owners').render(),
-      table: new tableComponent(toTableArray(await this.ownerService.getOwners())).render()
+      table: new tableComponent(
+        toTableArray(await this.ownerService.getOwners()), 
+        true, 
+        false,
+        './owners'
+      ).render()
     }
   }
 }

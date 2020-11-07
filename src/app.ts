@@ -17,6 +17,7 @@ import DetailRoutes from './routes/DetailRoutes'
 import TeamRoutes from './routes/TeamRoutes'
 import { Client } from 'pg'
 import TypesRoutes from './routes/TypesRoutes'
+import RolesRoutes from './routes/RolesRoutes'
 
 const app = express()
 
@@ -39,9 +40,9 @@ app.use(session({
 
 const pgClient = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_SSL ? {
+  ssl: {
     rejectUnauthorized: false
-  } : false
+  }
 })
 pgClient.connect().catch((err) => {
   console.error(err)
@@ -56,6 +57,7 @@ app.use('/detail', new DetailRoutes(pgClient).router)
 app.use('/team', new TeamRoutes(pgClient).router)
 app.use('/projects', new ProjectsRoutes(pgClient).router)
 app.use('/types', new TypesRoutes(pgClient).router)
+app.use('/roles', new RolesRoutes(pgClient).router)
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

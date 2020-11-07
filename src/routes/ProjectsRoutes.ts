@@ -74,7 +74,12 @@ class ProjectsRoutes {
     return {
       title: 'Timetracker - Projects',
       sidebar: new sidebarComponent('/projects').render(),
-      table: new tableComponent(toTableArray(await this.projectService.getProjects())).render(),
+      table: new tableComponent(
+        toTableArray(await this.projectService.getProjects()), 
+        true, 
+        false,
+        './projects'
+      ).render(),
       owners: await this.ownerService.getOwners()
     }
   }

@@ -43,7 +43,8 @@ class TimeService extends DbService{
     project = '',
     from = '1970-01-01T00:00:00.000',
     to = new Date().toISOString().replace('Z', '+00'),
-    page = 0
+    page = 0,
+    limit = 26
   ): Promise<time[]> {
     return (await this.client.query(`
       select 
@@ -63,7 +64,7 @@ class TimeService extends DbService{
         and lower(p.name) like '%${project.toLowerCase()}%'
         and "start" between '${from}' and '${to}'
       order by "start" desc
-      limit 26
+      limit ${limit}
       offset ${page * 25}
     `)).rows.map(a => {
       a.start = new Date(a.start)
