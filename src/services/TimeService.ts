@@ -52,6 +52,7 @@ class TimeService extends DbService{
         o.name as "owner",
         p.name as project,
         task,
+        ty.type,
         "start",
         "end",
         ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2) as "hours"
@@ -59,6 +60,7 @@ class TimeService extends DbService{
       inner join owner o on o.id = owner_id
       inner join project p on p.id = project_id
       inner join "user" u on u.id = user_id 
+      left join type ty on ty.id = t.type_id
       where lower(u.name) like '%${name.toLowerCase()}%'
         and lower(o.name) like '%${owner.toLowerCase()}%'
         and lower(p.name) like '%${project.toLowerCase()}%'
