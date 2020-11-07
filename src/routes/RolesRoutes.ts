@@ -62,6 +62,21 @@ class RolesRoutes {
       }
     })
 
+    this.router.patch('/:id', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        if (req.query.role && req.query.color) {
+          this.roleService.updateRole(parseInt(req.params.id), req.body.role, req.body.color)
+          res.status(201).redirect(`/roles/${req.params.id}`)
+        }
+      }
+    })
+
+    this.router.get('/:id/:accessId', async (req, res) => {
+      res.redirect(`/access/${req.params.accessId}`)
+    })
+
     this.router.get('/api', async (req, res) => {
       if (!req.session.user) {
         res.status(401).redirect('/login')

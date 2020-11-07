@@ -5,6 +5,12 @@
     </svg>
   </a>
   {{role.name}} role
+
+  <button onclick="toggleFilter()" type="button" class="btn btn-dark btn-sm">
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+  </button>
 </h2>
 <form method="PATCH">
   <div class="form-group">
@@ -20,18 +26,33 @@
   <button type="submit" class="btn btn-primary">Update</button>
 </form>
 <br>
-<form method="POST" id="post" class="collapsible-content">
+<form method="POST" id="post" class="collapsible-content hiding hidden">
   <div class="form-group">
     <label for="role">Name</label>
     <input autocomplete="new-password" type="text" class="form-control" name="role" placeholder="Enter role name">
   </div>
   
-  <div class="form-group">
-    <label for="username">Color</label>
-    <input type="color" class="form-control" name="color">
+  <div style="display: flex; justify-content: space-around;">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="create" id="create">
+      <label class="custom-control-label" for="create">Create</label>
+    </div>
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="read" id="read">
+      <label class="custom-control-label" for="read">Read</label>
+    </div>
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="update" id="update">
+      <label class="custom-control-label" for="update">Update</label>
+    </div>
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" name="delete" id="delete">
+      <label class="custom-control-label" for="delete">Delete</label>
+    </div>
   </div>
+  <br>
 
-  <button type="submit" class="btn btn-primary">Update</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 {{{table}}}
@@ -44,6 +65,10 @@
 </nav>
 
 <script>
+  function toggleFilter () {
+    document.getElementById('post').classList.toggle('hidden')
+  }
+  
   function pagination (direction) {
     const newPage = parseInt($('#page').val()) + direction
     $('#page').val(newPage > 0 ? newPage : 0)

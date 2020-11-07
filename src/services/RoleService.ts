@@ -16,6 +16,10 @@ export class RoleService extends DbService{
     return (await this.client.query(`insert into role(name, active, color) values ('${name}', true, '${color}') returning id`)).rows[0].id
   }
 
+  async updateRole(roleId: number, name: string, color: string) {
+    
+  }
+
   async getRole(roleId: number): Promise<{
     id: number,
     name: string,
