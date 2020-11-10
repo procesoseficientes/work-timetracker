@@ -4,6 +4,7 @@ import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import OwnerService from '../services/OwnerService'
+import { Parser } from 'json2csv'
 
 class OwnersRoutes {
   router: express.Router
@@ -51,6 +52,33 @@ class OwnersRoutes {
       }
     })
 
+    this.router.get('/excel', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.status(200).send(await this.ownerService.getOwners()
+        .then(data => {
+                    
+          const parser = new Parser();
+          const csv = parser.parse(data)
+
+          res.writeHead(200, {
+            'Content-Disposition': `attachment; filename="Owners.csv"`,
+            'Content-Type': 'text/csv',
+          })
+          res.end(csv)
+
+        }).catch(err => {
+          console.error(err)
+          res.status(500).render('detail', {
+            title: 'Timetracker - Times',
+            page: req.query.page,
+            times: []
+          })
+        })
+        )
+      }
+    })
   }
 
   async ownersView (): Promise<{
