@@ -88,13 +88,14 @@ class DetailRoutes {
           10000
         ).then(data => {
                     
-          const parser = new Parser();
+          const parser = new Parser()
           const csv = parser.parse(data)
 
           res.writeHead(200, {
             'Content-Disposition': `attachment; filename="Times.csv"`,
             'Content-Type': 'text/csv',
           })
+          
           res.end(csv)
 
         }).catch(err => {

@@ -4,6 +4,7 @@ import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import UserService from '../services/UserService'
 import { tableComponent } from '../components/table/table'
+import { Parser } from 'json2csv'
 
 class UsersRoutes {
   userService: UserService
@@ -48,6 +49,35 @@ class UsersRoutes {
         res.status(401).redirect('/login')
       } else {
         res.status(200).send(await this.userService.getUsers())
+      }
+    })
+
+    this.router.get('/excel', async (req, res) => {
+      if (!req.session.user) {
+        res.status(401).redirect('/login')
+      } else {
+        res.status(200).send(await this.userService.getUsers()
+          .then(data=>{
+
+            const parser = new Parser()
+            const csv = parser.parse(data)
+
+            res.writeHead(200, {
+              'Content-Disposition': `attachment; filename="Users.csv"`,
+              'Content-Type': 'text/csv',
+            })
+            
+            res.end(csv)
+
+          }).catch(err =>{
+            console.error(err)
+            res.status(500).render('detail', {
+              title: 'Timetracker - Times',
+              page: req.query.page,
+              times: []
+          })
+          })
+        )
       }
     })
 
