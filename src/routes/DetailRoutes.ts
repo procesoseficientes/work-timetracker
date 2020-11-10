@@ -92,7 +92,7 @@ class DetailRoutes {
           const csv = parser.parse(data)
 
           res.writeHead(200, {
-            'Content-Disposition': `attachment; filename="file.csv"`,
+            'Content-Disposition': `attachment; filename="Times.csv"`,
             'Content-Type': 'text/csv',
           })
           res.end(csv)
