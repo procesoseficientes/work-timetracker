@@ -66,34 +66,30 @@ class ProjectsRoutes {
     })
   
     this.router.get('/excel', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
+      if (req.query.ownerId != null) {
+        const id: number = isNaN(parseInt(<string>req.query.ownerId)) ? 1 : parseInt(<string>req.query.ownerId)
+        res.send(await this.projectService.getProjectsByOwner(id))
       } else {
-        if (req.query.ownerId != null) {
-          const id: number = isNaN(parseInt(<string>req.query.ownerId)) ? 1 : parseInt(<string>req.query.ownerId)
-          res.send(await this.projectService.getProjectsByOwner(id))
-        } else {
-          res.send(await this.projectService.getProjects()
-          .then(data =>{
-            
-            const parser = new Parser();
-            const csv = parser.parse(data)
+        res.send(await this.projectService.getProjects()
+        .then(data =>{
+          
+          const parser = new Parser();
+          const csv = parser.parse(data)
 
-            res.writeHead(200, {
-              'Content-Disposition': `attachment; filename="projects.csv"`,
-              'Content-Type': 'text/csv',
-            })
-            res.end(csv)
-          }).catch(err => {
-            console.error(err)
-            res.status(500).render('detail', {
-              title: 'Timetracker - Times',
-              page: req.query.page,
-              times: []
-            })
+          res.writeHead(200, {
+            'Content-Disposition': `attachment; filename="projects.csv"`,
+            'Content-Type': 'text/csv',
           })
-          )
-        }
+          res.end(csv)
+        }).catch(err => {
+          console.error(err)
+          res.status(500).render('detail', {
+            title: 'Timetracker - Times',
+            page: req.query.page,
+            times: []
+          })
+        })
+        )
       }
     })
   }
