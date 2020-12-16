@@ -1,4 +1,4 @@
-import express from 'express'
+import { Router } from 'express'
 import { Client } from 'pg'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
@@ -6,99 +6,86 @@ import UserService from '../services/UserService'
 import { tableComponent } from '../components/table/table'
 import { Parser } from 'json2csv'
 
-class UsersRoutes {
-  userService: UserService
-  router: express.Router
-  constructor (pgClient: Client) {
-    this.userService = new UserService(pgClient)
-    this.router = express.Router()
+export function UsersRoutes(pgClient: Client): Router {
+  const userService = new UserService(pgClient)
+  const router = Router()
 
-    this.router.get('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.render('users', await this.usersView())
-      }
-    })
-
-    this.router.post('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (
-          req.body.name &&
-          req.body.username && 
-          req.body.password
-        ) {
-          try {
-            this.userService.createUser(req.body.name, req.body.username, req.body.password)
-            res.status(201).redirect('/users')
-          } catch (error) {
-            console.error(error)
-            res.status(500).redirect('/users')
-          }
-        } else {
-          console.error('Insufficient parameters for request')
-          res.status(401).redirect('/users')
-        }
-      }
-    })
-  
-    this.router.get('/api', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.userService.getUsers())
-      }
-    })
-
-    this.router.get('/excel', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.userService.getUsers()
-          .then(data=>{
-
-            const parser = new Parser()
-            const csv = parser.parse(data)
-
-            res.writeHead(200, {
-              'Content-Disposition': `attachment; filename="Users.csv"`,
-              'Content-Type': 'text/csv',
-            })
-            
-            res.end(csv)
-
-          }).catch(err =>{
-            console.error(err)
-            res.status(500).render('detail', {
-              title: 'Timetracker - Times',
-              page: req.query.page,
-              times: []
-          })
-          })
-        )
-      }
-    })
-
-  }
-
-  async usersView (): Promise<{
-    title: string
-    sidebar: string
-    table: string
-  }> {
-    return {
-      title: 'Timetracker - Users',
-      sidebar: new sidebarComponent('/users').render(),
-      table: new tableComponent(
-        toTableArray(await this.userService.getUsers()), 
-        true, 
-        false,
-        './users'
-      ).render()
+  router.get('/', async (req, res) => {
+    if (!req.session.user) {
+      res.status(401).redirect('/login')
+    } else {
+      res.render('users', {
+        title: 'Timetracker - Users',
+        sidebar: new sidebarComponent('/users').render(),
+        table: new tableComponent(
+          toTableArray(await userService.getUsers()), 
+          true, 
+          false,
+          './users'
+        ).render()
+      })
     }
-  }
-}
+  })
 
-export default UsersRoutes
+  router.post('/', async (req, res) => {
+    if (!req.session.user) {
+      res.status(401).redirect('/login')
+    } else {
+      if (
+        req.body.name &&
+        req.body.username && 
+        req.body.password
+      ) {
+        try {
+          userService.createUser(req.body.name, req.body.username, req.body.password)
+          res.status(201).redirect('/users')
+        } catch (error) {
+          console.error(error)
+          res.status(500).redirect('/users')
+        }
+      } else {
+        console.error('Insufficient parameters for request')
+        res.status(401).redirect('/users')
+      }
+    }
+  })
+
+  router.get('/api', async (req, res) => {
+    if (!req.session.user) {
+      res.status(401).redirect('/login')
+    } else {
+      res.status(200).send(await userService.getUsers())
+    }
+  })
+
+  router.get('/excel', async (req, res) => {
+    if (!req.session.user) {
+      res.status(401).redirect('/login')
+    } else {
+      res.status(200).send(await userService.getUsers()
+        .then(data=>{
+
+          const parser = new Parser()
+          const csv = parser.parse(data)
+
+          res.writeHead(200, {
+            'Content-Disposition': `attachment; filename="Users.csv"`,
+            'Content-Type': 'text/csv',
+          })
+          
+          res.end(csv)
+
+        }).catch(err =>{
+          console.error(err)
+          res.status(500).render('detail', {
+            title: 'Timetracker - Times',
+            page: req.query.page,
+            times: []
+        })
+        })
+      )
+    }
+  })
+
+  return router
+}
