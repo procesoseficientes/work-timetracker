@@ -2,13 +2,16 @@ import { Router } from 'express'
 import path from 'path'
 import { Client } from 'pg'
 import UserService from '../services/UserService'
+import fs from 'fs'
+import mustache from 'mustache'
 
 export function LoginRoutes (pgClient: Client): Router {
   const userService: UserService = new UserService(pgClient)
   const router: Router = Router()
+  const template = fs.readFileSync(path.join(__dirname, '/../views/login.html'), 'utf8')
   
   router.get('/', async (_req, res) => {
-    res.sendFile(path.join(__dirname + '/../views/login.html'))
+    res.send(mustache.render(template, {}))
   })
   
   router.post('/', async (req, res) => {
@@ -21,7 +24,7 @@ export function LoginRoutes (pgClient: Client): Router {
       req.session.cookie.expires = false
       res.redirect('/')
     } else {
-      res.status(401).sendFile(path.join(__dirname + '/../views/login.html'))
+      res.send(mustache.render(template, {error: 'The username and password that you entered did not match our records. Please double-check and try again.'}))
     }
   })
   
