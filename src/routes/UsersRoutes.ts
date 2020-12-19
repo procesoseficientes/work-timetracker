@@ -2,17 +2,19 @@ import { Router } from 'express'
 import { Client } from 'pg'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import UserService from '../services/UserService'
+import { UserService } from '../services/UserService'
 import { tableComponent } from '../components/table/table'
 import { Parser } from 'json2csv'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
+import { RoleService } from '../services/RoleService'
 
 export function UsersRoutes(pgClient: Client): Router {
   const userService = new UserService(pgClient)
+  const roleService = new RoleService(pgClient)
   const router = Router()
 
-  router.get('/', authenticated ,async (_req, res) => {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
     res.render('users', {
       title: 'Timetracker - Users',
       sidebar: new sidebarComponent('/users').render(),
@@ -25,7 +27,7 @@ export function UsersRoutes(pgClient: Client): Router {
     })
   })
 
-  router.post('/', validateBody(body => 
+  router.post('/', hasAccess('create', roleService), validateBody(body => 
     body.name != null && body.username != null && body.password != null
   ), async (req, res) => {
     try {
@@ -37,13 +39,13 @@ export function UsersRoutes(pgClient: Client): Router {
     }
   })
 
-  router.get('/api', authenticated, (_req, res, next) => {
+  router.get('/api', hasAccess('read', roleService), (_req, res, next) => {
     userService.getUsers()
     .then(data => res.status(200).send(data))
     .catch(err => next(err))
   })
 
-  router.get('/excel', authenticated ,async (_req, res, next) => {
+  router.get('/excel', hasAccess('read', roleService) ,async (_req, res, next) => {
     userService.getUsers().then(data=>{
       const parser = new Parser()
       const csv = parser.parse(data)

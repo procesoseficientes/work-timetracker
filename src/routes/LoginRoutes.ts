@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import path from 'path'
 import { Client } from 'pg'
-import UserService from '../services/UserService'
+import { UserService } from '../services/UserService'
 import fs from 'fs'
 import mustache from 'mustache'
 

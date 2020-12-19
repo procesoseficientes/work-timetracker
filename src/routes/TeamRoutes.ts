@@ -4,13 +4,15 @@ import { groupBy } from '../utils/json'
 import { Client } from 'pg'
 import TimeService, { teamTime } from '../services/TimeService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
+import { RoleService } from '../services/RoleService'
 
 export function TeamRoutes (pgClient: Client): Router {
   const timeService = new TimeService(pgClient)
   const router = Router()
+  const roleService = new RoleService(pgClient)
 
-  router.get('/', authenticated, async (_req, res, next) => {
+  router.get('/', hasAccess('read', roleService), async (_req, res, next) => {
     teamView()
     .then(data => {
       res.render('team', data)

@@ -10,7 +10,7 @@ export interface user {
   role_id: number
 }
 
-class UserService extends DbService{
+export class UserService extends DbService{
   async getUsers (): Promise<user[]> {
     return (await this.client.query(`
     select 
@@ -47,5 +47,3 @@ class UserService extends DbService{
     return (await this.client.query(`insert into "user"(name, username, password, active) values ('${name}', '${username}', '${password}', true) returning id`)).rows[0].id
   }
 }
-
-export default UserService

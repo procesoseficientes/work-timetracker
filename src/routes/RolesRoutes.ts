@@ -4,14 +4,14 @@ import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { RoleService } from '../services/RoleService'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
 import { validateBody, validateQuery } from '../utils/validateQuery'
 
 export function RolesRoutes (pgClient: Client): Router {
   const router = Router()
   const roleService = new RoleService(pgClient)
 
-  router.get('/', authenticated, async (_req, res) => {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
     res.render('roles/roles', {
       title: 'Timetracker - Roles',
       sidebar: new sidebarComponent('/roles').render(),
@@ -26,7 +26,7 @@ export function RolesRoutes (pgClient: Client): Router {
 
   router.post(
     '/', 
-    authenticated, 
+    hasAccess('create', roleService), 
     validateBody(body => (
       body.role != null &&
       body.color != null
@@ -41,7 +41,7 @@ export function RolesRoutes (pgClient: Client): Router {
     }
   )
 
-  router.get('/api', authenticated, async (_req, res, next) => {
+  router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
     roleService.getRoles()
     .then(data => {
       res.status(200).send(data)
@@ -49,7 +49,7 @@ export function RolesRoutes (pgClient: Client): Router {
     .catch(err => next(err))
   })
 
-  router.get('/:id', authenticated, async (req, res) => {
+  router.get('/:id', hasAccess('read', roleService), async (req, res) => {
     res.render('roles/role', {
       title: `Timetracker - Roles`,
       sidebar: new sidebarComponent('/roles').render(),
@@ -63,12 +63,12 @@ export function RolesRoutes (pgClient: Client): Router {
     })
   })
 
-  router.patch('/:id', authenticated, validateQuery(['role', 'color']), async (req, res) => {
+  router.patch('/:id', hasAccess('update', roleService), validateQuery(['role', 'color']), async (req, res) => {
     roleService.updateRole(parseInt(req.params.id), req.body.role, req.body.color)
     res.status(201).redirect(`/roles/${req.params.id}`)
   })
 
-  router.get('/:id/:accessId', async (req, res) => {
+  router.get('/:id/:accessId', hasAccess('read', roleService) , async (req, res) => {
     res.redirect(`/access/${req.params.accessId}`)
   })
 

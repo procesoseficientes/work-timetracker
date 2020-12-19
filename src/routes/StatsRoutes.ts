@@ -4,15 +4,17 @@ import { Client } from 'pg'
 import ProjectsService, { projectDetail } from '../services/ProjectService'
 import OwnerService, { owner } from '../services/OwnerService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
+import { RoleService } from '../services/RoleService'
 
 export function StatsRoutes (pgClient: Client): Router {
   const router = Router()
   const projectService = new ProjectsService(pgClient)
   const ownerService = new OwnerService(pgClient)
+  const roleService = new RoleService(pgClient)
   const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
-  router.get('/', authenticated ,async (req, res) => {
+  router.get('/', hasAccess('read', roleService) ,async (req, res) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     res.render('stats', await statsView(<string>req.query.page))
   })

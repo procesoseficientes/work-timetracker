@@ -4,14 +4,16 @@ import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TypeService from '../services/TypeService'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
+import { RoleService } from '../services/RoleService'
 
 export function TypesRoutes (pgClient: Client): Router {
   const router = Router()
   const typeService = new TypeService(pgClient)
+  const roleService = new RoleService(pgClient)
 
-  router.get('/', authenticated, async (_req, res) => {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
     res.render('types', {
       title: 'Timetracker - Types',
       sidebar: new sidebarComponent('/types').render(),
@@ -24,7 +26,7 @@ export function TypesRoutes (pgClient: Client): Router {
     })
   })
 
-  router.post('/', authenticated, validateBody(body => body.type != null), async (req, res, next) => {
+  router.post('/', hasAccess('create', roleService), validateBody(body => body.type != null), async (req, res, next) => {
     typeService.createType(req.body.type)
     .then(data => {
       console.log(data)
@@ -33,7 +35,7 @@ export function TypesRoutes (pgClient: Client): Router {
     .catch(err => next(err))
   })
 
-  router.get('/api', authenticated, async (_req, res, next) => {
+  router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
     typeService.getTypes()
     .then(data => res.status(200).send(data))
     .catch(err => next(err))
