@@ -68,7 +68,8 @@ app.use((err: {message: string, status: number}, req: express.Request, res: expr
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  console.log(err)
+  res.render('error', {message: err.message, status: err.status})
 })
 
 export default app

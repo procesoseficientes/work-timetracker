@@ -8,6 +8,10 @@ export interface role {
 }
 
 export class RoleService extends DbService{
+  updateRole(arg0: number, role: string, color: string): void {
+    console.log(arg0, role, color)
+    throw new Error('Method not implemented.')
+  }
   async getRoles (): Promise<role[]> {
     return (await this.client.query('select * from role order by id desc')).rows
   }
@@ -16,9 +20,9 @@ export class RoleService extends DbService{
     return (await this.client.query(`insert into role(name, active, color) values ('${name}', true, '${color}') returning id`)).rows[0].id
   }
 
-  async updateRole(roleId: number, name: string, color: string) {
+  /*async updateRole(roleId: number, name: string, color: string) {
     
-  }
+  }*/
 
   async getRole(roleId: number): Promise<{
     id: number,

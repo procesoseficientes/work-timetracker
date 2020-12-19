@@ -4,6 +4,7 @@ import { Client } from 'pg'
 import ProjectsService, { projectDetail } from '../services/ProjectService'
 import OwnerService, { owner } from '../services/OwnerService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
+import { authenticated } from '../utils/auth'
 
 export function StatsRoutes (pgClient: Client): Router {
   const router = Router()
@@ -11,13 +12,9 @@ export function StatsRoutes (pgClient: Client): Router {
   const ownerService = new OwnerService(pgClient)
   const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']
 
-  router.get('/', async (req, res) => {
-    if (!req.session.user) {
-      res.status(401).redirect('/login')
-    } else {
-      if (!req.query.page || req.query.page === '') req.query.page = '0'
-      res.render('stats', await statsView(<string>req.query.page))
-    }
+  router.get('/', authenticated ,async (req, res) => {
+    if (!req.query.page || req.query.page === '') req.query.page = '0'
+    res.render('stats', await statsView(<string>req.query.page))
   })
 
   async function statsView (page: string): Promise<{
