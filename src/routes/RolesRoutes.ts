@@ -26,7 +26,7 @@ export function RolesRoutes (pgClient: Client): Router {
 
   router.post(
     '/', 
-    //authenticated, 
+    authenticated, 
     validateBody(body => (
       body.role != null &&
       body.color != null
@@ -40,6 +40,14 @@ export function RolesRoutes (pgClient: Client): Router {
       .catch(err => next(err))
     }
   )
+
+  router.get('/api', authenticated, async (_req, res, next) => {
+    roleService.getRoles()
+    .then(data => {
+      res.status(200).send(data)
+    })
+    .catch(err => next(err))
+  })
 
   router.get('/:id', authenticated, async (req, res) => {
     res.render('roles/role', {
@@ -62,14 +70,6 @@ export function RolesRoutes (pgClient: Client): Router {
 
   router.get('/:id/:accessId', async (req, res) => {
     res.redirect(`/access/${req.params.accessId}`)
-  })
-
-  router.get('/api', authenticated, async (_req, res, next) => {
-    roleService.getRoles()
-    .then(data => {
-      res.status(200).send(data)
-    })
-    .catch(err => next(err))
   })
 
   return router

@@ -14,18 +14,21 @@ export function LoginRoutes (pgClient: Client): Router {
     res.send(mustache.render(template, {}))
   })
   
-  router.post('/', async (req, res) => {
-    const result = await userService.validateLogin(req.body.username, req.body.password)
-    if (result && typeof result !== 'boolean') {
-      if (req.session) {
-        req.session.user = result.id
-        req.session.roleId = result.role
-        req.session.cookie.expires = false
+  router.post('/', async (req, res, next) => {
+    userService.validateLogin(req.body.username, req.body.password)
+    .then(result => {
+      if (result && typeof result !== 'boolean') {
+        if (req.session) {
+          req.session.user = result.id
+          req.session.roleId = result.role_id
+          req.session.cookie.expires = false
+        }
+        res.redirect('/')
+      } else {
+        res.send(mustache.render(template, {error: 'The username and password that you entered did not match our records. Please double-check and try again.'}))
       }
-      res.redirect('/')
-    } else {
-      res.send(mustache.render(template, {error: 'The username and password that you entered did not match our records. Please double-check and try again.'}))
-    }
+    })
+    .catch(err => next(err))
   })
   
   router.get('/signout', async (req, res) => {
@@ -38,7 +41,7 @@ export function LoginRoutes (pgClient: Client): Router {
     if (result && typeof result !== 'boolean') {
       if (req.session) {
         req.session.user = result.id
-        req.session.roleId = result.role
+        req.session.roleId = result.role_id
         req.session.cookie.expires = false
       }
       res.status(200).send({success: true})

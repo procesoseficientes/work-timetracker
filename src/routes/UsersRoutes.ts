@@ -6,7 +6,7 @@ import UserService from '../services/UserService'
 import { tableComponent } from '../components/table/table'
 import { Parser } from 'json2csv'
 import { authenticated } from '../utils/auth'
-import { validateQuery } from '../utils/validateQuery'
+import { validateBody } from '../utils/validateQuery'
 
 export function UsersRoutes(pgClient: Client): Router {
   const userService = new UserService(pgClient)
@@ -25,7 +25,9 @@ export function UsersRoutes(pgClient: Client): Router {
     })
   })
 
-  router.post('/', validateQuery(['name', 'username', 'password']), async (req, res) => {
+  router.post('/', validateBody(body => 
+    body.name != null && body.username != null && body.password != null
+  ), async (req, res) => {
     try {
       userService.createUser(req.body.name, req.body.username, req.body.password)
       res.status(201).redirect('/users')

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { RoleService } from '../services/RoleService'
+import createError from 'http-errors'
 
 /**
  * Middleware to validate user session
@@ -25,23 +26,30 @@ export function denyAll(_req: Request, res: Response): void {
   res.status(401).redirect('/login')
 }
 
+enum accessType {
+  create = 'create',
+  read = 'read',
+  update = 'update',
+  delete = 'delete'
+}
+
 /**
  * Middleware to only allow access to a certain accessType
  * @param accessType The authority to require and allow access 
  * @param roleService RoleService to access role information
  */
-export function hasAccess(accessType: string, roleService: RoleService) {
+export function hasAccess(access: keyof typeof accessType, roleService: RoleService) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (req.session?.roleId) {
-      roleService.getRole(req.session.roleId)
-      .then(role => {
-        if (role.name === accessType) {
+      roleService.getAccessByRole(req.session.roleId)
+      .then(accesses => {
+        const route = `/${req.originalUrl.split('/')[1]}`
+        const routeAccess: any = accesses.find(a => a.route === route)
+        console.log(route, routeAccess)
+        if (routeAccess && routeAccess[access] == true) {
           next()
         } else {
-          next({
-            message: 'Access Forbidden',
-            status: '401'
-          })
+          next(createError(403, 'Access Forbidden'))
         }
       }).catch(err => next(err))
     } else {

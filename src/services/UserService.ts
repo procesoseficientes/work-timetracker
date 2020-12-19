@@ -6,7 +6,8 @@ export interface user {
   password: string,
   id: number,
   active: boolean,
-  role: number
+  role: string,
+  role_id: number
 }
 
 class UserService extends DbService{
@@ -17,7 +18,8 @@ class UserService extends DbService{
       u.name, 
       u.username, 
       u.active, 
-      r.name as "role"
+      r.name as "role",
+      u.role_id
     from public."user" u
     inner join role r on r.id = u.role_id`)).rows
   }
@@ -30,8 +32,10 @@ class UserService extends DbService{
           u.name, 
           u.username, 
           u.active, 
-          u.role_id as "role"
+          r.name as "role",
+          u.role_id
         from public."user" u
+        inner join role r on r.id = u.role_id
         where username='${sqlString(username)}' and password='${sqlString(password)}'
       `)
       .then(data => data.rowCount > 0 ? resolve(<user>data.rows[0]) : resolve(false))

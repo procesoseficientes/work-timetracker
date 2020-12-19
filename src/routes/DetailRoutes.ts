@@ -3,13 +3,15 @@ import { Client } from 'pg'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TimeService from '../services/TimeService'
 import { Parser } from 'json2csv'
-import { authenticated } from '../utils/auth'
+import { authenticated, hasAccess } from '../utils/auth'
+import { RoleService } from '../services/RoleService'
 
 export function DetailRoutes(pgClient: Client): Router {
   const router: Router = Router()
   const timeService = new TimeService(pgClient)
+  const roleService = new RoleService(pgClient)
 
-  router.get('/', authenticated, (req, res) => {
+  router.get('/', hasAccess('read', roleService), (req, res) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     timeService.getTimes(
       <string>req.query.name, 
