@@ -1,108 +1,76 @@
-import express from 'express'
+import { Router } from 'express'
 import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { RoleService } from '../services/RoleService'
+import { hasAccess } from '../utils/auth'
+import { validateBody, validateQuery } from '../utils/validateQuery'
 
-class RolesRoutes {
-  router: express.Router
-  pgClient: Client
-  roleService: RoleService
-  
-  constructor (pgClient: Client) {
-    this.router = express.Router()
-    this.roleService = new RoleService(pgClient)
+export function RolesRoutes (pgClient: Client): Router {
+  const router = Router()
+  const roleService = new RoleService(pgClient)
 
-    this.router.get('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.render('roles', await this.rolesView())
-      }
-    })
-
-    this.router.post('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (
-          req.body.role &&
-          req.body.color
-        ) {
-          try {
-            this.roleService.createRole(req.body.role, req.body.color)
-            res.status(201).redirect('/roles')
-          } catch (error) {
-            console.error(error)
-            res.status(500).redirect('/roles')
-          }
-        } else {
-          console.error('Insufficient parameters for request')
-          res.status(401).redirect('/roles')
-        }
-      }
-    })
-  
-    this.router.get('/:id', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.render('role', {
-          title: `Timetracker - Roles`,
-          sidebar: new sidebarComponent('/roles').render(),
-          role: await this.roleService.getRole(parseInt(req.params.id)),
-          table: new tableComponent(
-            toTableArray(await this.roleService.getAccessByRole(parseInt(req.params.id))), 
-            true, 
-            true,
-            `/roles/${req.params.id}`
-          ).render()
-        })
-      }
-    })
-
-    this.router.patch('/:id', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (req.query.role && req.query.color) {
-          this.roleService.updateRole(parseInt(req.params.id), req.body.role, req.body.color)
-          res.status(201).redirect(`/roles/${req.params.id}`)
-        }
-      }
-    })
-
-    this.router.get('/:id/:accessId', async (req, res) => {
-      res.redirect(`/access/${req.params.accessId}`)
-    })
-
-    this.router.get('/api', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.roleService.getRoles())
-      }
-    })
-
-  }
-
-  async rolesView (): Promise<{
-    title: string;
-    sidebar: string;
-    table: string;
-  }> {
-    return {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
+    res.render('roles/roles', {
       title: 'Timetracker - Roles',
       sidebar: new sidebarComponent('/roles').render(),
       table: new tableComponent(
-        toTableArray(await this.roleService.getRoles()), 
+        toTableArray(await roleService.getRoles()), 
         true, 
         false,
         './roles'
       ).render()
-    }
-  }
-}
+    })
+  })
 
-export default RolesRoutes
+  router.post(
+    '/', 
+    hasAccess('create', roleService), 
+    validateBody(body => (
+      body.role != null &&
+      body.color != null
+    )),
+    async (req, res, next) => {
+      roleService.createRole(req.body.role, req.body.color)
+      .then(data => {
+        console.log(data)
+        res.status(201).redirect('/roles')
+      })
+      .catch(err => next(err))
+    }
+  )
+
+  router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
+    roleService.getRoles()
+    .then(data => {
+      res.status(200).send(data)
+    })
+    .catch(err => next(err))
+  })
+
+  router.get('/:id', hasAccess('read', roleService), async (req, res) => {
+    res.render('roles/role', {
+      title: `Timetracker - Roles`,
+      sidebar: new sidebarComponent('/roles').render(),
+      role: await roleService.getRole(parseInt(req.params.id)),
+      table: new tableComponent(
+        toTableArray(await roleService.getAccessByRole(parseInt(req.params.id))), 
+        true, 
+        true,
+        `/roles/${req.params.id}`
+      ).render()
+    })
+  })
+
+  router.patch('/:id', hasAccess('update', roleService), validateQuery(['role', 'color']), async (req, res) => {
+    roleService.updateRole(parseInt(req.params.id), req.body.role, req.body.color)
+    res.status(201).redirect(`/roles/${req.params.id}`)
+  })
+
+  router.get('/:id/:accessId', hasAccess('read', roleService) , async (req, res) => {
+    res.redirect(`/access/${req.params.accessId}`)
+  })
+
+  return router
+}

@@ -1,74 +1,45 @@
-import express from 'express'
+import { Router } from 'express'
 import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TypeService from '../services/TypeService'
+import { hasAccess } from '../utils/auth'
+import { validateBody } from '../utils/validateQuery'
+import { RoleService } from '../services/RoleService'
 
-class TypesRoutes {
-  router: express.Router
-  pgClient: Client
-  typeService: TypeService
-  
-  constructor (pgClient: Client) {
-    this.router = express.Router()
-    this.typeService = new TypeService(pgClient)
+export function TypesRoutes (pgClient: Client): Router {
+  const router = Router()
+  const typeService = new TypeService(pgClient)
+  const roleService = new RoleService(pgClient)
 
-    this.router.get('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.render('types', await this.typesView())
-      }
-    })
-
-    this.router.post('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (
-          req.body.type
-        ) {
-          try {
-            this.typeService.createType(req.body.type)
-            res.status(201).redirect('/types')
-          } catch (error) {
-            console.error(error)
-            res.status(500).redirect('/types')
-          }
-        } else {
-          console.error('Insufficient parameters for request')
-          res.status(401).redirect('/types')
-        }
-      }
-    })
-  
-    this.router.get('/api', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.typeService.getTypes())
-      }
-    })
-
-  }
-
-  async typesView (): Promise<{
-    title: string;
-    sidebar: string;
-    table: string;
-  }> {
-    return {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
+    res.render('types', {
       title: 'Timetracker - Types',
       sidebar: new sidebarComponent('/types').render(),
       table: new tableComponent(
-        toTableArray(await this.typeService.getTypes()), 
+        toTableArray(await typeService.getTypes()), 
         true, 
         false,
         './types'
       ).render()
-    }
-  }
-}
+    })
+  })
 
-export default TypesRoutes
+  router.post('/', hasAccess('create', roleService), validateBody(body => body.type != null), async (req, res, next) => {
+    typeService.createType(req.body.type)
+    .then(data => {
+      console.log(data)
+      res.status(201).redirect('/types')
+    })
+    .catch(err => next(err))
+  })
+
+  router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
+    typeService.getTypes()
+    .then(data => res.status(200).send(data))
+    .catch(err => next(err))
+  })
+
+  return router
+}

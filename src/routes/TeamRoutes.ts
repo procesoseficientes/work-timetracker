@@ -1,29 +1,26 @@
-import express from 'express'
+import { Router } from 'express'
 import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
 import TimeService, { teamTime } from '../services/TimeService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
+import { hasAccess } from '../utils/auth'
+import { RoleService } from '../services/RoleService'
 
-class TeamRoutes {
-  timeService: TimeService
-  router: express.Router
+export function TeamRoutes (pgClient: Client): Router {
+  const timeService = new TimeService(pgClient)
+  const router = Router()
+  const roleService = new RoleService(pgClient)
 
-  constructor (pgClient: Client) {
-    this.timeService = new TimeService(pgClient)
-    this.router = express.Router()
-
-    this.router.get('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        const view = await this.teamView()
-        res.render('team', view)
-      }
+  router.get('/', hasAccess('read', roleService), async (_req, res, next) => {
+    teamView()
+    .then(data => {
+      res.render('team', data)
     })
-  }
+    .catch(err => next(err))
+  })
 
-  async teamView(): Promise<{
+  async function teamView(): Promise<{
     title: string
     sidebar: string
     team: {
@@ -35,7 +32,7 @@ class TeamRoutes {
       owner: string
     }[]
 }> {
-    const teamTimes = groupBy((await this.timeService.getTodayTeam()), 'user_id')
+    const teamTimes = groupBy((await timeService.getTodayTeam()), 'user_id')
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),
@@ -57,6 +54,6 @@ class TeamRoutes {
       team: grouped
     }
   }
-}
 
-export default TeamRoutes
+  return router
+}
