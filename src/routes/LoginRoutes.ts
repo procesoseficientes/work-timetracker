@@ -8,7 +8,7 @@ import mustache from 'mustache'
 export function LoginRoutes (pgClient: Client): Router {
   const userService: UserService = new UserService(pgClient)
   const router: Router = Router()
-  const template = fs.readFileSync(path.join(__dirname, '/../views/login.html'), 'utf8')
+  const template = fs.readFileSync(path.join(__dirname, '/../views/login.hbs'), 'utf8')
   
   router.get('/', async (_req, res) => {
     res.send(mustache.render(template, {}))
