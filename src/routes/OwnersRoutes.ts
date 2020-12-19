@@ -5,14 +5,16 @@ import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import OwnerService from '../services/OwnerService'
 import { Parser } from 'json2csv'
-import { authenticated } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
+import { RoleService } from '../services/RoleService'
 
 export function OwnersRoutes(pgClient: Client): Router {
   const router = Router()
   const ownerService = new OwnerService(pgClient)
+  const roleService = new RoleService(pgClient)
   
-  router.get('/', authenticated, async (_req, res) => {
+  router.get('/', hasAccess('read', roleService), async (_req, res) => {
     res.render('owners', {
       title: 'Timetracker - Owners',
       sidebar: new sidebarComponent('/owners').render(),
@@ -25,7 +27,7 @@ export function OwnersRoutes(pgClient: Client): Router {
     })
   })
   
-  router.post('/', authenticated, validateBody(body => body.name != null), async (req, res, next) => {
+  router.post('/', hasAccess('create', roleService), validateBody(body => body.name != null), async (req, res, next) => {
     ownerService.createOwner(req.body.name)
     .then((data) => {
       console.log(data)
@@ -34,11 +36,11 @@ export function OwnersRoutes(pgClient: Client): Router {
     .catch(err => next(err))
   })
     
-  router.get('/api', authenticated, async (_req, res) => {
+  router.get('/api', hasAccess('read', roleService), async (_req, res) => {
     res.status(200).send(await ownerService.getOwners())
   })
     
-  router.get('/excel', authenticated, async (_req, res, next) => {
+  router.get('/excel', hasAccess('read', roleService), async (_req, res, next) => {
     ownerService.getOwners()
     .then(data => {
       const parser = new Parser()
