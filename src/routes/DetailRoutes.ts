@@ -3,7 +3,7 @@ import { Client } from 'pg'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TimeService from '../services/TimeService'
 import { Parser } from 'json2csv'
-import { authenticated, hasAccess } from '../utils/auth'
+import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
 
 export function DetailRoutes(pgClient: Client): Router {
@@ -53,7 +53,7 @@ export function DetailRoutes(pgClient: Client): Router {
     })
   })
 
-  router.get('/api', async (req, res) => {
+  router.get('/api', hasAccess('read', roleService), async (req, res) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     res.status(200).send(
       await timeService.getTimes(
@@ -67,7 +67,7 @@ export function DetailRoutes(pgClient: Client): Router {
     )
   })
   
-  router.get('/excel', authenticated, async (req, res, next) => {
+  router.get('/excel', hasAccess('read', roleService), async (req, res, next) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     timeService.getTimes(
       <string>req.query.name, 
