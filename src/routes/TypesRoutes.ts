@@ -7,6 +7,7 @@ import TypeService from '../services/TypeService'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function TypesRoutes (pgClient: Client): Router {
   const router = Router()
@@ -32,13 +33,13 @@ export function TypesRoutes (pgClient: Client): Router {
       console.log(data)
       res.status(201).redirect('/types')
     })
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
     typeService.getTypes()
     .then(data => res.status(200).send(data))
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   return router

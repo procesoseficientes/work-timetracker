@@ -5,6 +5,7 @@ import TimeService from '../services/TimeService'
 import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function DetailRoutes(pgClient: Client): Router {
   const router: Router = Router()
@@ -88,7 +89,7 @@ export function DetailRoutes(pgClient: Client): Router {
       
       res.end(csv)
 
-    }).catch(err => next(err))
+    }).catch(err => next(createHttpError(500, err.message)))
   })
 
   return router

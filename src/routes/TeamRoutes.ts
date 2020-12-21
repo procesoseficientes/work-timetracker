@@ -6,6 +6,7 @@ import TimeService, { teamTime } from '../services/TimeService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function TeamRoutes (pgClient: Client): Router {
   const timeService = new TimeService(pgClient)
@@ -17,7 +18,7 @@ export function TeamRoutes (pgClient: Client): Router {
     .then(data => {
       res.render('team', data)
     })
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   async function teamView(): Promise<{

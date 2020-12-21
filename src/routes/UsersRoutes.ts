@@ -8,6 +8,7 @@ import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function UsersRoutes(pgClient: Client): Router {
   const userService = new UserService(pgClient)
@@ -42,7 +43,7 @@ export function UsersRoutes(pgClient: Client): Router {
   router.get('/api', hasAccess('read', roleService), (_req, res, next) => {
     userService.getUsers()
     .then(data => res.status(200).send(data))
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   router.get('/excel', hasAccess('read', roleService) ,async (_req, res, next) => {
@@ -57,7 +58,7 @@ export function UsersRoutes(pgClient: Client): Router {
       
       res.end(csv)
 
-    }).catch(err => next(err))
+    }).catch(err => next(createHttpError(500, err.message)))
   })
 
   return router

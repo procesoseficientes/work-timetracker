@@ -9,6 +9,7 @@ import toTableArray from '../utils/tableArray'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function ProjectsRoutes(pgClient: Client): Router {
   const router = Router()
@@ -69,7 +70,7 @@ export function ProjectsRoutes(pgClient: Client): Router {
         'Content-Type': 'text/csv',
       })
       res.end(csv)
-    }).catch(err => next(err))
+    }).catch(err => next(createHttpError(500, err.message)))
   })
 
   return router
