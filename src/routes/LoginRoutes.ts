@@ -4,11 +4,12 @@ import { Client } from 'pg'
 import { UserService } from '../services/UserService'
 import fs from 'fs'
 import mustache from 'mustache'
+import createHttpError from 'http-errors'
 
 export function LoginRoutes (pgClient: Client): Router {
   const userService: UserService = new UserService(pgClient)
   const router: Router = Router()
-  const template = fs.readFileSync(path.join(__dirname, '/../views/login.html'), 'utf8')
+  const template = fs.readFileSync(path.join(__dirname, '/../views/login.hbs'), 'utf8')
   
   router.get('/', async (_req, res) => {
     res.send(mustache.render(template, {}))
@@ -28,7 +29,7 @@ export function LoginRoutes (pgClient: Client): Router {
         res.send(mustache.render(template, {error: 'The username and password that you entered did not match our records. Please double-check and try again.'}))
       }
     })
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
   
   router.get('/signout', async (req, res) => {

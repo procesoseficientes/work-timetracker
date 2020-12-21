@@ -8,23 +8,31 @@ import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function OwnersRoutes(pgClient: Client): Router {
   const router = Router()
   const ownerService = new OwnerService(pgClient)
   const roleService = new RoleService(pgClient)
   
-  router.get('/', hasAccess('read', roleService), async (_req, res) => {
-    res.render('owners', {
-      title: 'Timetracker - Owners',
-      sidebar: new sidebarComponent('/owners').render(),
-      table: new tableComponent(
-        toTableArray(await ownerService.getOwners()), 
-        true, 
-        false,
-        './owners'
-      ).render()
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/owners', req.session?.roleId)
+    .then(async access => {
+      res.render('owners', {
+        title: 'Timetracker - Owners',
+        sidebar: new sidebarComponent(
+          '/owners',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await ownerService.getOwners()), 
+          access.update, 
+          access.delete,
+          './owners'
+        ).render()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
   })
   
   router.post('/', hasAccess('create', roleService), validateBody(body => body.name != null), async (req, res, next) => {
@@ -33,7 +41,7 @@ export function OwnersRoutes(pgClient: Client): Router {
       console.log(data)
       res.status(201).redirect('/owners')
     })
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
     
   router.get('/api', hasAccess('read', roleService), async (_req, res) => {
@@ -52,7 +60,7 @@ export function OwnersRoutes(pgClient: Client): Router {
       })
       res.end(csv)
       
-    }).catch(err => next(err))
+    }).catch(err => next(createHttpError(500, err.message)))
   })
 
   return router

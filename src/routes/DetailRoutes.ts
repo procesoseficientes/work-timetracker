@@ -5,6 +5,7 @@ import TimeService from '../services/TimeService'
 import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function DetailRoutes(pgClient: Client): Router {
   const router: Router = Router()
@@ -20,10 +21,13 @@ export function DetailRoutes(pgClient: Client): Router {
       <string>req.query.from === '' ? undefined : <string>req.query.from,
       <string>req.query.to === '' ? undefined : <string>req.query.to,
       parseInt(<string>req.query.page)
-    ).then(data => {
+    ).then(async data => {
       res.render('detail', {
         title: 'Timetracker - Times',
-        sidebar: new sidebarComponent('/detail').render(),
+        sidebar: new sidebarComponent(
+          '/detail',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
         times: data
           .slice(0, 26)
           .map(a => {
@@ -88,7 +92,7 @@ export function DetailRoutes(pgClient: Client): Router {
       
       res.end(csv)
 
-    }).catch(err => next(err))
+    }).catch(err => next(createHttpError(500, err.message)))
   })
 
   return router

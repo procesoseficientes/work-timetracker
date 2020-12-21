@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { RoleService } from '../services/RoleService'
 import createError from 'http-errors'
+import createHttpError from 'http-errors'
 
 /**
  * Middleware to validate user session
@@ -51,7 +52,7 @@ export function hasAccess(access: keyof typeof accessType, roleService: RoleServ
         } else {
           next(createError(403, 'Access Forbidden'))
         }
-      }).catch(err => next(err))
+      }).catch(err => next(createHttpError(500, err.message)))
     } else {
       res.status(401).redirect('/login')
     }

@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
+import createHttpError from 'http-errors'
 
 export function validateQuery(params: string[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
     let success = true
     for (const param of params) {
       if (req.query[param] == null) {
-        next({message: `Missing one or all of the following parameters '${params.join(', ')}'`, status: 400})
+        next(createHttpError(400, `Missing one or all of the following parameters '${params.join(', ')}'`))
         success = false
         break
       }
@@ -17,10 +18,11 @@ export function validateQuery(params: string[]) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateBody(predicate: (body: any) => boolean) {
   return (req: Request, _res: Response, next: NextFunction): void => {
+    console.log(predicate.toString(), req.body)
     if (predicate(req.body)) {
       next()
     } else {
-      next({message: `Incorrect body format`, status: 400})
+      next(createHttpError(400, 'Invalid body format'))
     }
   }
 }

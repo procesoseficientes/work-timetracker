@@ -7,23 +7,31 @@ import TypeService from '../services/TypeService'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
 import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
 export function TypesRoutes (pgClient: Client): Router {
   const router = Router()
   const typeService = new TypeService(pgClient)
   const roleService = new RoleService(pgClient)
 
-  router.get('/', hasAccess('read', roleService), async (_req, res) => {
-    res.render('types', {
-      title: 'Timetracker - Types',
-      sidebar: new sidebarComponent('/types').render(),
-      table: new tableComponent(
-        toTableArray(await typeService.getTypes()), 
-        true, 
-        false,
-        './types'
-      ).render()
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/types', req.session?.roleId)
+    .then(async access => {
+      res.render('types', {
+        title: 'Timetracker - Types',
+        sidebar: new sidebarComponent(
+          '/types',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await typeService.getTypes()), 
+          access.update, 
+          access.delete,
+          './types'
+        ).render()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
   })
 
   router.post('/', hasAccess('create', roleService), validateBody(body => body.type != null), async (req, res, next) => {
@@ -32,13 +40,13 @@ export function TypesRoutes (pgClient: Client): Router {
       console.log(data)
       res.status(201).redirect('/types')
     })
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   router.get('/api', hasAccess('read', roleService), async (_req, res, next) => {
     typeService.getTypes()
     .then(data => res.status(200).send(data))
-    .catch(err => next(err))
+    .catch(err => next(createHttpError(500, err.message)))
   })
 
   return router
