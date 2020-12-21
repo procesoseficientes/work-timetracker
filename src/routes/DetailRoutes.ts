@@ -21,10 +21,13 @@ export function DetailRoutes(pgClient: Client): Router {
       <string>req.query.from === '' ? undefined : <string>req.query.from,
       <string>req.query.to === '' ? undefined : <string>req.query.to,
       parseInt(<string>req.query.page)
-    ).then(data => {
+    ).then(async data => {
       res.render('detail', {
         title: 'Timetracker - Times',
-        sidebar: new sidebarComponent('/detail').render(),
+        sidebar: new sidebarComponent(
+          '/detail',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
         times: data
           .slice(0, 26)
           .map(a => {
