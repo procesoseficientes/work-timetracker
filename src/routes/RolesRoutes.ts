@@ -105,7 +105,6 @@ export function RolesRoutes (pgClient: Client): Router {
   router.get('/:id/:accessId', hasAccess('read', roleService), async (req, res, next) => {
     roleService.getAccess(parseInt(req.params.accessId))
     .then(async access => {
-      console.log(access)
       res.render('roles/access', {
         title: 'Timetracker - Access',
         access: access,

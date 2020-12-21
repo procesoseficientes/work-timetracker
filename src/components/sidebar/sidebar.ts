@@ -25,7 +25,6 @@ const template = fs.readFileSync(path.resolve(__dirname, 'sidebar.html'), 'utf8'
  */
 export class sidebarComponent extends Component<sidebarInterface> {
   constructor(pageLink: string, accesses: access[] = []) {
-    console.log(accesses)
     const pages: sidebarInterface = {
       groups: [
         {

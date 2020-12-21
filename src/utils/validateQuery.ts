@@ -18,7 +18,6 @@ export function validateQuery(params: string[]) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateBody(predicate: (body: any) => boolean) {
   return (req: Request, _res: Response, next: NextFunction): void => {
-    console.log(predicate.toString(), req.body)
     if (predicate(req.body)) {
       next()
     } else {
