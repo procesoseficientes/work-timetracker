@@ -21,7 +21,10 @@ export function IndexRoutes (pgClient: Client): Router {
       const times = await timeService.getTodayUser(req.session?.user)
       res.render('track', {
         title: 'Timetracker',
-        sidebar: new sidebarComponent('/').render(),
+        sidebar: new sidebarComponent(
+          '/',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
         owners: await ownerService.getOwners(),
         types: await typeService.getTypes(),
         isWorking: times[0] ? times[0].current : false,

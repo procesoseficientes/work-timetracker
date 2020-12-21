@@ -20,10 +20,13 @@ export function OwnersRoutes(pgClient: Client): Router {
     .then(async access => {
       res.render('owners', {
         title: 'Timetracker - Owners',
-        sidebar: new sidebarComponent('/owners').render(),
+        sidebar: new sidebarComponent(
+          '/owners',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
         table: new tableComponent(
           toTableArray(await ownerService.getOwners()), 
-          access.read, 
+          access.update, 
           access.delete,
           './owners'
         ).render()

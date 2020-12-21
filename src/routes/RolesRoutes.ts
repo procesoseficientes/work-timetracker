@@ -12,17 +12,24 @@ export function RolesRoutes (pgClient: Client): Router {
   const router = Router()
   const roleService = new RoleService(pgClient)
 
-  router.get('/', hasAccess('read', roleService), async (_req, res) => {
-    res.render('roles/roles', {
-      title: 'Timetracker - Roles',
-      sidebar: new sidebarComponent('/roles').render(),
-      table: new tableComponent(
-        toTableArray(await roleService.getRoles()), 
-        true, 
-        false,
-        './roles'
-      ).render()
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/roles', req.session?.roleId)
+    .then(async access => {
+      res.render('roles/roles', {
+        title: 'Timetracker - Roles',
+        sidebar: new sidebarComponent(
+          '/roles',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await roleService.getRoles()), 
+          access.update, 
+          access.delete,
+          './roles'
+        ).render()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
   })
 
   router.post(
@@ -53,7 +60,10 @@ export function RolesRoutes (pgClient: Client): Router {
   router.get('/:id', hasAccess('read', roleService), async (req, res) => {
     res.render('roles/role', {
       title: `Timetracker - Roles`,
-      sidebar: new sidebarComponent('/roles').render(),
+      sidebar: new sidebarComponent(
+        '/roles',
+        await roleService.getAccessByRole(req.session?.roleId)
+      ).render(),
       role: await roleService.getRole(parseInt(req.params.id)),
       table: new tableComponent(
         toTableArray(await roleService.getAccessByRole(parseInt(req.params.id))), 
@@ -94,12 +104,15 @@ export function RolesRoutes (pgClient: Client): Router {
 
   router.get('/:id/:accessId', hasAccess('read', roleService), async (req, res, next) => {
     roleService.getAccess(parseInt(req.params.accessId))
-    .then(access => {
+    .then(async access => {
       console.log(access)
       res.render('roles/access', {
         title: 'Timetracker - Access',
         access: access,
-        sidebar: new sidebarComponent('/roles').render(),
+        sidebar: new sidebarComponent(
+          '/roles',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
       })
     })
     .catch(err => next(createHttpError(500, err.message)))

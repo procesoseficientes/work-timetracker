@@ -17,18 +17,25 @@ export function ProjectsRoutes(pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
   const ownerService = new OwnerService(pgClient)
   
-  router.get('/', hasAccess('read', roleService), async (_req, res) => {
-    res.render('projects', {
-      title: 'Timetracker - Projects',
-      sidebar: new sidebarComponent('/projects').render(),
-      table: new tableComponent(
-        toTableArray(await projectService.getProjects()), 
-        true, 
-        false,
-        './projects'
-      ).render(),
-      owners: await ownerService.getOwners()
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
+    .then(async access => {
+      res.render('projects', {
+        title: 'Timetracker - Projects',
+        sidebar: new sidebarComponent(
+          '/projects',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await projectService.getProjects()), 
+          access.update, 
+          access.delete,
+          './projects'
+        ).render(),
+        owners: await ownerService.getOwners()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
   })
     
   router.post(

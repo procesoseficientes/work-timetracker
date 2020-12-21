@@ -15,17 +15,24 @@ export function UsersRoutes(pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
   const router = Router()
 
-  router.get('/', hasAccess('read', roleService), async (_req, res) => {
-    res.render('users', {
-      title: 'Timetracker - Users',
-      sidebar: new sidebarComponent('/users').render(),
-      table: new tableComponent(
-        toTableArray(await userService.getUsers()), 
-        true, 
-        false,
-        './users'
-      ).render()
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
+    .then(async access => {
+      res.render('users', {
+        title: 'Timetracker - Users',
+        sidebar: new sidebarComponent(
+          '/users',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await userService.getUsers()), 
+          access.update, 
+          access.delete,
+          './users'
+        ).render()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
   })
 
   router.post('/', hasAccess('create', roleService), validateBody(body => 
