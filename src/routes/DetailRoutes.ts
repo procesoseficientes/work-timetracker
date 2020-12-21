@@ -6,6 +6,7 @@ import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
 import createHttpError from 'http-errors'
+import { Converter } from 'showdown'
 
 export function DetailRoutes(pgClient: Client): Router {
   const router: Router = Router()
@@ -33,6 +34,7 @@ export function DetailRoutes(pgClient: Client): Router {
           .map(a => {
             a.start = a.start.toString().substring(0, 21)
             a.end = a.end ? a.end.toString().substring(0, 21) : ''
+            a.task = new Converter({simplifiedAutoLink: true, simpleLineBreaks: true}).makeHtml(a.task)
             return a
           }),
         count: data.length,
