@@ -67,8 +67,9 @@ export class UserService extends DbService{
       set name = '${sqlString(name)}',
           username = '${sqlString(username)}',
           active = ${active},
-          role = ${roleId}
-      where id = ${id};
+          role_id = ${roleId}
+      where id = ${id}
+      returning id;
     `)).rows[0].id
   }
 }

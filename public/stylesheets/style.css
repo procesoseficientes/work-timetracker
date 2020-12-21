@@ -140,7 +140,12 @@ a:hover {
   text-decoration: none;
 }
 
-.table img {
+.table img, .team-label img {
   max-width: 200px;
   max-height: 200px;
+}
+
+.team-label h1, .team-label h2, .team-label h3, .team-label h3, .team-label h5, .team-label h6{
+  font-size: inherit;
+  font-weight: bolder;
 }

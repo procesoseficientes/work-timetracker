@@ -63,7 +63,8 @@ export function UsersRoutes(pgClient: Client): Router {
           '/users',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
-        user: data
+        user: data,
+        roles: await roleService.getRoles()
       })
     })
     .catch(err => next(createHttpError(err.message)))
