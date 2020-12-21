@@ -8,7 +8,7 @@
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
   },
   "scripts": {
-    "copy": "copyfiles --up 1 src/views/**/*.hbs dist/ && copyfiles --up 1 src/components/**/*.html dist/",
+    "copy": "copyfiles --up 1 src/views/**/*.* dist/ && copyfiles --up 1 src/components/**/*.html dist/",
     "start": "node dist",
     "test": "npm run build",
     "build": "npm run copy && tsc",
