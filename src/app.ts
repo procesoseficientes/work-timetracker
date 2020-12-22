@@ -4,20 +4,19 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import logger from 'morgan'
-
-import IndexRoutes from './routes/IndexRoutes'
-import UsersRoutes from './routes/UsersRoutes'
-import StatsRoutes from './routes/StatsRoutes'
-import ProjectsRoutes from './routes/ProjectsRoutes'
-import LoginRoutes from './routes/LoginRoutes'
-
 import session from 'express-session'
-import OwnersRoutes from './routes/OwnersRoutes'
-import DetailRoutes from './routes/DetailRoutes'
-import TeamRoutes from './routes/TeamRoutes'
+
+import { IndexRoutes } from './routes/IndexRoutes'
+import { UsersRoutes } from './routes/UsersRoutes'
+import { StatsRoutes } from './routes/StatsRoutes'
+import { ProjectsRoutes } from './routes/ProjectsRoutes'
+import { LoginRoutes } from './routes/LoginRoutes'
+import { OwnersRoutes } from './routes/OwnersRoutes'
+import { DetailRoutes } from './routes/DetailRoutes'
+import { TeamRoutes } from './routes/TeamRoutes'
 import { Client } from 'pg'
-import TypesRoutes from './routes/TypesRoutes'
-import RolesRoutes from './routes/RolesRoutes'
+import { TypesRoutes } from './routes/TypesRoutes'
+import { RolesRoutes } from './routes/RolesRoutes'
 
 const app = express()
 
@@ -39,25 +38,22 @@ app.use(session({
 }))
 
 const pgClient = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  connectionString: process.env.DATABASE_URL
 })
 pgClient.connect().catch((err) => {
   console.error(err)
 })
 
-app.use('/', new IndexRoutes(pgClient).router)
-app.use('/login', new LoginRoutes(pgClient).router)
-app.use('/users', new UsersRoutes(pgClient).router)
-app.use('/stats', new StatsRoutes(pgClient).router)
-app.use('/owners', new OwnersRoutes(pgClient).router)
-app.use('/detail', new DetailRoutes(pgClient).router)
-app.use('/team', new TeamRoutes(pgClient).router)
-app.use('/projects', new ProjectsRoutes(pgClient).router)
-app.use('/types', new TypesRoutes(pgClient).router)
-app.use('/roles', new RolesRoutes(pgClient).router)
+app.use('/', IndexRoutes(pgClient))
+app.use('/login', LoginRoutes(pgClient))
+app.use('/users', UsersRoutes(pgClient))
+app.use('/stats', StatsRoutes(pgClient))
+app.use('/owners', OwnersRoutes(pgClient))
+app.use('/detail', DetailRoutes(pgClient))
+app.use('/team', TeamRoutes(pgClient))
+app.use('/projects', ProjectsRoutes(pgClient))
+app.use('/types', TypesRoutes(pgClient))
+app.use('/roles', RolesRoutes(pgClient))
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
@@ -72,7 +68,7 @@ app.use((err: {message: string, status: number}, req: express.Request, res: expr
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  res.render('error', {message: err.message, status: err.status})
 })
 
 export default app

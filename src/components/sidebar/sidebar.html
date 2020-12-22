@@ -8,12 +8,14 @@
       {{/header}}
       <ul class="nav flex-column">
         {{#items}}
+        {{#visible}}
         <li class="nav-item">
-          <a class="nav-link {{#active}}active{{/active}}" aria-current="page" href="{{link}}">
+          <a onclick="toggleLoading()" class="nav-link {{#active}}active{{/active}}" aria-current="page" href="{{link}}">
             {{{icon}}}
             {{caption}}
           </a>
         </li>
+        {{/visible}}
         {{/items}}
       </ul>
     {{/groups}}

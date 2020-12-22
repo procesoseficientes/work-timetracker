@@ -16,7 +16,7 @@ body {
   background-color: #21252B;
 }
 
-select, input {
+select, input, .form-control {
   border: none !important;
 }
 
@@ -43,7 +43,7 @@ select, input {
   }
 }
 
-.btn, select, input {
+.btn, select, input, .form-control {
   border-radius: 8px !important;
 }
 
@@ -114,4 +114,46 @@ select, input {
 
 .page-link {
   border: none;
+}
+
+a {
+  color: #58a6ff;
+}
+
+a:hover {
+  color: #58a6ff;
+}
+
+.action {
+  border-radius: 50%;
+  text-align: center;
+  display: inline-block;
+  padding: 7px;
+  transition: .2s background-color;
+}
+
+.action:hover {
+  background-color: rgba(33, 37, 43, 0.4);
+}
+
+.action a {
+  text-decoration: none;
+}
+
+.table img, .team-label img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.team-label h1, .team-label h2, .team-label h3, .team-label h3, .team-label h5, .team-label h6{
+  font-size: inherit;
+  font-weight: bolder;
+}
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.modal-body {
+  border-radius: 8px;
 }

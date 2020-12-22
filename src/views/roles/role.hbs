@@ -14,22 +14,23 @@
 </h2>
 <form method="PATCH">
   <div class="form-group">
-    <label for="role">Name</label>
+    <label for="name">Name</label>
     <input value="{{role.name}}" autocomplete="new-password" type="text" class="form-control bg-dark text-light" name="role" placeholder="Enter role name">
   </div>
 
   <div class="form-group">
-    <label for="username">Color</label>
+    <label for="color">Color</label>
     <input value="{{role.color}}" type="color" class="form-control bg-dark text-light" name="color">
   </div>
 
   <button type="submit" class="btn btn-primary">Update</button>
+  <button type="button" class="btn btn-danger">Delete</button>
 </form>
 <br>
-<form method="POST" id="post" class="collapsible-content hiding hidden">
+<form method="POST" id="post" class="collapsible-content hiding">
   <div class="form-group">
-    <label for="role">Name</label>
-    <input autocomplete="new-password" type="text" class="form-control" name="role" placeholder="Enter role name">
+    <label for="route">Name</label>
+    <input autocomplete="new-password" type="text" class="form-control" name="route" placeholder="Enter role name">
   </div>
   
   <div style="display: flex; justify-content: space-around;">

@@ -1,6 +1,6 @@
 {
   "name": "work-timetracker",
-  "version": "1.0.0",
+  "version": "2020.12.21",
   "description": "Track your team's work",
   "main": "index.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
   },
   "scripts": {
-    "copy": "copyfiles --up 1 src/views/*.* dist/ && copyfiles --up 1 src/components/**/*.html dist/",
+    "copy": "copyfiles --up 1 \"src/views/**/*.*\" dist/ && copyfiles --up 1 src/components/**/*.html dist/",
     "start": "node dist",
     "test": "npm run build",
     "build": "npm run copy && tsc",
@@ -31,6 +31,7 @@
     "bigojs": "^1.0.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
+    "copyfiles": "^2.4.1",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-session": "^1.17.1",
@@ -39,6 +40,7 @@
     "json2csv": "^5.0.3",
     "morgan": "~1.9.0",
     "pg": "^8.3.3",
+    "showdown": "^1.9.1",
     "typescript": "^4.0.2"
   },
   "devDependencies": {
@@ -47,12 +49,13 @@
     "@types/express-session": "^1.17.0",
     "@types/http-errors": "^1.8.0",
     "@types/morgan": "^1.9.1",
+    "@types/mustache": "^4.1.0",
     "@types/pg": "^7.14.4",
+    "@types/showdown": "^1.9.3",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
-    "copyfiles": "^2.3.0",
     "eslint": "^7.10.0",
     "nodemon": "^2.0.4",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.1.1"
   }
 }

@@ -1,104 +1,120 @@
-import express from 'express'
+import { Router } from 'express'
 import { Client } from 'pg'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import UserService from '../services/UserService'
+import { UserService } from '../services/UserService'
 import { tableComponent } from '../components/table/table'
 import { Parser } from 'json2csv'
+import { hasAccess } from '../utils/auth'
+import { validateBody } from '../utils/validateQuery'
+import { RoleService } from '../services/RoleService'
+import createHttpError from 'http-errors'
 
-class UsersRoutes {
-  userService: UserService
-  router: express.Router
-  constructor (pgClient: Client) {
-    this.userService = new UserService(pgClient)
-    this.router = express.Router()
+export function UsersRoutes(pgClient: Client): Router {
+  const userService = new UserService(pgClient)
+  const roleService = new RoleService(pgClient)
+  const router = Router()
 
-    this.router.get('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.render('users', await this.usersView())
-      }
+  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
+    .then(async access => {
+      res.render('users/users', {
+        title: 'Timetracker - Users',
+        sidebar: new sidebarComponent(
+          '/users',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        table: new tableComponent(
+          toTableArray(await userService.getUsers()), 
+          access.update, 
+          access.delete,
+          './users'
+        ).render(),
+        roles: await roleService.getRoles()
+      })
     })
+    .catch(err => next(createHttpError(err.message)))
+  })
 
-    this.router.post('/', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        if (
-          req.body.name &&
-          req.body.username && 
-          req.body.password
-        ) {
-          try {
-            this.userService.createUser(req.body.name, req.body.username, req.body.password)
-            res.status(201).redirect('/users')
-          } catch (error) {
-            console.error(error)
-            res.status(500).redirect('/users')
-          }
-        } else {
-          console.error('Insufficient parameters for request')
-          res.status(401).redirect('/users')
-        }
-      }
-    })
-  
-    this.router.get('/api', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.userService.getUsers())
-      }
-    })
-
-    this.router.get('/excel', async (req, res) => {
-      if (!req.session.user) {
-        res.status(401).redirect('/login')
-      } else {
-        res.status(200).send(await this.userService.getUsers()
-          .then(data=>{
-
-            const parser = new Parser()
-            const csv = parser.parse(data)
-
-            res.writeHead(200, {
-              'Content-Disposition': `attachment; filename="Users.csv"`,
-              'Content-Type': 'text/csv',
-            })
-            
-            res.end(csv)
-
-          }).catch(err =>{
-            console.error(err)
-            res.status(500).render('detail', {
-              title: 'Timetracker - Times',
-              page: req.query.page,
-              times: []
-          })
-          })
-        )
-      }
-    })
-
-  }
-
-  async usersView (): Promise<{
-    title: string
-    sidebar: string
-    table: string
-  }> {
-    return {
-      title: 'Timetracker - Users',
-      sidebar: new sidebarComponent('/users').render(),
-      table: new tableComponent(
-        toTableArray(await this.userService.getUsers()), 
-        true, 
-        false,
-        './users'
-      ).render()
+  router.post('/', hasAccess('create', roleService), validateBody(body => 
+    body.name != null && body.username != null && body.password != null && body.role
+  ), async (req, res) => {
+    try {
+      userService.createUser(req.body.name, req.body.username, req.body.password, req.body.role)
+      res.status(201).redirect('/users')
+    } catch (error) {
+      console.error(error)
+      res.status(500).redirect('/users')
     }
-  }
-}
+  })
 
-export default UsersRoutes
+  router.get('/api', hasAccess('read', roleService), (_req, res, next) => {
+    userService.getUsers()
+    .then(data => res.status(200).send(data))
+    .catch(err => next(createHttpError(500, err.message)))
+  })
+
+  router.patch('/api/:id/state', hasAccess('update', roleService), (req, res, next) => {
+    userService.changeStateUser(parseInt(req.params.id), req.body.state)
+    .then(data => {
+      res.status(203).send(data)
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.get('/:id', hasAccess('read', roleService), (req, res, next) => {
+    userService.getUser(parseInt(req.params.id))
+    .then(async data => {
+      res.render('users/user', {
+        title: 'Timetracker - ' + data.username,
+        sidebar: new sidebarComponent(
+          '/users',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        user: data,
+        roles: await roleService.getRoles()
+      })
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.delete('/:id', hasAccess('delete', roleService), (req, res, next) => {
+    userService.deleteUser(parseInt(req.params.id))
+    .then(data => {
+      res.status(200).send(data)
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.post('/:id', hasAccess('read', roleService), (req, res, next) => {
+    userService.updateUser(
+      parseInt(req.params.id),
+      req.body.name,
+      req.body.username,
+      true,
+      req.body.role
+    )
+    .then(data => {
+      console.log(data)
+      res.status(203).redirect('/users')
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.get('/excel', hasAccess('read', roleService) ,async (_req, res, next) => {
+    userService.getUsers().then(data=>{
+      const parser = new Parser()
+      const csv = parser.parse(data)
+
+      res.writeHead(200, {
+        'Content-Disposition': `attachment; filename="Users.csv"`,
+        'Content-Type': 'text/csv',
+      })
+      
+      res.end(csv)
+
+    }).catch(err => next(createHttpError(500, err.message)))
+  })
+
+  return router
+}
