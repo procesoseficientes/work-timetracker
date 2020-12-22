@@ -149,3 +149,11 @@ a:hover {
   font-size: inherit;
   font-weight: bolder;
 }
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.modal-body {
+  border-radius: 8px;
+}

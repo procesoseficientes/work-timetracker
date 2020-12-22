@@ -37,10 +37,10 @@ export function UsersRoutes(pgClient: Client): Router {
   })
 
   router.post('/', hasAccess('create', roleService), validateBody(body => 
-    body.name != null && body.username != null && body.password != null
+    body.name != null && body.username != null && body.password != null && body.role
   ), async (req, res) => {
     try {
-      userService.createUser(req.body.name, req.body.username, req.body.password)
+      userService.createUser(req.body.name, req.body.username, req.body.password, req.body.role)
       res.status(201).redirect('/users')
     } catch (error) {
       console.error(error)
@@ -52,6 +52,14 @@ export function UsersRoutes(pgClient: Client): Router {
     userService.getUsers()
     .then(data => res.status(200).send(data))
     .catch(err => next(createHttpError(500, err.message)))
+  })
+
+  router.patch('/api/:id/state', hasAccess('update', roleService), (req, res, next) => {
+    userService.changeStateUser(parseInt(req.params.id), req.body.state)
+    .then(data => {
+      res.status(203).send(data)
+    })
+    .catch(err => next(createHttpError(err.message)))
   })
 
   router.get('/:id', hasAccess('read', roleService), (req, res, next) => {
@@ -66,6 +74,14 @@ export function UsersRoutes(pgClient: Client): Router {
         user: data,
         roles: await roleService.getRoles()
       })
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.delete('/:id', hasAccess('delete', roleService), (req, res, next) => {
+    userService.deleteUser(parseInt(req.params.id))
+    .then(data => {
+      res.status(200).send(data)
     })
     .catch(err => next(createHttpError(err.message)))
   })

@@ -54,9 +54,29 @@
   function toggleFilter () {
     document.getElementById('post').classList.toggle('hidden')
   }
+
   function pagination (direction) {
     const newPage = parseInt($('#page').val()) + direction
     $('#page').val(newPage > 0 ? newPage : 0)
     $('#filter').submit()
+  }
+
+  function deleteRow(userId) {
+    fetch(`/users/${userId}`, {
+      method: 'delete',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ id: userId })
+    }).then(data => {
+      switch (data.status) {
+        case 200: 
+          toggleLoading()
+          window.location.replace('/users')
+        break
+        case 500:
+          data.json().then(data => console.log(data))
+          showAlert('Delete user', 'Unable to delete because there are times related to this user. Deactivate user instead.')
+        break
+      }
+    })
   }
 </script>

@@ -8,6 +8,7 @@
     <link rel='stylesheet' href='/stylesheets/bootstrap-reboot.min.css'/>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
     <link rel='stylesheet' href='/stylesheets/dashboard.css'/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
   </head>
   <body>
     <div class="loader">
@@ -39,6 +40,28 @@
         </div>
       </div>
     </main>
+
+
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content text-light bg-dark">
+          <div class="modal-header">
+            <h5 id="alert-modal-title" class="modal-title" id="alertModalLabel">alert title</h5>
+            <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="alert-modal-body" class="modal-body bg-dark">
+            alert body
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <script src="/javascripts/jquery.slim.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>
     <script src="/javascripts/bootstrap.bundle.min.js"></script>
@@ -47,6 +70,14 @@
       function toggleLoading() {
         document.getElementById('loader').classList.toggle("loading")
       }
+
+      function showAlert(title, body) {
+        document.getElementById('alert-modal-title').innerHTML = title
+        document.getElementById('alert-modal-body').innerHTML = body
+        $('#alertModal').modal('show')
+      }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
   </body>
 </html>
