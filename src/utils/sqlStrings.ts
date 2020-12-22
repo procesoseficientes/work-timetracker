@@ -4,14 +4,10 @@
  */
 export function sqlString(string: string): string {
   // eslint-disable-next-line no-control-regex
-  string = string.replace(/[\0\n\r\b\t\\'"\x1a]/g, (s: string) => {
+  string = string.replace(/[\0\b\t\\'"\x1a]/g, (s: string) => {
     switch (s) {
       case '\0':
         return '\\0'
-      case '\n':
-        return '\\n'
-      case '\r':
-        return '\\r'
       case '\b':
         return '\\b'
       case '\t':

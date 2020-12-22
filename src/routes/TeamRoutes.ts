@@ -7,6 +7,7 @@ import { sidebarComponent } from '../components/sidebar/sidebar'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
 import createHttpError from 'http-errors'
+import { Converter } from 'showdown'
 
 export function TeamRoutes (pgClient: Client): Router {
   const timeService = new TimeService(pgClient)
@@ -40,7 +41,7 @@ export function TeamRoutes (pgClient: Client): Router {
         times: teamTimes[a].filter((a: {percent: number, current: number}) => a.percent > 0.5 || a.current)
           .map(mapTime)
           .reverse(),
-        task: teamTimes[a][0].task,
+        task: new Converter({simplifiedAutoLink: true, simpleLineBreaks: true}).makeHtml(teamTimes[a][0].task),
         name: teamTimes[a][0].name,
         project: teamTimes[a][0].project,
         owner: teamTimes[a][0].owner

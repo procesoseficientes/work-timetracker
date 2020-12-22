@@ -1,3 +1,4 @@
+import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
 
 interface time {
@@ -61,9 +62,9 @@ class TimeService extends DbService{
       inner join project p on p.id = project_id
       inner join "user" u on u.id = user_id 
       left join type ty on ty.id = t.type_id
-      where lower(u.name) like '%${name.toLowerCase()}%'
-        and lower(o.name) like '%${owner.toLowerCase()}%'
-        and lower(p.name) like '%${project.toLowerCase()}%'
+      where lower(u.name) like '%${sqlString(name.toLowerCase())}%'
+        and lower(o.name) like '%${sqlString(owner.toLowerCase())}%'
+        and lower(p.name) like '%${sqlString(project.toLowerCase())}%'
         and "start" between '${from}' and '${to}'
       order by "start" desc
       limit ${limit}
@@ -94,7 +95,7 @@ class TimeService extends DbService{
 
     insert into "time"(
     user_id, owner_id, project_id, task, type_id, start)
-    values (${userId}, ${ownerId}, ${projectId}, '${task}', ${typeId}, CURRENT_TIMESTAMP) returning id;
+    values (${userId}, ${ownerId}, ${projectId}, '${sqlString(task.replace(/</g, ''))}', ${typeId}, CURRENT_TIMESTAMP) returning id;
   `))
     return result[1].rows[0].id
   }

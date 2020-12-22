@@ -18,7 +18,7 @@ export function UsersRoutes(pgClient: Client): Router {
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
     roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
     .then(async access => {
-      res.render('users', {
+      res.render('users/users', {
         title: 'Timetracker - Users',
         sidebar: new sidebarComponent(
           '/users',
@@ -29,17 +29,18 @@ export function UsersRoutes(pgClient: Client): Router {
           access.update, 
           access.delete,
           './users'
-        ).render()
+        ).render(),
+        roles: await roleService.getRoles()
       })
     })
     .catch(err => next(createHttpError(err.message)))
   })
 
   router.post('/', hasAccess('create', roleService), validateBody(body => 
-    body.name != null && body.username != null && body.password != null
+    body.name != null && body.username != null && body.password != null && body.role
   ), async (req, res) => {
     try {
-      userService.createUser(req.body.name, req.body.username, req.body.password)
+      userService.createUser(req.body.name, req.body.username, req.body.password, req.body.role)
       res.status(201).redirect('/users')
     } catch (error) {
       console.error(error)
@@ -51,6 +52,53 @@ export function UsersRoutes(pgClient: Client): Router {
     userService.getUsers()
     .then(data => res.status(200).send(data))
     .catch(err => next(createHttpError(500, err.message)))
+  })
+
+  router.patch('/api/:id/state', hasAccess('update', roleService), (req, res, next) => {
+    userService.changeStateUser(parseInt(req.params.id), req.body.state)
+    .then(data => {
+      res.status(203).send(data)
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.get('/:id', hasAccess('read', roleService), (req, res, next) => {
+    userService.getUser(parseInt(req.params.id))
+    .then(async data => {
+      res.render('users/user', {
+        title: 'Timetracker - ' + data.username,
+        sidebar: new sidebarComponent(
+          '/users',
+          await roleService.getAccessByRole(req.session?.roleId)
+        ).render(),
+        user: data,
+        roles: await roleService.getRoles()
+      })
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.delete('/:id', hasAccess('delete', roleService), (req, res, next) => {
+    userService.deleteUser(parseInt(req.params.id))
+    .then(data => {
+      res.status(200).send(data)
+    })
+    .catch(err => next(createHttpError(err.message)))
+  })
+
+  router.post('/:id', hasAccess('read', roleService), (req, res, next) => {
+    userService.updateUser(
+      parseInt(req.params.id),
+      req.body.name,
+      req.body.username,
+      true,
+      req.body.role
+    )
+    .then(data => {
+      console.log(data)
+      res.status(203).redirect('/users')
+    })
+    .catch(err => next(createHttpError(err.message)))
   })
 
   router.get('/excel', hasAccess('read', roleService) ,async (_req, res, next) => {

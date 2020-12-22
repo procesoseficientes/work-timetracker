@@ -9,7 +9,7 @@
 {{#each team}}
   <hr/>
   <h6>{{this.name}}</h6>
-  <label>{{this.task}} - {{this.project}} - {{this.owner}}</label>
+  <label class="team-label">{{{this.task}}} - {{this.project}} - {{this.owner}}</label>
   <div class="progress" style="height: 35px;">
     {{#each this.times}}
     <div 
