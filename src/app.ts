@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import logger from 'morgan'
 import session from 'express-session'
+import exphbs from 'express-handlebars'
 
 import { IndexRoutes } from './routes/IndexRoutes'
 import { UsersRoutes } from './routes/UsersRoutes'
@@ -21,8 +22,17 @@ import { RolesRoutes } from './routes/RolesRoutes'
 const app = express()
 
 // view engine setup
+const hbs = exphbs.create({
+  extname: '.hbs',
+  defaultLayout: 'layout',
+  helpers: {
+    json: (context: string) => JSON.stringify(context)
+  }
+}) 
+
+app.engine('.hbs', hbs.engine)
+app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'hbs')
 
 app.use(logger('dev'))
 app.use(express.json())
