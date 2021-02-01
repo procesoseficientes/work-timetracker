@@ -1,3 +1,4 @@
+import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
 
 interface project {
@@ -72,6 +73,17 @@ class ProjectService extends DbService{
       values (${ownerId}, '${name}', '${description}', ${budget})
       returning id
     `)).rows[0].id
+  }
+
+  async toggleState (projectId: number): Promise<number> {
+    return new Promise((res, rej) => {
+      this.client.query(`
+        update project set active = not active where id = ${sqlString(projectId.toString())}
+        returning id
+      `)
+      .then(() => res(projectId))
+      .catch(err => rej(err))
+    })
   }
 }
 

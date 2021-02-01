@@ -1,3 +1,4 @@
+import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
 
 export interface owner {
@@ -13,6 +14,17 @@ class OwnerService extends DbService{
 
   async createOwner (name: string): Promise<number> {
     return (await this.client.query(`insert into "owner"(name, active) values ('${name}', true) returning id`)).rows[0].id
+  }
+
+  async toggleState (id: number): Promise<number> {
+    return new Promise((res, rej) => {
+      this.client.query(`
+        update "owner" set active = not active where id = ${sqlString(id.toString())}
+        returning id
+      `)
+      .then(() => res(id))
+      .catch(err => rej(err))
+    })
   }
 }
 

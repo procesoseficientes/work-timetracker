@@ -10,7 +10,7 @@ export interface tableInterface {
   route?: string
 }
 
-const template = fs.readFileSync(path.resolve(__dirname, 'table.html'), 'utf8')
+const template = fs.readFileSync(path.resolve(__dirname, 'table.hbs'), 'utf8')
 
 /**
  * Class that represents a table component

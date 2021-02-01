@@ -7,7 +7,7 @@ Fixes `access denied` bug on second page of detail
 CSV download link now includes current active filters
 
 ### Retrieves latest tracked information
-![tracking information](https://i.imgur.com/ZuBtRtq.png)
+![tracking information](https://i.imgur.com/ZuBtRtq.png)  
 Latest tracked information is now the default value in tracking page
 
 ## 2020.12.21

@@ -18,7 +18,7 @@ export interface sidebarInterface {
   }[]
 }
 
-const template = fs.readFileSync(path.resolve(__dirname, 'sidebar.html'), 'utf8')
+const template = fs.readFileSync(path.resolve(__dirname, 'sidebar.hbs'), 'utf8')
 
 /**
  * Class that represents a sidebar component
