@@ -1,4 +1,8 @@
 # Changelog
+## 2021.02.01
+### Toggle active rows
+All `active toggles` are now fully working
+
 ## 2021.01.31
 ### Detail page bug fix
 Fixes `access denied` bug on second page of detail
