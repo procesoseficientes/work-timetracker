@@ -84,6 +84,11 @@ export function DetailRoutes(pgClient: Client): Router {
       0,
       10000
     ).then(data => {
+      // @fabrv
+      // JSONtoCSV crahses if the input date is empty
+      // This will line will create an empty row so JSONtoCSV can work
+      data = data.length === 0 ? [{ name: '', owner: '', project: '', task: '', start: '', end: '', hours: ''}] : data
+      
       const parser = new Parser()
       const csv = parser.parse(data)
 
@@ -94,7 +99,10 @@ export function DetailRoutes(pgClient: Client): Router {
       
       res.end(csv)
 
-    }).catch(err => next(createHttpError(500, err.message)))
+    }).catch(err => {
+      console.error(err)
+      next(createHttpError(500, err.message))
+    })
   })
 
   return router

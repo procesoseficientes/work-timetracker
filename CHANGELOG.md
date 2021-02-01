@@ -3,6 +3,9 @@
 ### Detail page bug fix
 Fixes `access denied` bug on second page of detail
 
+### Excel download with active filters
+CSV download link now includes current active filters
+
 ## 2020.12.21
 ### Role panel
 ![role panel](https://i.imgur.com/QhCpTWm.png)
