@@ -14,13 +14,15 @@ interface time {
 export interface userTime {
   user_id: string,
   owner: string,
+  owner_id: number,
   project: string,
+  project_id: string,
   task: string, 
   start: string | number | Date,
   end: string | number | Date,
-  current: boolean; 
+  current: boolean, 
   hours: string | number,
-  percent: number; 
+  percent: number,
   color: string
 }
 
@@ -112,7 +114,9 @@ class TimeService extends DbService{
       select 
         user_id,
         o.name as "owner",
+        o.id as owner_id,
         p.name as "project",
+        p.id as project_id,
         t.task,
         t.start,
         "end" is null as "current",

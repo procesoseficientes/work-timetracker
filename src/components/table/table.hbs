@@ -20,7 +20,7 @@
         {{#del}}
         <td>
           <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="switch{{id}}" checked="{{active}}">
+            <input onclick="toggleStatus({{id}})" type="checkbox" class="custom-control-input" id="switch{{id}}" {{#active}}checked{{/active}}>
             <label class="custom-control-label" for="switch{{id}}"></label>
           </div>
         </td>
@@ -66,3 +66,19 @@
     </div>
   </div>
 </div>
+
+<script>
+  function toggleStatus(projectId) {
+    return fetch(`${window.location.pathname}/api/${projectId}/toggle`, {
+      method: 'PUT'
+    }).then(response => response.json())
+    .then(data => {
+      if (data.status !== 200) {
+        document.getElementById(`switch${projectId}`).checked = !document.getElementById(`switch${projectId}`).checked
+      }
+    }).catch(err => {
+      console.error(err)
+      document.getElementById(`switch${projectId}`).checked = !document.getElementById(`switch${projectId}`).checked
+    })
+  }
+</script>

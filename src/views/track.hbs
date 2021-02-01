@@ -53,6 +53,12 @@
 {{#if isWorking}}<button onclick="stopTracking()" class="btn btn-danger">Stop Tracking</button>{{/if}}
 
 <script>
+  // Gets today's times, retrieves the latest and set the default data
+  // of the selects to the latest time
+  const times = {{{json this.times}}}
+  document.getElementsByName('owner')[0].value = times[times.length - 1].owner_id
+  document.getElementsByName('project')[0].value = times[times.length - 1].project_id
+
   function loadProject() {
     const owner = document.getElementsByName('owner')[0].value
     fetch(`/projects/api?ownerId=${owner}`).then(async data => {

@@ -5,9 +5,12 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import logger from 'morgan'
 import session from 'express-session'
+import exphbs from 'express-handlebars'
 
 import { IndexRoutes } from './routes/IndexRoutes'
 import { UsersRoutes } from './routes/UsersRoutes'
+import fs from 'fs'
+
 import { StatsRoutes } from './routes/StatsRoutes'
 import { ProjectsRoutes } from './routes/ProjectsRoutes'
 import { LoginRoutes } from './routes/LoginRoutes'
@@ -17,12 +20,22 @@ import { TeamRoutes } from './routes/TeamRoutes'
 import { Client } from 'pg'
 import { TypesRoutes } from './routes/TypesRoutes'
 import { RolesRoutes } from './routes/RolesRoutes'
+import { ChangeLogRoutes } from './routes/ChangeLogRoutes'
 
 const app = express()
 
 // view engine setup
+const hbs = exphbs.create({
+  extname: '.hbs',
+  defaultLayout: 'layout',
+  helpers: {
+    json: (context: string) => JSON.stringify(context)
+  }
+}) 
+
+app.engine('.hbs', hbs.engine)
+app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'hbs')
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -36,8 +49,6 @@ app.use(session({
   resave: true,
 	saveUninitialized: true
 }))
-
-console.log(process.env.DATABASE_URL)
 
 const pgClient = new Client({
   connectionString: process.env.DATABASE_URL
@@ -56,6 +67,9 @@ app.use('/team', TeamRoutes(pgClient))
 app.use('/projects', ProjectsRoutes(pgClient))
 app.use('/types', TypesRoutes(pgClient))
 app.use('/roles', RolesRoutes(pgClient))
+
+const changeLogMD = fs.readFileSync(path.join(__dirname, '../CHANGELOG.md'), 'utf8')
+app.use('/changelog', ChangeLogRoutes(pgClient, changeLogMD))
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

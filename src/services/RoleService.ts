@@ -88,4 +88,15 @@ export class RoleService extends DbService{
     where id = ${accessId};`
     return (await this.client.query(query)).rows[0]
   }
+
+  async toggleState (id: number): Promise<number> {
+    return new Promise((res, rej) => {
+      this.client.query(`
+        update type set active = not active where id = ${sqlString(id.toString())}
+        returning id
+      `)
+      .then(() => res(id))
+      .catch(err => rej(err))
+    })
+  }
 }

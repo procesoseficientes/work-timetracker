@@ -1,3 +1,4 @@
+import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
 
 interface project {
@@ -22,16 +23,18 @@ export interface projectDetail {
 }
 
 class ProjectService extends DbService{
-  async getProjects(): Promise<project[]> {
+  async getProjects(actives = true): Promise<project[]> {
     return (await this.client.query(`
-    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
-    inner join owner o on o.id = p.owner_id`)).rows
+      select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+      inner join owner o on o.id = p.owner_id
+      ${actives ? 'where p.active = true' : ''}
+    `)).rows
   }
 
   async getProjectsByOwner (ownerId: number): Promise<project[]> {
     return (await this.client.query(`
     select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
-    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId}`)).rows
+    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId} and p.active = true`)).rows
   }
   
   async getProjectsDetail (): Promise<projectDetail[]> {
@@ -72,6 +75,17 @@ class ProjectService extends DbService{
       values (${ownerId}, '${name}', '${description}', ${budget})
       returning id
     `)).rows[0].id
+  }
+
+  async toggleState (projectId: number): Promise<number> {
+    return new Promise((res, rej) => {
+      this.client.query(`
+        update project set active = not active where id = ${sqlString(projectId.toString())}
+        returning id
+      `)
+      .then(() => res(projectId))
+      .catch(err => rej(err))
+    })
   }
 }
 

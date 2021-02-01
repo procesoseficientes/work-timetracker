@@ -78,12 +78,14 @@ export class UserService extends DbService{
     return (await this.client.query(`delete from "user" where id = ${id} returning true as res;`)).rows[0].res
   }
 
-  async changeStateUser (id: number, active: boolean): Promise<number> {
-    return (await this.client.query(`
-      update "user"
-      set active = ${active}
-      where id = ${id}
-      returning id;
-    `)).rows[0].id
+  async toggleState (id: number): Promise<number> {
+    return new Promise((res, rej) => {
+      this.client.query(`
+        update "user" set active = not active where id = ${sqlString(id.toString())}
+        returning id
+      `)
+      .then(() => res(id))
+      .catch(err => rej(err))
+    })
   }
 }

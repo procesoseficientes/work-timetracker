@@ -17,7 +17,7 @@ export function ProjectsRoutes(pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
   const ownerService = new OwnerService(pgClient)
   
-  router.get('/', hasAccess('read', roleService), async (req, res, next) => {
+  router.get('/', hasAccess('read', roleService), (req, res, next) => {
     roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
     .then(async access => {
       res.render('projects', {
@@ -27,11 +27,12 @@ export function ProjectsRoutes(pgClient: Client): Router {
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
         table: new tableComponent(
-          toTableArray(await projectService.getProjects()), 
+          toTableArray(await projectService.getProjects(!access.delete)), 
           access.update, 
           access.delete,
           './projects'
         ).render(),
+        access: access,
         owners: await ownerService.getOwners()
       })
     })
@@ -78,6 +79,21 @@ export function ProjectsRoutes(pgClient: Client): Router {
       })
       res.end(csv)
     }).catch(err => next(createHttpError(500, err.message)))
+  })
+
+  router.put('/api/:id/toggle', hasAccess('update', roleService), (req, res) => {
+    projectService.toggleState(parseInt(req.params.id)).then(data => {
+      res.send({
+        status: 200,
+        data: data
+      })
+    }).catch(err => {
+      console.error(err)
+      res.status(500).send({
+        status: 500,
+        message: err.message
+      })
+    })
   })
 
   return router

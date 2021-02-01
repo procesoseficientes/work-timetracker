@@ -24,6 +24,7 @@ export function UsersRoutes(pgClient: Client): Router {
           '/users',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
+        access: access,
         table: new tableComponent(
           toTableArray(await userService.getUsers()), 
           access.update, 
@@ -54,12 +55,19 @@ export function UsersRoutes(pgClient: Client): Router {
     .catch(err => next(createHttpError(500, err.message)))
   })
 
-  router.patch('/api/:id/state', hasAccess('update', roleService), (req, res, next) => {
-    userService.changeStateUser(parseInt(req.params.id), req.body.state)
-    .then(data => {
-      res.status(203).send(data)
+  router.put('/api/:id/toggle', hasAccess('update', roleService), (req, res) => {
+    userService.toggleState(parseInt(req.params.id)).then(data => {
+      res.send({
+        status: 200,
+        data: data
+      })
+    }).catch(err => {
+      console.error(err)
+      res.status(500).send({
+        status: 500,
+        message: err.message
+      })
     })
-    .catch(err => next(createHttpError(err.message)))
   })
 
   router.get('/:id', hasAccess('read', roleService), (req, res, next) => {

@@ -21,6 +21,7 @@ export function RolesRoutes (pgClient: Client): Router {
           '/roles',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
+        access: access,
         table: new tableComponent(
           toTableArray(await roleService.getRoles()), 
           access.update, 
@@ -55,6 +56,21 @@ export function RolesRoutes (pgClient: Client): Router {
       res.status(200).send(data)
     })
     .catch(err => next(createHttpError(500, err.message)))
+  })
+
+  router.put('/api/:id/toggle', hasAccess('update', roleService), (req, res) => {
+    roleService.toggleState(parseInt(req.params.id)).then(data => {
+      res.send({
+        status: 200,
+        data: data
+      })
+    }).catch(err => {
+      console.error(err)
+      res.status(500).send({
+        status: 500,
+        message: err.message
+      })
+    })
   })
 
   router.get('/:id', hasAccess('read', roleService), async (req, res) => {
