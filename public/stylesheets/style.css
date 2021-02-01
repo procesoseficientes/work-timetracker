@@ -157,3 +157,7 @@ a:hover {
 .modal-body {
   border-radius: 8px;
 }
+
+img {
+  max-width: 100%;
+}

@@ -9,6 +9,8 @@ import exphbs from 'express-handlebars'
 
 import { IndexRoutes } from './routes/IndexRoutes'
 import { UsersRoutes } from './routes/UsersRoutes'
+import fs from 'fs'
+
 import { StatsRoutes } from './routes/StatsRoutes'
 import { ProjectsRoutes } from './routes/ProjectsRoutes'
 import { LoginRoutes } from './routes/LoginRoutes'
@@ -18,6 +20,7 @@ import { TeamRoutes } from './routes/TeamRoutes'
 import { Client } from 'pg'
 import { TypesRoutes } from './routes/TypesRoutes'
 import { RolesRoutes } from './routes/RolesRoutes'
+import { ChangeLogRoutes } from './routes/ChangeLogRoutes'
 
 const app = express()
 
@@ -64,6 +67,9 @@ app.use('/team', TeamRoutes(pgClient))
 app.use('/projects', ProjectsRoutes(pgClient))
 app.use('/types', TypesRoutes(pgClient))
 app.use('/roles', RolesRoutes(pgClient))
+
+const changeLogMD = fs.readFileSync(path.join(__dirname, '../CHANGELOG.md'), 'utf8')
+app.use('/changelog', ChangeLogRoutes(pgClient, changeLogMD))
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
