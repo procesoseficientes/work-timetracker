@@ -25,15 +25,16 @@ export interface projectDetail {
 class ProjectService extends DbService{
   async getProjects(actives = true): Promise<project[]> {
     return (await this.client.query(`
-    select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
-    inner join owner o on o.id = p.owner_id
-    ${actives ? 'where p.active = true' : ''}`)).rows
+      select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
+      inner join owner o on o.id = p.owner_id
+      ${actives ? 'where p.active = true' : ''}
+    `)).rows
   }
 
   async getProjectsByOwner (ownerId: number): Promise<project[]> {
     return (await this.client.query(`
     select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
-    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId}`)).rows
+    inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId} and p.active = true`)).rows
   }
   
   async getProjectsDetail (): Promise<projectDetail[]> {

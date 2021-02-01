@@ -8,8 +8,12 @@ export interface owner {
 }
 
 class OwnerService extends DbService{
-  async getOwners (): Promise<owner[]> {
-    return (await this.client.query('select * from owner order by id desc')).rows
+  async getOwners (actives = true): Promise<owner[]> {
+    return (await this.client.query(`
+      select * from owner
+      ${actives ? 'where active = true' : ''}
+      order by id desc
+    `)).rows
   }
 
   async createOwner (name: string): Promise<number> {

@@ -26,7 +26,7 @@ export function OwnersRoutes(pgClient: Client): Router {
         ).render(),
         access: access,
         table: new tableComponent(
-          toTableArray(await ownerService.getOwners()), 
+          toTableArray(await ownerService.getOwners(!access.delete)), 
           access.update, 
           access.delete,
           './owners'

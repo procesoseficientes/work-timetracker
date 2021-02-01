@@ -69,7 +69,7 @@
 
 <script>
   function toggleStatus(projectId) {
-    return fetch(`/projects/api/${projectId}/toggle`, {
+    return fetch(`${window.location.pathname}/api/${projectId}/toggle`, {
       method: 'PUT'
     }).then(response => response.json())
     .then(data => {

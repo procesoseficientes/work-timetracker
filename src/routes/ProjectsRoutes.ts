@@ -27,7 +27,7 @@ export function ProjectsRoutes(pgClient: Client): Router {
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
         table: new tableComponent(
-          toTableArray(await projectService.getProjects(!access.update)), 
+          toTableArray(await projectService.getProjects(!access.delete)), 
           access.update, 
           access.delete,
           './projects'
