@@ -53,20 +53,15 @@ INSERT INTO public."user"(
 INSERT INTO public.project(owner_id, name, description, budget)
 VALUES (0, 'Lunch/Break', 'Section of time schedulded for lunchs and breaks, budget is based on 1.5 hours for 7 team members', 53);
 
-insert into public.access(role_id, route, "create", read, update, delete)
-values (1, '/', true, true, true, true);
-
-insert into public.access(role_id, route, "create", read, update, delete)
-values (1, '/team', true, true, true, true);
-
-insert into public.access(role_id, route, "create", read, update, delete)
-values (1, '/users', true, true, true, true);
-
-insert into public.access(role_id, route, "create", read, update, delete)
-values (1, '/projects', true, true, true, true);
-
-insert into public.access(role_id, route, "create", read, update, delete)
-values (1, '/owners', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (1, 1, '/', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (2, 1, '/team', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (3, 1, '/users', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (4, 1, '/projects', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (5, 1, '/owners', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (6, 1, '/roles', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (7, 1, '/types', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (8, 1, '/stats', true, true, true, true);
+INSERT INTO public.access (id, role_id, route, "create", read, update, delete) VALUES (9, 1, '/detail', true, true, true, true);
 
 insert into public."type"(type, active) values ('Development', true)
 insert into public."type"(type, active) values ('Bug fixing', true)

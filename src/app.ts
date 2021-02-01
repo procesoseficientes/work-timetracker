@@ -37,6 +37,8 @@ app.use(session({
 	saveUninitialized: true
 }))
 
+console.log(process.env.DATABASE_URL)
+
 const pgClient = new Client({
   connectionString: process.env.DATABASE_URL
 })

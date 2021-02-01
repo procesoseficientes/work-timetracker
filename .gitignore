@@ -1,5 +1,6 @@
 /.vs/
 /node_modules/
 vars.ps1
+vars.sh
 debug.log
 /dist/

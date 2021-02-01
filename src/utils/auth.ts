@@ -44,7 +44,7 @@ export function hasAccess(access: keyof typeof accessType, roleService: RoleServ
     if (req.session?.roleId) {
       roleService.getAccessByRole(req.session.roleId)
       .then(accesses => {
-        const route = `/${req.originalUrl.split('/')[1]}`
+        const route = `/${req.originalUrl.split('/')[1].split('?')[0]}`
         const routeAccess: any = accesses.find(a => a.route === route)
         
         if (routeAccess && routeAccess[access] == true) {
