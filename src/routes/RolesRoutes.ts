@@ -21,6 +21,7 @@ export function RolesRoutes (pgClient: Client): Router {
           '/roles',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
+        access: access,
         table: new tableComponent(
           toTableArray(await roleService.getRoles()), 
           access.update, 

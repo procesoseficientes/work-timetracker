@@ -23,6 +23,7 @@ export function TypesRoutes (pgClient: Client): Router {
           '/types',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
+        access: access,
         table: new tableComponent(
           toTableArray(await typeService.getTypes()), 
           access.update, 

@@ -32,6 +32,7 @@ export function ProjectsRoutes(pgClient: Client): Router {
           access.delete,
           './projects'
         ).render(),
+        access: access,
         owners: await ownerService.getOwners()
       })
     })

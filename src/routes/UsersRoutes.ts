@@ -24,6 +24,7 @@ export function UsersRoutes(pgClient: Client): Router {
           '/users',
           await roleService.getAccessByRole(req.session?.roleId)
         ).render(),
+        access: access,
         table: new tableComponent(
           toTableArray(await userService.getUsers()), 
           access.update, 
