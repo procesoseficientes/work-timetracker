@@ -1,4 +1,8 @@
 # Changelog
+## 2021.01.31
+### Detail page bug fix
+Fixes `access denied` bug on second page of detail
+
 ## 2020.12.21
 ### Role panel
 ![role panel](https://i.imgur.com/QhCpTWm.png)
