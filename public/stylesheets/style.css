@@ -161,3 +161,19 @@ a:hover {
 img {
   max-width: 100%;
 }
+
+.dropdown {
+  position: relative;
+}
+
+.navbar-nav .dropdown-menu {
+  position: fixed;
+  top: 50px;
+  left: initial;
+  right: 0 !important;
+}
+
+.dropdown-menu.show {
+  display: block;
+  width: 10rem;
+}
