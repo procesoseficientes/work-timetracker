@@ -6,10 +6,10 @@ import bodyParser from 'body-parser'
 import logger from 'morgan'
 import session from 'express-session'
 import exphbs from 'express-handlebars'
+import fs from 'fs'
 
 import { IndexRoutes } from './routes/IndexRoutes'
 import { UsersRoutes } from './routes/UsersRoutes'
-import fs from 'fs'
 
 import { StatsRoutes } from './routes/StatsRoutes'
 import { ProjectsRoutes } from './routes/ProjectsRoutes'
@@ -51,7 +51,8 @@ app.use(session({
 }))
 
 const pgClient = new Client({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 })
 pgClient.connect().catch((err) => {
   console.error(err)
