@@ -2,7 +2,7 @@ import { Router } from "express"
 import { Client } from "pg"
 import { Converter } from "showdown"
 import { sidebarComponent } from "../components/sidebar/sidebar"
-import { RoleService } from "../services/RoleService"
+import { RoleService } from "../controllers/RoleService"
 import { authenticated } from "../utils/auth"
 
 export function ChangeLogRoutes(pgClient: Client, changeLogMD: string): Router {

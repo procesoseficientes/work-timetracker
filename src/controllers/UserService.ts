@@ -1,23 +1,15 @@
+import { user } from "../models/user"
 import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
-
-export interface user {
-  username: string, 
-  password: string,
-  id: number,
-  active: boolean,
-  role: string,
-  role_id: number
-}
 
 export class UserService extends DbService{
   async getUsers (): Promise<user[]> {
     return (await this.client.query(`
-    select 
-      u.id, 
-      u.name, 
-      u.username, 
-      u.active, 
+    select
+      u.id,
+      u.name,
+      u.username,
+      u.active,
       r.name as "role",
       u.role_id
     from public."user" u
@@ -26,11 +18,11 @@ export class UserService extends DbService{
 
   async getUser(userId: number): Promise<user> {
     return (await this.client.query(`
-    select 
-      u.id, 
-      u.name, 
-      u.username, 
-      u.active, 
+    select
+      u.id,
+      u.name,
+      u.username,
+      u.active,
       r.name as "role",
       u.role_id
     from public."user" u
@@ -41,11 +33,11 @@ export class UserService extends DbService{
   validateLogin(username: string, password: string): Promise<user | boolean> {
     return new Promise((resolve, reject) => {
       this.client.query(`
-        select 
-          u.id, 
-          u.name, 
-          u.username, 
-          u.active, 
+        select
+          u.id,
+          u.name,
+          u.username,
+          u.active,
           r.name as "role",
           u.role_id
         from public."user" u

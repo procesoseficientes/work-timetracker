@@ -1,26 +1,9 @@
+import { projectDetail } from "../models/projectDetail"
 import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
 
-interface project {
-  id: number
-  owner_id: number
-  name: string
-  description: string
-  active: boolean
-  budget: number
-}
+import { project } from "../models/project"
 
-export interface projectDetail {
-  id: number
-  time_id: number
-  name: string
-  description: string
-  user: string
-  hours: number
-  project_hours: number
-  percent: number
-  color?: string
-}
 
 class ProjectService extends DbService{
   async getProjects(actives = true): Promise<project[]> {
@@ -36,13 +19,13 @@ class ProjectService extends DbService{
     select p.id, o.name as "owner", p.name, p.description, p.budget, p.active from project p
     inner join owner o on o.id = p.owner_id where p.owner_id = ${ownerId} and p.active = true`)).rows
   }
-  
+
   async getProjectsDetail (): Promise<projectDetail[]> {
     return (await this.client.query(`
     select
       p.id,
       u.id as time_id,
-      p.name, 
+      p.name,
       p.description,
       u.name as "user",
       user_hours as "hours",
@@ -50,7 +33,7 @@ class ProjectService extends DbService{
       ((user_hours + 1) / (p.budget + 0.1)) * 100 as "percent"
     from project p
     inner join owner o on o.id = p.owner_id
-    inner join (select 
+    inner join (select
         u.id as id,
         u.name as name,
         t.project_id,
@@ -59,8 +42,8 @@ class ProjectService extends DbService{
       inner join "user" u on u.id = user_id
       group by u.id, u.name, t.project_id) u on u.project_id = p.id
     inner join (
-      select 
-        p.id as project_id, 
+      select
+        p.id as project_id,
         sum(ROUND(cast((extract(epoch from "end" - "start")) as numeric) / 3600, 2)) as project_hours
       from project p
       inner join time t on t.project_id = p.id

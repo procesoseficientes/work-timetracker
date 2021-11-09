@@ -1,10 +1,10 @@
 import { Router } from 'express'
 import { Client } from 'pg'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import TimeService from '../services/TimeService'
+import TimeService from '../controllers/TimeService'
 import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
 import { Converter } from 'showdown'
 
