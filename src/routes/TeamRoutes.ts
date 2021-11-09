@@ -15,14 +15,14 @@ export function TeamRoutes (pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
 
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
-    teamView(req.session?.roleId)
+    teamView(req.session?.roleId || 0)
     .then(data => {
       res.render('team', data)
     })
     .catch(err => next(createHttpError(500, err.message)))
   })
 
-  async function teamView(roleId: string): Promise<{
+  async function teamView(roleId: number): Promise<{
     title: string
     sidebar: string
     team: {
@@ -46,7 +46,7 @@ export function TeamRoutes (pgClient: Client): Router {
         project: teamTimes[a][0].project,
         owner: teamTimes[a][0].owner
       }
-      
+
       return g
     })
 
@@ -54,7 +54,7 @@ export function TeamRoutes (pgClient: Client): Router {
       title: 'Timetracker - Team',
       sidebar: new sidebarComponent(
         '/team', 
-        await roleService.getAccessByRole(parseInt(roleId))
+        await roleService.getAccessByRole(roleId)
       ).render(),
       team: grouped
     }

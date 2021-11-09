@@ -15,15 +15,15 @@ export function IndexRoutes (pgClient: Client): Router {
   const typeService = new TypeService(pgClient)
   const roleService = new RoleService(pgClient)
   const router = Router()
-  
+
   router.get('/', authenticated, async (req, res) => {
     try {
-      const times = await timeService.getTodayUser(req.session?.user)
+      const times = await timeService.getTodayUser(parseInt(req.session?.user || ""))
       res.render('track', {
         title: 'Timetracker',
         sidebar: new sidebarComponent(
           '/',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         owners: await ownerService.getOwners(),
         types: await typeService.getTypes(),
@@ -39,11 +39,11 @@ export function IndexRoutes (pgClient: Client): Router {
       res.status(500).send(error)
     }
   })
-  
+
   router.post('/', hasAccess('create', roleService), async (req, res, next) => {
     try {
       await timeService.startTracking(
-        req.session?.user,
+        parseInt(req.session?.user || ""),
         req.body.owner,
         req.body.project,
         req.body.task,
@@ -55,28 +55,28 @@ export function IndexRoutes (pgClient: Client): Router {
       next(createError(500))
     }
   })
-    
+
   router.delete('/', hasAccess('delete', roleService), async (req, res) => {
     res.send(await timeService.stopTracking(req.body.id))
   })
-    
+
   router.delete('/api', hasAccess('delete', roleService), async (req, res) => {
     res.send(await timeService.stopTracking(req.body.id))
   })
-    
+
   router.get('/api', authenticated, async (req, res) => {
     try {
-      res.send(await timeService.getTodayUser(req.session?.user))
+      res.send(await timeService.getTodayUser(parseInt(req.session?.user || "")))
     } catch (error) {
       console.error(error)
       res.status(500).send(error)
     }
   })
-    
+
   router.post('/api', hasAccess('create', roleService) , async (req, res, next) => {
     try {
       res.status(201).send(await timeService.startTracking(
-        req.session?.user,
+        parseInt(req.session?.user || ""),
         req.body.owner,
         req.body.project,
         req.body.task,

@@ -15,18 +15,18 @@ export function TypesRoutes (pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
 
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
-    roleService.getAccessByRouteAndRole('/types', req.session?.roleId)
+    roleService.getAccessByRouteAndRole('/types', req.session?.roleId || 0)
     .then(async access => {
       res.render('types', {
         title: 'Timetracker - Types',
         sidebar: new sidebarComponent(
           '/types',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         access: access,
         table: new tableComponent(
-          toTableArray(await typeService.getTypes()), 
-          access.update, 
+          toTableArray(await typeService.getTypes()),
+          access.update,
           access.delete,
           './types'
         ).render()

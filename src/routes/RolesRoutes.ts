@@ -13,18 +13,18 @@ export function RolesRoutes (pgClient: Client): Router {
   const roleService = new RoleService(pgClient)
 
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
-    roleService.getAccessByRouteAndRole('/roles', req.session?.roleId)
+    roleService.getAccessByRouteAndRole('/roles', req.session?.roleId || 0)
     .then(async access => {
       res.render('roles/roles', {
         title: 'Timetracker - Roles',
         sidebar: new sidebarComponent(
           '/roles',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         access: access,
         table: new tableComponent(
-          toTableArray(await roleService.getRoles()), 
-          access.update, 
+          toTableArray(await roleService.getRoles()),
+          access.update,
           access.delete,
           './roles'
         ).render()
@@ -34,8 +34,8 @@ export function RolesRoutes (pgClient: Client): Router {
   })
 
   router.post(
-    '/', 
-    hasAccess('create', roleService), 
+    '/',
+    hasAccess('create', roleService),
     validateBody(body => (
       body.role != null &&
       body.color != null
@@ -78,12 +78,12 @@ export function RolesRoutes (pgClient: Client): Router {
       title: `Timetracker - Roles`,
       sidebar: new sidebarComponent(
         '/roles',
-        await roleService.getAccessByRole(req.session?.roleId)
+        await roleService.getAccessByRole(req.session?.roleId || 0)
       ).render(),
       role: await roleService.getRole(parseInt(req.params.id)),
       table: new tableComponent(
-        toTableArray(await roleService.getAccessByRole(parseInt(req.params.id))), 
-        true, 
+        toTableArray(await roleService.getAccessByRole(parseInt(req.params.id))),
+        true,
         true,
         `/roles/${req.params.id}`
       ).render()
@@ -126,7 +126,7 @@ export function RolesRoutes (pgClient: Client): Router {
         access: access,
         sidebar: new sidebarComponent(
           '/roles',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
       })
     })
@@ -134,8 +134,8 @@ export function RolesRoutes (pgClient: Client): Router {
   })
 
   router.post(
-    '/:id/:accessId', 
-    hasAccess('update', roleService), 
+    '/:id/:accessId',
+    hasAccess('update', roleService),
     validateBody(body => body.role != null),
     (req, res, next) => {
       roleService.updateAccess(

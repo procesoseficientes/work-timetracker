@@ -16,18 +16,18 @@ export function UsersRoutes(pgClient: Client): Router {
   const router = Router()
 
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
-    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
+    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId || 0)
     .then(async access => {
       res.render('users/users', {
         title: 'Timetracker - Users',
         sidebar: new sidebarComponent(
           '/users',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         access: access,
         table: new tableComponent(
-          toTableArray(await userService.getUsers()), 
-          access.update, 
+          toTableArray(await userService.getUsers()),
+          access.update,
           access.delete,
           './users'
         ).render(),
@@ -37,7 +37,7 @@ export function UsersRoutes(pgClient: Client): Router {
     .catch(err => next(createHttpError(err.message)))
   })
 
-  router.post('/', hasAccess('create', roleService), validateBody(body => 
+  router.post('/', hasAccess('create', roleService), validateBody(body =>
     body.name != null && body.username != null && body.password != null && body.role
   ), async (req, res) => {
     try {
@@ -77,7 +77,7 @@ export function UsersRoutes(pgClient: Client): Router {
         title: 'Timetracker - ' + data.username,
         sidebar: new sidebarComponent(
           '/users',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         user: data,
         roles: await roleService.getRoles()
@@ -118,7 +118,7 @@ export function UsersRoutes(pgClient: Client): Router {
         'Content-Disposition': `attachment; filename="Users.csv"`,
         'Content-Type': 'text/csv',
       })
-      
+
       res.end(csv)
 
     }).catch(err => next(createHttpError(500, err.message)))

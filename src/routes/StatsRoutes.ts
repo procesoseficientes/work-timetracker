@@ -16,10 +16,10 @@ export function StatsRoutes (pgClient: Client): Router {
 
   router.get('/', hasAccess('read', roleService) ,async (req, res) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
-    res.render('stats', await statsView(<string>req.query.page, req.session?.roleId))
+    res.render('stats', await statsView(<string>req.query.page, req.session?.roleId || 0))
   })
 
-  async function statsView (page: string, roleId: string): Promise<{
+  async function statsView (page: string, roleId: number): Promise<{
     title: string;
     sidebar: string;
     owners: owner[];
@@ -51,7 +51,7 @@ export function StatsRoutes (pgClient: Client): Router {
       title: 'Timetracker - Stats',
       sidebar: new sidebarComponent(
         '/stats',
-        await roleService.getAccessByRole(parseInt(roleId))
+        await roleService.getAccessByRole(roleId)
       ).render(),
       owners: await ownerService.getOwners(),
       projects: grouped,

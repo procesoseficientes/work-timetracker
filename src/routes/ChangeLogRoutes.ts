@@ -15,7 +15,7 @@ export function ChangeLogRoutes(pgClient: Client, changeLogMD: string): Router {
       body: new Converter({simplifiedAutoLink: true, simpleLineBreaks: true}).makeHtml(changeLogMD),
       sidebar: new sidebarComponent(
         '/changelog',
-        await roleService.getAccessByRole(req.session?.roleId)
+        await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render()
     })
   })

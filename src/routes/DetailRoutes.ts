@@ -16,7 +16,7 @@ export function DetailRoutes(pgClient: Client): Router {
   router.get('/', hasAccess('read', roleService), (req, res) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     timeService.getTimes(
-      <string>req.query.name, 
+      <string>req.query.name,
       <string>req.query.owner,
       <string>req.query.project,
       <string>req.query.from === '' ? undefined : <string>req.query.from,
@@ -27,7 +27,7 @@ export function DetailRoutes(pgClient: Client): Router {
         title: 'Timetracker - Times',
         sidebar: new sidebarComponent(
           '/detail',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         times: data
           .slice(0, 26)
@@ -63,7 +63,7 @@ export function DetailRoutes(pgClient: Client): Router {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     res.status(200).send(
       await timeService.getTimes(
-        <string>req.query.name, 
+        <string>req.query.name,
         <string>req.query.owner,
         <string>req.query.project,
         <string>req.query.from === '' ? undefined : <string>req.query.from,
@@ -72,11 +72,11 @@ export function DetailRoutes(pgClient: Client): Router {
       )
     )
   })
-  
+
   router.get('/excel', hasAccess('read', roleService), async (req, res, next) => {
     if (!req.query.page || req.query.page === '') req.query.page = '0'
     timeService.getTimes(
-      <string>req.query.name, 
+      <string>req.query.name,
       <string>req.query.owner,
       <string>req.query.project,
       <string>req.query.from === '' ? undefined : <string>req.query.from,
@@ -88,7 +88,7 @@ export function DetailRoutes(pgClient: Client): Router {
       // JSONtoCSV crahses if the input date is empty
       // This will line will create an empty row so JSONtoCSV can work
       data = data.length === 0 ? [{ name: '', owner: '', project: '', task: '', start: '', end: '', hours: ''}] : data
-      
+
       const parser = new Parser()
       const csv = parser.parse(data)
 
@@ -96,7 +96,7 @@ export function DetailRoutes(pgClient: Client): Router {
         'Content-Disposition': `attachment; filename="Times.csv"`,
         'Content-Type': 'text/csv',
       })
-      
+
       res.end(csv)
 
     }).catch(err => {

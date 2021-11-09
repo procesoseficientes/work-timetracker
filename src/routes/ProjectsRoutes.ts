@@ -16,19 +16,19 @@ export function ProjectsRoutes(pgClient: Client): Router {
   const projectService = new ProjectsService(pgClient)
   const roleService = new RoleService(pgClient)
   const ownerService = new OwnerService(pgClient)
-  
+
   router.get('/', hasAccess('read', roleService), (req, res, next) => {
-    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId)
+    roleService.getAccessByRouteAndRole('/projects', req.session?.roleId || 0)
     .then(async access => {
       res.render('projects', {
         title: 'Timetracker - Projects',
         sidebar: new sidebarComponent(
           '/projects',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         table: new tableComponent(
-          toTableArray(await projectService.getProjects(!access.delete)), 
-          access.update, 
+          toTableArray(await projectService.getProjects(!access.delete)),
+          access.update,
           access.delete,
           './projects'
         ).render(),
@@ -38,14 +38,14 @@ export function ProjectsRoutes(pgClient: Client): Router {
     })
     .catch(err => next(createHttpError(err.message)))
   })
-    
+
   router.post(
-    '/', 
-    hasAccess('create', roleService), 
+    '/',
+    hasAccess('create', roleService),
     validateBody(body => (
       body.owner != null &&
-      body.name != null && 
-      body.description != null && 
+      body.name != null &&
+      body.description != null &&
       body.budget != null
     )),
     async (req, res) => {
@@ -58,7 +58,7 @@ export function ProjectsRoutes(pgClient: Client): Router {
       }
     }
   )
-  
+
   router.get('/api', hasAccess('read', roleService), async (req, res) => {
     if (req.query.ownerId != null) {
       const id: number = isNaN(parseInt(<string>req.query.ownerId)) ? 1 : parseInt(<string>req.query.ownerId)
@@ -67,12 +67,12 @@ export function ProjectsRoutes(pgClient: Client): Router {
       res.send(await projectService.getProjects())
     }
   })
-  
+
   router.get('/excel', hasAccess('read', roleService), async (_req, res, next) => {
-    projectService.getProjects().then(data =>{ 
+    projectService.getProjects().then(data =>{
       const parser = new Parser()
       const csv = parser.parse(data)
-      
+
       res.writeHead(200, {
         'Content-Disposition': `attachment; filename="projects.csv"`,
         'Content-Type': 'text/csv',

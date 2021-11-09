@@ -8,6 +8,13 @@ import session from 'express-session'
 import exphbs from 'express-handlebars'
 import fs from 'fs'
 
+declare module 'express-session' {
+  export interface SessionData {
+    user: string;
+    roleId: number;
+  }
+}
+
 import { IndexRoutes } from './routes/IndexRoutes'
 import { UsersRoutes } from './routes/UsersRoutes'
 
@@ -31,7 +38,7 @@ const hbs = exphbs.create({
   helpers: {
     json: (context: string) => JSON.stringify(context)
   }
-}) 
+})
 
 app.engine('.hbs', hbs.engine)
 app.set('view engine', '.hbs')

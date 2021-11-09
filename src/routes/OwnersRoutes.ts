@@ -14,20 +14,20 @@ export function OwnersRoutes(pgClient: Client): Router {
   const router = Router()
   const ownerService = new OwnerService(pgClient)
   const roleService = new RoleService(pgClient)
-  
+
   router.get('/', hasAccess('read', roleService), async (req, res, next) => {
-    roleService.getAccessByRouteAndRole('/owners', req.session?.roleId)
+    roleService.getAccessByRouteAndRole('/owners', req.session?.roleId || 0)
     .then(async access => {
       res.render('owners', {
         title: 'Timetracker - Owners',
         sidebar: new sidebarComponent(
           '/owners',
-          await roleService.getAccessByRole(req.session?.roleId)
+          await roleService.getAccessByRole(req.session?.roleId || 0)
         ).render(),
         access: access,
         table: new tableComponent(
-          toTableArray(await ownerService.getOwners(!access.delete)), 
-          access.update, 
+          toTableArray(await ownerService.getOwners(!access.delete)),
+          access.update,
           access.delete,
           './owners'
         ).render()
@@ -35,7 +35,7 @@ export function OwnersRoutes(pgClient: Client): Router {
     })
     .catch(err => next(createHttpError(err.message)))
   })
-  
+
   router.post('/', hasAccess('create', roleService), validateBody(body => body.name != null), async (req, res, next) => {
     ownerService.createOwner(req.body.name)
     .then((data) => {
@@ -44,23 +44,23 @@ export function OwnersRoutes(pgClient: Client): Router {
     })
     .catch(err => next(createHttpError(500, err.message)))
   })
-    
+
   router.get('/api', hasAccess('read', roleService), async (_req, res) => {
     res.status(200).send(await ownerService.getOwners())
   })
-    
+
   router.get('/excel', hasAccess('read', roleService), async (_req, res, next) => {
     ownerService.getOwners()
     .then(data => {
       const parser = new Parser()
       const csv = parser.parse(data)
-      
+
       res.writeHead(200, {
         'Content-Disposition': `attachment; filename="Owners.csv"`,
         'Content-Type': 'text/csv',
       })
       res.end(csv)
-      
+
     }).catch(err => next(createHttpError(500, err.message)))
   })
 
