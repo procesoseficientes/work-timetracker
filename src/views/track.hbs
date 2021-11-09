@@ -37,12 +37,12 @@
 <h2>Timeline</h2>
 <div class="progress" style="height: 35px;">
    {{#each this.times}}
-    <div 
-      class="progress-bar {{this.color}} {{#if this.current}}progress-bar-animated progress-bar-striped{{/if}}" 
-      role="progressbar" 
-      style="width: {{this.percent}}%" 
-      aria-valuenow="20" 
-      aria-valuemin="0" 
+    <div
+      class="progress-bar {{this.color}} {{#if this.current}}progress-bar-animated progress-bar-striped{{/if}}"
+      role="progressbar"
+      style="width: {{this.percent}}%"
+      aria-valuenow="20"
+      aria-valuemin="0"
       aria-valuemax="100"
     >
       {{this.owner}} ({{this.hours}}h)
@@ -56,8 +56,10 @@
   // Gets today's times, retrieves the latest and set the default data
   // of the selects to the latest time
   const times = {{{json this.times}}}
-  document.getElementsByName('owner')[0].value = times[times.length - 1].owner_id
-  document.getElementsByName('project')[0].value = times[times.length - 1].project_id
+  if (times.length > 0) {
+    document.getElementsByName('owner')[0].value = times[times.length - 1].owner_id
+    document.getElementsByName('project')[0].value = times[times.length - 1].project_id
+  }
 
   function loadProject() {
     const owner = document.getElementsByName('owner')[0].value
