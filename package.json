@@ -3,7 +3,7 @@
   "version": "2020.12.21",
   "description": "Track your team's work",
   "main": "index.js",
-  "engine": {
+  "engines": {
     "node": "16.x"
   },
   "repository": {
