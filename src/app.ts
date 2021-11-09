@@ -2,7 +2,6 @@ import createError from 'http-errors'
 import express from 'express'
 import path from 'path'
 import cookieParser from 'cookie-parser'
-import bodyParser from 'body-parser'
 import logger from 'morgan'
 import session from 'express-session'
 import exphbs from 'express-handlebars'
@@ -49,8 +48,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, '../public')))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(session({
   secret: 'secret',
   resave: true,

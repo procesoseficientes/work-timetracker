@@ -1,7 +1,7 @@
 import { Component } from 'bigojs'
 import fs from 'fs'
 import path from 'path'
-import { access } from '../../services/RoleService'
+import { access } from '../../models/access'
 
 export interface sidebarItem {
   link: string,
@@ -52,7 +52,7 @@ export class sidebarComponent extends Component<sidebarInterface> {
               icon: '<svg class="feather" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
               caption: 'Changelog',
               visible: true
-            }            
+            }
           ]
         },
         {

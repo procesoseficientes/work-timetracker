@@ -1,5 +1,5 @@
 @font-face {
-  font-family: KumbhSans; 
+  font-family: KumbhSans;
   src: url('../fonts/KumbhSans-Regular.ttf');
 }
 
@@ -176,4 +176,52 @@ img {
 .dropdown-menu.show {
   display: block;
   width: 10rem;
+}
+
+.timeline {
+  padding: 5px;
+  height: 52px;
+  border-radius: 8px;
+  position: relative;
+  opacity: .9;
+}
+
+.time {
+  text-align: center;
+  padding: 10px 3px 10px 3px;
+  border-radius: 5px;
+  position: absolute;
+  height: 41px;
+  opacity: .8;
+}
+
+.time-text {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.tt .tt-text {
+  visibility: hidden;
+  width: 240px;
+  background-color: rgba(0,0,0,.7);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 100;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tt:hover .tt-text {
+  visibility: visible;
+}
+
+.timeline {
+
 }

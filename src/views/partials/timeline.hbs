@@ -1,0 +1,92 @@
+<!--<div class="progress" style="height: 35px;">
+   {{#each this.times}}
+    <div
+      class="progress-bar {{this.color}} {{#if this.current}}progress-bar-animated progress-bar-striped{{/if}}"
+      role="progressbar"
+      style="width: {{this.percent}}%"
+      aria-valuenow="20"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      {{this.owner}} ({{this.hours}}h)
+    </div>
+    {{/each}}
+</div>-->
+
+<div class="timeline bg-dark" id="timeline"></div>
+
+<script type="text/javascript">
+  {
+    const times = {{{json this.times}}}
+    console.log(times);
+    const firstDate = (new Date(times[0].start)).toLocaleString('en-GB')
+    const firstHour = parseInt((new Date(firstDate).toLocaleString('en-GB').split(',')[1].split(':')[0]))
+
+    const getHour = (firstHour, i) => {
+      const hour = (firstHour + i) % 24;
+      return hour < 10 ? `0${hour}:00` : `${hour}:00`;
+    };
+
+    const timeEntryWidth = (startTimeStamp, endTimeStamp) => {
+      const start = new Date(startTimeStamp);
+      const end = endTimeStamp ? new Date(endTimeStamp) : new Date();
+
+      const diff = (end - start) / 3600000;
+
+      return (((diff / 12) * 100) - 0.1) < 0.5 ? 0.5 : ((diff / 12) * 100) - 0.1;
+    };
+
+    // Function that receives a ISO date string and returns a date object with the closest floor hour
+    const getClosestFloorHour = (dateString) => {
+      const date = new Date(dateString);
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      const second = date.getSeconds();
+      const millisecond = date.getMilliseconds();
+
+      const floorHour = hour - (minute > 0 || second > 0 || millisecond > 0 ? 1 : 0);
+      const floorDate = new Date(date.setHours(floorHour));
+
+      return floorDate;
+    };
+
+    const timeEntryStartingPoint = (startTimeStamp, firstTime) => {
+      const start = new Date(startTimeStamp);
+      const diff = (start - getClosestFloorHour(firstTime)) / 3600000;
+
+      return ((diff / 12) * 100);
+    };
+
+    /**
+     * Returns HTML code with a Time element
+     * @param element
+     * @param {number} firstHour
+     * @returns {string}
+    */
+    const element = (element, firstHour) => {
+      const startDate = (new Date(element.start)).toLocaleString('en-GB')
+
+      return `
+        <div
+          class="time tt"
+          style="
+            background-color: ${element.color};
+            width: ${timeEntryWidth(element.start, element.end)}%;
+            left: ${timeEntryStartingPoint(element.start, times[0].start)}%"
+        >
+          <span class="tt-text">
+            ${element.hours}h ${element.type} <br>
+            ${element.owner} | ${element.project}
+          </span>
+          <div class="time-text">
+            ${timeEntryWidth(element.start, element.end) > 5 ? element.type : ''}
+          </div>
+        </div>
+      `
+    }
+
+    document.getElementById('timeline').innerHTML = times.map(time => (
+      element(time, firstHour)
+    )).join('')
+  }
+</script>

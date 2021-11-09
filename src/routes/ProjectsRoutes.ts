@@ -1,14 +1,14 @@
 import { Router } from 'express'
 import { Client } from 'pg'
-import ProjectsService from '../services/ProjectService'
-import OwnerService from '../services/OwnerService'
+import ProjectsService from '../controllers/ProjectService'
+import OwnerService from '../controllers/OwnerService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { tableComponent } from '../components/table/table'
 import { Parser } from 'json2csv'
 import toTableArray from '../utils/tableArray'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
 
 export function ProjectsRoutes(pgClient: Client): Router {

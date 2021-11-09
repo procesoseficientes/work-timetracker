@@ -3,10 +3,10 @@ import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import TypeService from '../services/TypeService'
+import TypeService from '../controllers/TypeService'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
 
 export function TypesRoutes (pgClient: Client): Router {

@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import createError from 'http-errors'
 import { Client } from 'pg'
-import TypeService from '../services/TypeService'
-import OwnerService from '../services/OwnerService'
-import TimeService from '../services/TimeService'
+import TypeService from '../controllers/TypeService'
+import OwnerService from '../controllers/OwnerService'
+import TimeService from '../controllers/TimeService'
 import mapTime from '../utils/mapTime'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { authenticated, hasAccess } from '../utils/auth'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 
 export function IndexRoutes (pgClient: Client): Router {
   const timeService = new TimeService(pgClient)
@@ -29,9 +29,7 @@ export function IndexRoutes (pgClient: Client): Router {
         types: await typeService.getTypes(),
         isWorking: times[0] ? times[0].current : false,
         lastTask: times[0] ?  times[0].task : '',
-        times: times.filter(a => a.percent > 0.5 || a.current)
-        .map(mapTime)
-        .reverse(),
+        times: times.map(mapTime).reverse(),
         userId: req.session?.user
       })
     } catch (error) {

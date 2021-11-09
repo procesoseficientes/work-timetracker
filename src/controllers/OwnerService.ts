@@ -1,11 +1,6 @@
+import { owner } from "../models/owner"
 import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
-
-export interface owner {
-  id: number,
-  name: string, 
-  active: boolean
-}
 
 class OwnerService extends DbService{
   async getOwners (actives = true): Promise<owner[]> {
