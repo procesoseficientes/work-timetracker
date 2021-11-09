@@ -5,7 +5,7 @@
   "main": "index.js",
   "engine": {
     "node": "16.x"
-  }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
