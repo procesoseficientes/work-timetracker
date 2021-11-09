@@ -3,6 +3,9 @@
   "version": "2020.12.21",
   "description": "Track your team's work",
   "main": "index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/procesoseficientes/work-timetracker.git"
