@@ -17,6 +17,8 @@ export interface userTime {
   task: string,
   start: string | number | Date,
   end: string | number | Date,
+  type_id: number,
+  type: string,
   current: boolean,
   hours: string | number,
   percent: number,

@@ -29,9 +29,7 @@ export function IndexRoutes (pgClient: Client): Router {
         types: await typeService.getTypes(),
         isWorking: times[0] ? times[0].current : false,
         lastTask: times[0] ?  times[0].task : '',
-        times: times.filter(a => a.percent > 0.5 || a.current)
-        .map(mapTime)
-        .reverse(),
+        times: times.map(mapTime).reverse(),
         userId: req.session?.user
       })
     } catch (error) {

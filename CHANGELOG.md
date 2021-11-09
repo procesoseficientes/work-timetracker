@@ -1,4 +1,9 @@
 # Changelog
+## 2021.11.9
+-  New rolling timeline
+  - The new timeline aligns the block according to the last 8hors
+  - The colours are now assigned by a hash fuction according to the time type
+  - Hovering the time block shows a tooltip with more information
 ## 2021.02.01
 - Toggle active rows
   - All `active toggles` are now fully working

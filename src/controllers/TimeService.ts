@@ -80,16 +80,17 @@ class TimeService extends DbService{
         o.id as owner_id,
         p.name as "project",
         p.id as project_id,
-        t.task,
-        t.start,
+        t.*,
+        tt.type,
         "end" is null as "current",
         (extract(epoch from "end" - "start")) / 3600 as hours,
         (extract(epoch from "end" - "start") / 28800) * 100 as "percent"
       from "time" t
       inner join "owner" o on owner_id = o.id
       inner join project p on project_id = p.id
+      inner join type tt on t.type_id = tt.id
       where user_id = ${userId}
-      and "start" > now() - interval '1 day'
+      and "start" > now() - interval '8 hour'
       order by "start" desc
     `)).rows
   }
@@ -97,19 +98,20 @@ class TimeService extends DbService{
   async getTodayTeam(): Promise<teamTime[]> {
     return (await this.client.query(`
       select
-        t.id as "time_id",
         user_id,
+        t.id as "time_id",
         u.name,
         o.name as "owner",
         p.name as "project",
-        t.task,
-        t.start,
-        "end" is null as "is_current",
+        t.*,
+        tt.type,
+        "end" is null as "current",
         (extract(epoch from "end" - "start")) / 3600 as hours,
         (extract(epoch from "end" - "start") / 28800) * 100 as "percent"
       from "time" t
       inner join "owner" o on owner_id = o.id
       inner join "user" u on user_id = u.id
+      inner join type tt on t.type_id = tt.id
       inner join project p on project_id = p.id
       and "start" > now() - interval '1 day'
       order by "start" desc
