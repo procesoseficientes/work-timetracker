@@ -3,11 +3,11 @@ import { Client } from 'pg'
 import { tableComponent } from '../components/table/table'
 import toTableArray from '../utils/tableArray'
 import { sidebarComponent } from '../components/sidebar/sidebar'
-import OwnerService from '../services/OwnerService'
+import OwnerService from '../controllers/OwnerService'
 import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { validateBody } from '../utils/validateQuery'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
 
 export function OwnersRoutes(pgClient: Client): Router {

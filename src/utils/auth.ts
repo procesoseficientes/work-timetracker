@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { RoleService } from '../services/RoleService'
+import { RoleService } from '../controllers/RoleService'
 import createError from 'http-errors'
 import createHttpError from 'http-errors'
 
@@ -36,7 +36,7 @@ enum accessType {
 
 /**
  * Middleware to only allow access to a certain accessType
- * @param accessType The authority to require and allow access 
+ * @param accessType The authority to require and allow access
  * @param roleService RoleService to access role information
  */
 export function hasAccess(access: keyof typeof accessType, roleService: RoleService) {
@@ -46,7 +46,7 @@ export function hasAccess(access: keyof typeof accessType, roleService: RoleServ
       .then(accesses => {
         const route = `/${req.originalUrl.split('/')[1].split('?')[0]}`
         const routeAccess: any = accesses.find(a => a.route === route)
-        
+
         if (routeAccess && routeAccess[access] == true) {
           next()
         } else {
