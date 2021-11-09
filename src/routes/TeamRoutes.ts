@@ -40,9 +40,7 @@ export function TeamRoutes (pgClient: Client): Router {
     const grouped = Object.keys(teamTimes).map(a => {
       const g = {
         id: parseInt(a),
-        times: teamTimes[a].filter((a: {percent: number, current: number}) => a.percent > 0.5 || a.current)
-          .map(mapTime)
-          .reverse(),
+        times: teamTimes[a].map(mapTime).reverse(),
         task: '',//new Converter({simplifiedAutoLink: true, simpleLineBreaks: true}).makeHtml(teamTimes[a][0].task),
         name: teamTimes[a][0].name,
         project: teamTimes[a][0].project,
