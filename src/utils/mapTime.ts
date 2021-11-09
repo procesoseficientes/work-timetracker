@@ -1,4 +1,4 @@
-import { userTime } from "../services/TimeService"
+import { userTime } from "../models/time"
 
 function mapTime(element: userTime, index: number): userTime {
   const colors = ['bg-primary', 'bg-info', 'bg-danger', 'bg-secondary', 'bg-warning']

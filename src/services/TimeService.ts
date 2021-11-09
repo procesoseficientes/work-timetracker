@@ -1,43 +1,6 @@
+import { teamTime, time, userTime } from "../models/time"
 import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
-
-interface time {
-  name: string,
-  owner: string,
-  project: string,
-  task: string,
-  start: string,
-  end: string,
-  hours: string
-}
-
-export interface userTime {
-  user_id: string,
-  owner: string,
-  owner_id: number,
-  project: string,
-  project_id: string,
-  task: string, 
-  start: string | number | Date,
-  end: string | number | Date,
-  current: boolean, 
-  hours: string | number,
-  percent: number,
-  color: string
-}
-
-export interface teamTime {
-  time_id: number,
-  user_id: number,
-  name: string,
-  owner: string,
-  project: string,
-  task: string,
-  start: Date,
-  is_current: boolean,
-  hours: number,
-  percent: number
-}
 
 class TimeService extends DbService{
   async getTimes (
@@ -50,8 +13,8 @@ class TimeService extends DbService{
     limit = 26
   ): Promise<time[]> {
     return (await this.client.query(`
-      select 
-        u.name as "name",  
+      select
+        u.name as "name",
         o.name as "owner",
         p.name as project,
         task,
@@ -62,7 +25,7 @@ class TimeService extends DbService{
       from time t
       inner join owner o on o.id = owner_id
       inner join project p on p.id = project_id
-      inner join "user" u on u.id = user_id 
+      inner join "user" u on u.id = user_id
       left join type ty on ty.id = t.type_id
       where lower(u.name) like '%${sqlString(name.toLowerCase())}%'
         and lower(o.name) like '%${sqlString(owner.toLowerCase())}%'
@@ -83,9 +46,9 @@ class TimeService extends DbService{
   }
 
   async startTracking (
-    userId: number, 
-    ownerId: string, 
-    projectId: string, 
+    userId: number,
+    ownerId: string,
+    projectId: string,
     task: string,
     typeId: number
   ): Promise<number> {
@@ -111,7 +74,7 @@ class TimeService extends DbService{
 
   async getTodayUser (userId: number): Promise<userTime[]> {
     return (await this.client.query(`
-      select 
+      select
         user_id,
         o.name as "owner",
         o.id as owner_id,
@@ -133,7 +96,7 @@ class TimeService extends DbService{
 
   async getTodayTeam(): Promise<teamTime[]> {
     return (await this.client.query(`
-      select 
+      select
         t.id as "time_id",
         user_id,
         u.name,

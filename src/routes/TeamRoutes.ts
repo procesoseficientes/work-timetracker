@@ -2,12 +2,13 @@ import { Router } from 'express'
 import mapTime from '../utils/mapTime'
 import { groupBy } from '../utils/json'
 import { Client } from 'pg'
-import TimeService, { teamTime } from '../services/TimeService'
+import TimeService from '../services/TimeService'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../services/RoleService'
 import createHttpError from 'http-errors'
 import { Converter } from 'showdown'
+import { teamTime } from '../models/time'
 
 export function TeamRoutes (pgClient: Client): Router {
   const timeService = new TimeService(pgClient)
@@ -53,7 +54,7 @@ export function TeamRoutes (pgClient: Client): Router {
     return {
       title: 'Timetracker - Team',
       sidebar: new sidebarComponent(
-        '/team', 
+        '/team',
         await roleService.getAccessByRole(roleId)
       ).render(),
       team: grouped

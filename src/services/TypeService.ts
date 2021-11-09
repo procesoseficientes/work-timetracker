@@ -1,11 +1,6 @@
+import { type } from "../models/type"
 import { sqlString } from "../utils/sqlStrings"
 import DbService from "./DbService"
-
-export interface type {
-  id: number,
-  name: string, 
-  active: boolean
-}
 
 class TypeService extends DbService{
   async getTypes (): Promise<type[]> {
