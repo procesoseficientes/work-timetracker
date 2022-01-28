@@ -12,6 +12,6 @@ module.exports = {
   rules: {
     'semi': [2, 'never'],
     'prefer-arrow-callback': 1,
-    'no-unused-vars': 2
+    '@typescript-eslint/no-unused-vars': 2
   }
 }

@@ -27,7 +27,7 @@ class TimeService extends DbService{
       inner join project p on p.id = project_id
       inner join "user" u on u.id = user_id
       left join type ty on ty.id = t.type_id
-      where lower(u.name) like '%${sqlString(name.toLowerCase())}%'
+      where unaccent(lower(u.name)) like unaccent('%${sqlString(name.toLowerCase())}%')
         and lower(o.name) like '%${sqlString(owner.toLowerCase())}%'
         and lower(p.name) like '%${sqlString(project.toLowerCase())}%'
         and "start" between '${from}' and '${to}'

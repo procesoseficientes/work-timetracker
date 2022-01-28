@@ -4,8 +4,10 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import session from 'express-session'
-import exphbs from 'express-handlebars'
+import { create } from 'express-handlebars'
 import fs from 'fs'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const json2xls = require('json2xls')
 
 declare module 'express-session' {
   export interface SessionData {
@@ -31,7 +33,7 @@ import { ChangeLogRoutes } from './routes/ChangeLogRoutes'
 const app = express()
 
 // view engine setup
-const hbs = exphbs.create({
+const hbs = create({
   extname: '.hbs',
   defaultLayout: 'layout',
   helpers: {
@@ -43,6 +45,8 @@ app.engine('.hbs', hbs.engine)
 app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, 'views'))
 
+
+app.use(json2xls.middleware)
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
