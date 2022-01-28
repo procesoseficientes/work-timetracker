@@ -1,4 +1,8 @@
 # Changelog
+## 2022.01.28
+- Accent bug fix
+- New PDF report for times
+- New Excel report for tiems
 ## 2021.11.9
 -  New rolling timeline
   - The new timeline aligns the block according to the last 8hors
