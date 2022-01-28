@@ -2,7 +2,6 @@ import { Router } from 'express'
 import { Client } from 'pg'
 import { sidebarComponent } from '../components/sidebar/sidebar'
 import TimeService from '../controllers/TimeService'
-// import { Parser } from 'json2csv'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
@@ -139,7 +138,6 @@ export function DetailRoutes(pgClient: Client): Router {
     })
 
     res.end(pdf?.content)
-    //res.send(new Converter({tables: true, simpleLineBreaks: true}).makeHtml(reportComponent.render()))
   })
 
   return router
