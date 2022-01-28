@@ -53,6 +53,7 @@
     "@types/express-session": "^1.17.0",
     "@types/http-errors": "^1.8.0",
     "@types/json2csv": "^5.0.1",
+    "@types/marked": "^4.0.1",
     "@types/morgan": "^1.9.1",
     "@types/mustache": "^4.1.0",
     "@types/pg": "^7.14.4",
