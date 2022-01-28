@@ -8,7 +8,7 @@ export interface reportInterface extends time {
   totalHours: number
 }
 
-const template = fs.readFileSync(path.resolve(__dirname, 'detailReport.md'), 'utf8')
+const template = fs.readFileSync(path.resolve(__dirname, 'detailReport.hbs'), 'utf8')
 
 /**
  * Class that represents a report component
