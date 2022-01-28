@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { RoleService } from '../controllers/RoleService'
 import createError from 'http-errors'
 import createHttpError from 'http-errors'
+import { accessType } from '../models/accessType'
 
 /**
  * Middleware to validate user session
@@ -27,13 +28,6 @@ export function denyAll(_req: Request, res: Response): void {
   res.status(401).redirect('/login')
 }
 
-enum accessType {
-  create = 'create',
-  read = 'read',
-  update = 'update',
-  delete = 'delete'
-}
-
 /**
  * Middleware to only allow access to a certain accessType
  * @param accessType The authority to require and allow access
@@ -45,7 +39,7 @@ export function hasAccess(access: keyof typeof accessType, roleService: RoleServ
       roleService.getAccessByRole(req.session.roleId)
       .then(accesses => {
         const route = `/${req.originalUrl.split('/')[1].split('?')[0]}`
-        const routeAccess: any = accesses.find(a => a.route === route)
+        const routeAccess = accesses.find(a => a.route === route)
 
         if (routeAccess && routeAccess[access] == true) {
           next()
