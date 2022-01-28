@@ -7,7 +7,6 @@ import { sidebarComponent } from '../components/sidebar/sidebar'
 import { hasAccess } from '../utils/auth'
 import { RoleService } from '../controllers/RoleService'
 import createHttpError from 'http-errors'
-import { Converter } from 'showdown'
 import { teamTime } from '../models/time'
 
 export function TeamRoutes (pgClient: Client): Router {
