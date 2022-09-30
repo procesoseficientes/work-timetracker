@@ -20,7 +20,7 @@
     const times = {{{json this.times}}}
     console.log(times);
     const firstDate = (new Date(times[0].start)).toLocaleString('en-GB')
-    const firstHour = parseInt((new Date(firstDate).toLocaleString('en-GB').split(',')[1].split(':')[0]))
+    const firstHour = parseInt(firstDate.split(',')[1].split(':')[0])
 
     const getHour = (firstHour, i) => {
       const hour = (firstHour + i) % 24;
