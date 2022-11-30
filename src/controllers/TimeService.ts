@@ -36,10 +36,10 @@ class TimeService extends DbService{
       offset ${page * 25}
     `)).rows.map(a => {
       a.start = new Date(a.start)
-      a.start.setHours(a.start.getHours() - 6)
+      a.start.setHours(a.start.getHours())
       if (a.end) {
         a.end = new Date(a.end)
-        a.end.setHours(a.end.getHours() - 6)
+        a.end.setHours(a.end.getHours())
       }
       return a
     })
