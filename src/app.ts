@@ -62,7 +62,7 @@ app.use(session({
 
 const pgClient = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  //ssl: { rejectUnauthorized: false }
 })
 pgClient.connect().catch((err) => {
   console.error(err)
